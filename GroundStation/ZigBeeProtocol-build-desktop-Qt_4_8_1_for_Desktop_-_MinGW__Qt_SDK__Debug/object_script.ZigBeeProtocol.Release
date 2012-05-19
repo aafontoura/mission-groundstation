@@ -1,0 +1,13 @@
+INPUT(
+./release/qextserialport.o
+./release/qextserialenumerator.o
+./release/qextserialport_win.o
+./release/qextserialenumerator_win.o
+./release/qextwineventnotifier_p.o
+./release/serialhandler.o
+./release/zigbeeprotocol.o
+./release/moc_qextserialenumerator.o
+./release/moc_qextwineventnotifier_p.o
+./release/moc_serialhandler.o
+./release/moc_zigbeeprotocol.o
+);

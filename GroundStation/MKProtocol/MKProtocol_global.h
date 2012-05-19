@@ -1,0 +1,12 @@
+#ifndef MKPROTOCOL_GLOBAL_H
+#define MKPROTOCOL_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(MKPROTOCOL_LIBRARY)
+#  define MKPROTOCOLSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define MKPROTOCOLSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // MKPROTOCOL_GLOBAL_H
