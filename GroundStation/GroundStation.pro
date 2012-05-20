@@ -5,6 +5,7 @@
 #-------------------------------------------------
 include(./MKProtocol/MKProtocol.pro)
 
+
 QT       += core gui
 
 TARGET = GroundStation
