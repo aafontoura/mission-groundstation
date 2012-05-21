@@ -21,6 +21,15 @@ private:
     void readFolder(QTreeWidgetItem *item);
     void readBookmark(QTreeWidgetItem *item);
 
+    void readInformation(QTreeWidgetItem *item);
+    void readName(QTreeWidgetItem *item);
+    void readNode(QTreeWidgetItem *item, const QString &nodeName);
+    void readDescription(QTreeWidgetItem *item);
+    void readTasks(QTreeWidgetItem *item);
+    void readTimeStart(QTreeWidgetItem *item);
+
+
+
     QTreeWidgetItem *createChildItem(QTreeWidgetItem *item);
 
     QXmlStreamReader xml;

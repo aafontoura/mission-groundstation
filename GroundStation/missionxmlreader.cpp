@@ -39,20 +39,110 @@ QString MissionXMLReader::errorString() const
 
 void MissionXMLReader::readMission()
 {
-    Q_ASSERT(xml.isStartElement() && xml.name() == "xbel");
+    Q_ASSERT(xml.isStartElement() && xml.name() == "mission");
 
     while (xml.readNextStartElement())
     {
-        if (xml.name() == "folder")
+        if (xml.name() == "information")
+            readInformation(0);
+        /*else if (xml.name() == "environment")
+            readInvironment(0);
+        else if (xml.name() == "waypoint")
+            readWaypoint(0);
+        else if (xml.name() == "static_node")
+            readStaticNode(0);*/
+        else
+            xml.skipCurrentElement();
+
+        /*
+        else if (xml.name() == "folder")
             readFolder(0);
         else if (xml.name() == "bookmark")
             readBookmark(0);
         else if (xml.name() == "separator")
             readSeparator(0);
         else
-            xml.skipCurrentElement();
+            xml.skipCurrentElement();*/
     }
 }
+
+void MissionXMLReader::readInformation(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "information");
+
+    QTreeWidgetItem *information = createChildItem(item);
+    // bool folded = (xml.attributes().value("folded") != "no");
+    treeWidget->setItemExpanded(information, true);
+    // information->setText("Information");
+
+    while (xml.readNextStartElement())
+    {
+
+        if (xml.name() == "name")
+            readName(information);
+        /*else if (xml.name() == "latitude_boundaries")
+            readLatBound(information);*/
+        else
+            readNode(information,xml.name().toString());
+    }
+}
+
+void MissionXMLReader::readNode(QTreeWidgetItem *item,const QString &nodeName )
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == nodeName);
+
+    QString desc = xml.readElementText();
+    if (!desc.isEmpty())
+    {
+        QTreeWidgetItem *newItem = createChildItem(item);
+        // QTreeWidgetItem *newItemDesc = createChildItem(newItem);
+
+        newItem->setText(0, nodeName);
+        newItem->setText(1, desc);
+    }
+}
+
+void MissionXMLReader::readTimeStart(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "time_start");
+
+    QTreeWidgetItem *timerStartItem = createChildItem(item);
+
+    QString time_start = xml.readElementText();
+    timerStartItem->setText(0, time_start);
+}
+
+void MissionXMLReader::readTasks(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "tasks");
+
+    QTreeWidgetItem *tasksItem = createChildItem(item);
+
+    QString tasks = xml.readElementText();
+    tasksItem->setText(0, tasks);
+}
+
+void MissionXMLReader::readDescription(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "description");
+
+    QTreeWidgetItem *descriptionItem = createChildItem(item);
+    QString description = xml.readElementText();
+    descriptionItem->setText(0, description);
+}
+
+
+void MissionXMLReader::readName(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "name");
+
+    // QTreeWidgetItem *nameItem = createChildItem(item);
+
+    QString name = xml.readElementText();
+    item->setText(0, name);
+}
+
+
 
 void MissionXMLReader::readTitle(QTreeWidgetItem *item)
 {
