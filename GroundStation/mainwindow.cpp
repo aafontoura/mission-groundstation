@@ -16,7 +16,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(QuadCopter,SIGNAL(commError()),this,SLOT(CommError()));
     connect(QuadCopter,SIGNAL(retried(char,char)),this,SLOT(informRetry(char,char)));
 
+
+    ui->openAct->setShortcuts(QKeySequence::Open);
+    connect(ui->openAct, SIGNAL(triggered()), this, SLOT(open()));
+
     SetUpInfoTable();
+
+
+
+
+
+    /* --- */
+
+
 }
 
 MainWindow::~MainWindow()
@@ -35,7 +47,7 @@ void MainWindow::SetUpInfoTable()
     QStringList header;
 
     header << "FlightControl Version" << "FlightControl ProtocolVersion" << "NaviCtrl Version";
-    header << "NaviControl ProtocolVersion" << "3D 1" << "3D 2" << "3D 3";
+    header << "NaviControl ProtocolVersion" << "Roll" << "Pitch" << "Yaw";
 
     ui->HelicopterAttView->setVerticalHeaderLabels(header);
 
@@ -123,87 +135,7 @@ void MainWindow::informRetry(char typeCommand ,char origin)
 }
 
 
-/*
-void MainWindow::processData(char p1, char p2)
-{
-    if (0 != p2)
-    {
-        switch(p2)
-        {
 
-            case SEND_WAYPOINT_REPLY:
-
-                ui->plainTextEdit->insertPlainText("WPs: " + QString::number(Waypoints->getNumberOfWaypoints()) + "\n");
-
-                break;
-
-            case REQUEST_WAYPOINT_REPLY:
-                break;
-
-            case REQUEST_OSD_REPLY:
-                break;
-
-            case VERSION_INFO_HEADER_REPLY:
-                switch (p1)
-                {
-                    case 'b':
-
-                        ui->plainTextEdit->insertPlainText("Version: " + FCVersion->getSwVersion() + "\n");
-                        break;
-                    case 'c':
-
-                        ui->plainTextEdit->insertPlainText("Version: " + NCVersion->getSwVersion() + "\n");
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            case DEBUG_OUT_HEADER_REPLY:
-
-                ui->lcdNumber->display(HeliDebugOut->getStatus(0));
-                ui->lcdNumber_2->display(HeliDebugOut->getStatus(1));
-                ui->progressBar->setValue(HeliDebugOut->getAnalog(0));
-                ui->progressBar_2->setValue(HeliDebugOut->getAnalog(1));
-                //ui->plainTextEdit->insertPlainText("Debug Received!\n");
-                //for (int i = 0 ; i < 32 ; i++)
-                //    ui->plainTextEdit->insertPlainText(QString::number(HeliDebugOut->getAnalog(i))+" ");
-                //ui->plainTextEdit->insertPlainText("\n");
-                break;
-
-            case DATA_3D_HEADER_REPLY:
-
-                ui->lcdNumber->setDigitCount(5);
-                ui->lcdNumber->display(MovementData->getWinkel(0));
-                ui->progressBar->setValue((MovementData->getWinkel(0)+1800)/36);
-                ui->progressBar_2->setValue((MovementData->getWinkel(1)+1800)/36);
-                ui->progressBar_3->setValue(MovementData->getWinkel(2)/36);
-                ui->lcdNumber_2->setDigitCount(5);
-                ui->lcdNumber_2->display(MovementData->getCentroid(0));
-                ui->progressBar_4->setValue(MovementData->getCentroid(0)/3);
-                ui->progressBar_5->setValue(MovementData->getCentroid(1)/3);
-                ui->progressBar_6->setValue(MovementData->getCentroid(2)/3);
-               // for (int i = 0 ; i < 3 ; i++)
-               //     ui->plainTextEdit->insertPlainText(QString::number(MovementData->getWinkel(i))+" ");
-               // for (int i = 0 ; i < 3 ; i++)
-                //    ui->plainTextEdit->insertPlainText(QString::number(MovementData->getCentroid(i))+" ");
-                //ui->plainTextEdit->insertPlainText("\n");
-                break;
-
-            default:
-                //ui->plainTextEdit->insertPlainText("No Module\n");
-                break;
-        }
-
-        //ui->plainTextEdit->insertPlainText("Received: " + QString::fromLatin1(Data.toHex())+"\n");
-
-
-    }
-    else;
-        //ui->plainTextEdit->insertPlainText(QString::fromLatin1(Data));
-
-    heliProtocol->checkPackages();
-}*/
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -253,4 +185,43 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_MainWindow_destroyed()
 {
     // ui->plainTextEdit->insertPlainText("teste\n");
+}
+
+void MainWindow::on_nameSpace_clicked(const QModelIndex &index)
+{
+
+}
+
+
+
+void MainWindow::open()
+{
+    QString fileName =
+            QFileDialog::getOpenFileName(this, tr("Open Bookmark File"),
+                                         QDir::currentPath(),
+                                         tr("XBEL Files (*.xbel *.xml)"));
+    if (fileName.isEmpty())
+        return;
+
+    ui->treeWidget->clear();
+
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("QXmlStream Bookmarks"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(fileName)
+                             .arg(file.errorString()));
+        return;
+    }
+
+    MissionXMLReader reader(ui->treeWidget);
+    if (!reader.read(&file)) {
+        QMessageBox::warning(this, tr("QXmlStream Bookmarks"),
+                             tr("Parse error in file %1:\n\n%2")
+                             .arg(fileName)
+                             .arg(reader.errorString()));
+    } else {
+        statusBar()->showMessage(tr("File loaded"), 2000);
+    }
+
 }

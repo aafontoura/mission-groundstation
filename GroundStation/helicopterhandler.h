@@ -12,6 +12,13 @@
 #include "modules/data3d.h"
 #include "modules/waypointshandler.h"
 
+#include "structureparser.h"
+#include <qapplication.h>
+#include <qfile.h>
+#include <QtXml/qxml.h>
+#include <qmainwindow.h>
+#include <qlabel.h>
+
 class HelicopterHandler : public QObject
 {
 Q_OBJECT

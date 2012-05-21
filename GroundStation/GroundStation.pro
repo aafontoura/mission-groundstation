@@ -5,7 +5,8 @@
 #-------------------------------------------------
 include(./MKProtocol/MKProtocol.pro)
 
-QT       += core gui
+QT       += core gui xml
+
 
 TARGET = GroundStation
 TEMPLATE = app
@@ -17,12 +18,16 @@ LIBS+= -L./mkprotocol/debug
 
 SOURCES += main.cpp \
         mainwindow.cpp \    
-    helicopterhandler.cpp
+    helicopterhandler.cpp \
+    networkmission.cpp \
+    missionxmlreader.cpp
 
 
 
 HEADERS  += mainwindow.h \    
-    helicopterhandler.h
+    helicopterhandler.h \
+    networkmission.h \
+    missionxmlreader.h
 
 
 

@@ -6,7 +6,7 @@
 class WaypointInfo
 {
 public:
-    WaypointInfo();
+
 
     typedef struct
     {
@@ -32,6 +32,15 @@ public:
             quint8  Name[4];                    // Name of that point (ASCII)
         quint8  reserve[2];                     // reserve
     } __attribute__((packed)) WaypointStruct;
+
+
+    WaypointInfo();
+    WaypointInfo(WaypointStruct newWaypoint);
+    void setWaypoint(WaypointStruct newWaypoint);
+    WaypointStruct getWaypoint();
+
+private:
+    WaypointStruct Waypoint;
 };
 
 #endif // WAYPOINTINFO_H

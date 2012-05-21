@@ -4,10 +4,15 @@
 #include <QMainWindow>
 #include <QByteArray>
 #include <QStringList>
+#include <QString>
 #include <QTableWidgetItem>
 #include <QMessageBox>
 // #include "waypointshandler.h"
 #include "helicopterhandler.h"
+#include "missionxmlreader.h"
+#include <QtXML/QDomDocument>
+#include <QFile>
+#include <QFileDialog>
 
 
 #define RET_OK true
@@ -22,8 +27,9 @@ class MainWindow : public QMainWindow
     
 public:
     explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-    
+    ~MainWindow();    
+
+
 private:
     Ui::MainWindow *ui;
     MKProtocol *heliProtocol;
@@ -52,6 +58,8 @@ private slots:
     void on_pushButton_7_clicked();
     void on_pushButton_2_clicked();
     void on_MainWindow_destroyed();
+    void on_nameSpace_clicked(const QModelIndex &index);
+    void open();
 };
 
 #endif // MAINWINDOW_H

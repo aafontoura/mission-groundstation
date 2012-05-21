@@ -40,7 +40,7 @@ public:
 private:
     QList<HeliWaypoint> WaypointsList;
 
-    HeliWaypoint::WaypointStruct NewWaypoint;
+    // HeliWaypoint::WaypointStruct NewWaypoint;
 
 
 
