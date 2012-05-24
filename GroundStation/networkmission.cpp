@@ -4,3 +4,8 @@
 NetworkMission::NetworkMission()
 {
 }
+
+/* NetworkMission::NetworkMission(NetworkMission *newMission)
+{
+
+}*/

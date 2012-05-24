@@ -1,7 +1,14 @@
 #include "missionxmlreader.h"
 
-MissionXMLReader::MissionXMLReader(QTreeWidget *treeWidget)
-     : treeWidget(treeWidget)
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
+MissionXMLReader::MissionXMLReader(QTreeWidget *treeWidget, NetworkMission *missionItem)
+    : treeWidget(treeWidget) , mission(missionItem)
 {
     QStyle *style = treeWidget->style();
 
@@ -13,6 +20,12 @@ MissionXMLReader::MissionXMLReader(QTreeWidget *treeWidget)
 }
 
 
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 bool MissionXMLReader::read(QIODevice *device)
 {
     xml.setDevice(device);
@@ -29,6 +42,12 @@ bool MissionXMLReader::read(QIODevice *device)
 }
 
 
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 QString MissionXMLReader::errorString() const
  {
      return QObject::tr("%1\nLine %2, column %3")
@@ -37,6 +56,13 @@ QString MissionXMLReader::errorString() const
              .arg(xml.columnNumber());
  }
 
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 void MissionXMLReader::readMission()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "mission");
@@ -66,20 +92,32 @@ void MissionXMLReader::readMission()
     }
 }
 
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 void MissionXMLReader::readInformation(QTreeWidgetItem *item)
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "information");
 
-    QTreeWidgetItem *information = createChildItem(item);
-    // bool folded = (xml.attributes().value("folded") != "no");
+    /* Field tree */
+    QTreeWidgetItem *information = createChildItem(item);    
     treeWidget->setItemExpanded(information, true);
-    // information->setText("Information");
+
 
     while (xml.readNextStartElement())
     {
-
         if (xml.name() == "name")
-            readName(information);
+            readInformationName(information);
+        else if (xml.name() == "description")
+            readDescription(information);
+        else if (xml.name() == "tasks")
+            readTasks(information);
+        else if (xml.name() == "priority")
+            readPriority(information);
         /*else if (xml.name() == "latitude_boundaries")
             readLatBound(information);*/
         else
@@ -87,6 +125,14 @@ void MissionXMLReader::readInformation(QTreeWidgetItem *item)
     }
 }
 
+
+/*************************************************************************************************/
+/* Name.........: readNode                                                                       */
+/* Inputs.......: Item     - Reference for the treeView                                          */
+/*                nodeName - Tag Name                                                            */
+/* Outputs......: none                                                                           */
+/* Description..: Generic procedure to fill the treeView from any tag                            */
+/*************************************************************************************************/
 void MissionXMLReader::readNode(QTreeWidgetItem *item,const QString &nodeName )
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == nodeName);
@@ -95,55 +141,128 @@ void MissionXMLReader::readNode(QTreeWidgetItem *item,const QString &nodeName )
     if (!desc.isEmpty())
     {
         QTreeWidgetItem *newItem = createChildItem(item);
-        // QTreeWidgetItem *newItemDesc = createChildItem(newItem);
 
         newItem->setText(0, nodeName);
         newItem->setText(1, desc);
     }
 }
 
-void MissionXMLReader::readTimeStart(QTreeWidgetItem *item)
+/*************************************************************************************************/
+/* Name.........: readPriority                                                                   */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the Priority of the mission from XML                                      */
+/*************************************************************************************************/
+void MissionXMLReader::readPriority(QTreeWidgetItem *item)
 {
-    Q_ASSERT(xml.isStartElement() && xml.name() == "time_start");
+    Q_ASSERT(xml.isStartElement() && xml.name() == "priority");
 
-    QTreeWidgetItem *timerStartItem = createChildItem(item);
+    /* Read information inside the tag */
+    QString priority = xml.readElementText();
 
-    QString time_start = xml.readElementText();
-    timerStartItem->setText(0, time_start);
+    /* Update mission information */
+    if (priority == "NORMAL")
+        mission->missionInformation.priority = PRIORITY_NORMAL;
+    else
+        mission->missionInformation.priority = 0;
+
+    mission->missionInformation.priorityXML = priority;
+
+    /* Update Tree (GUI) */
+    if (!priority.isEmpty())
+    {
+        QTreeWidgetItem *newItem = createChildItem(item);
+
+        newItem->setText(0, "priority");
+        newItem->setText(1, priority);
+    }
 }
 
+/*************************************************************************************************/
+/* Name.........: readTasks                                                                      */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the task of the mission from XML                                          */
+/*************************************************************************************************/
 void MissionXMLReader::readTasks(QTreeWidgetItem *item)
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "tasks");
 
-    QTreeWidgetItem *tasksItem = createChildItem(item);
+    /* Read information inside the tag */
+    QString task = xml.readElementText();
 
-    QString tasks = xml.readElementText();
-    tasksItem->setText(0, tasks);
+    /* Update mission information */
+    mission->missionInformation.tasks = task;
+
+    /* Update Tree (GUI) */
+    if (!task.isEmpty())
+    {
+        QTreeWidgetItem *newItem = createChildItem(item);
+
+        newItem->setText(0, "tasks");
+        newItem->setText(1, task);
+    }
 }
 
+
+
+
+
+/*************************************************************************************************/
+/* Name.........: readDescription                                                                */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the descritpion of the mission from XML                                   */
+/*************************************************************************************************/
 void MissionXMLReader::readDescription(QTreeWidgetItem *item)
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "description");
 
-    QTreeWidgetItem *descriptionItem = createChildItem(item);
-    QString description = xml.readElementText();
-    descriptionItem->setText(0, description);
+    /* Read information inside the tag */
+    QString desc = xml.readElementText();
+
+    /* Update mission information */
+    mission->missionInformation.description = desc;
+
+    /* Update Tree (GUI) */
+    if (!desc.isEmpty())
+    {
+        QTreeWidgetItem *newItem = createChildItem(item);
+
+        newItem->setText(0, "description");
+        newItem->setText(1, desc);
+    }
+    // readNode(item,xml.name().toString());
 }
 
 
-void MissionXMLReader::readName(QTreeWidgetItem *item)
+/*************************************************************************************************/
+/* Name.........: readInformationName                                                            */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the name of the mission from XML                                          */
+/*************************************************************************************************/
+void MissionXMLReader::readInformationName(QTreeWidgetItem *item)
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "name");
 
-    // QTreeWidgetItem *nameItem = createChildItem(item);
-
+    /* Read information inside the tag */
     QString name = xml.readElementText();
+
+    /* Update mission information */
+    mission->missionInformation.name = name;
+
+    /* Update Tree (GUI) */
     item->setText(0, name);
 }
 
 
-
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 void MissionXMLReader::readTitle(QTreeWidgetItem *item)
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "title");
@@ -152,7 +271,14 @@ void MissionXMLReader::readTitle(QTreeWidgetItem *item)
     item->setText(0, title);
 }
 
-void MissionXMLReader::readSeparator(QTreeWidgetItem *item)
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
+/*void MissionXMLReader::readSeparator(QTreeWidgetItem *item)
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "separator");
 
@@ -160,9 +286,16 @@ void MissionXMLReader::readSeparator(QTreeWidgetItem *item)
     separator->setFlags(item->flags() & ~Qt::ItemIsSelectable);
     separator->setText(0, QString(30, 0xB7));
     xml.skipCurrentElement();
-}
+}*/
 
-void MissionXMLReader::readFolder(QTreeWidgetItem *item)
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
+/*void MissionXMLReader::readFolder(QTreeWidgetItem *item)
  {
      Q_ASSERT(xml.isStartElement() && xml.name() == "folder");
 
@@ -182,25 +315,15 @@ void MissionXMLReader::readFolder(QTreeWidgetItem *item)
          else
              xml.skipCurrentElement();
      }
- }
+ }*/
 
- void MissionXMLReader::readBookmark(QTreeWidgetItem *item)
- {
-     Q_ASSERT(xml.isStartElement() && xml.name() == "bookmark");
 
-     QTreeWidgetItem *bookmark = createChildItem(item);
-     bookmark->setFlags(bookmark->flags() | Qt::ItemIsEditable);
-     bookmark->setIcon(0, bookmarkIcon);
-     bookmark->setText(0, QObject::tr("Unknown title"));
-     bookmark->setText(1, xml.attributes().value("href").toString());
-
-     while (xml.readNextStartElement()) {
-         if (xml.name() == "title")
-             readTitle(bookmark);
-         else
-             xml.skipCurrentElement();
-     }
- }
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 
  QTreeWidgetItem *MissionXMLReader::createChildItem(QTreeWidgetItem *item)
  {

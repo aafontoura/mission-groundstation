@@ -1,6 +1,6 @@
 #include "waypointinfo.h"
 
-WaypointInfo::WaypointInfo()
+WaypointInfo::WaypointInfo() : GPSPosition()
 {
 }
 

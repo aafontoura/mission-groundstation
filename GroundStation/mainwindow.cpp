@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->openAct->setShortcuts(QKeySequence::Open);
     connect(ui->openAct, SIGNAL(triggered()), this, SLOT(open()));
 
+    mission = new NetworkMission();
+
     SetUpInfoTable();
 
 
@@ -214,7 +216,7 @@ void MainWindow::open()
         return;
     }
 
-    MissionXMLReader reader(ui->treeWidget);
+    MissionXMLReader reader(ui->treeWidget, mission);
     if (!reader.read(&file)) {
         QMessageBox::warning(this, tr("QXmlStream Bookmarks"),
                              tr("Parse error in file %1:\n\n%2")

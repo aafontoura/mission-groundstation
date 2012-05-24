@@ -10,6 +10,7 @@
 // #include "waypointshandler.h"
 #include "helicopterhandler.h"
 #include "missionxmlreader.h"
+#include "networkmission.h"
 #include <QtXML/QDomDocument>
 #include <QFile>
 #include <QFileDialog>
@@ -33,6 +34,8 @@ public:
 private:
     Ui::MainWindow *ui;
     MKProtocol *heliProtocol;
+    NetworkMission *mission;
+
 
     //WaypointsHandler *Waypoints;
 

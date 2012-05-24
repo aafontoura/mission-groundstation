@@ -3,13 +3,16 @@
 
 #include <QTreeWidgetItem>
 #include <qtxml/QXmlStreamReader>
+#include "networkmission.h"
 
+
+#define PRIORITY_NORMAL 2
 
 
 class MissionXMLReader
 {
 public:
-    MissionXMLReader(QTreeWidget *treeWidget);
+    MissionXMLReader(QTreeWidget *treeWidget, NetworkMission *missionItem);
     bool read(QIODevice *device);
 
     QString errorString() const;
@@ -22,9 +25,10 @@ private:
     void readBookmark(QTreeWidgetItem *item);
 
     void readInformation(QTreeWidgetItem *item);
-    void readName(QTreeWidgetItem *item);
+    void readInformationName(QTreeWidgetItem *item);
     void readNode(QTreeWidgetItem *item, const QString &nodeName);
     void readDescription(QTreeWidgetItem *item);
+    void readPriority(QTreeWidgetItem *item);
     void readTasks(QTreeWidgetItem *item);
     void readTimeStart(QTreeWidgetItem *item);
 
@@ -34,9 +38,11 @@ private:
 
     QXmlStreamReader xml;
     QTreeWidget *treeWidget;
+    NetworkMission *mission;
 
     QIcon folderIcon;
     QIcon bookmarkIcon;
+
 };
 
 #endif // MISSIONXMLREADER_H

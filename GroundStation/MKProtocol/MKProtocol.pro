@@ -27,7 +27,8 @@ SOURCES += $$PWD/mkprotocol.cpp \
     $$PWD/modules/helicopterattribute.cpp \
     $$PWD/modules/generalwaypoint.cpp \
     $$PWD/modules/debuganalogs.cpp \
-    $$PWD/modules/data3d.cpp
+    $$PWD/modules/data3d.cpp \
+    MKProtocol/gpsposition.cpp
 
 
 HEADERS += $$PWD/mkprotocol.h \
@@ -42,7 +43,8 @@ HEADERS += $$PWD/mkprotocol.h \
     $$PWD/modules/generalwaypoint.h \
     $$PWD/modules/debuganalogs.h \
     $$PWD/modules/data3d.h \
-    $$PWD/modules/versioninfo.h
+    $$PWD/modules/versioninfo.h \
+    MKProtocol/gpsposition.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
