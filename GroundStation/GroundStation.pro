@@ -20,14 +20,16 @@ SOURCES += main.cpp \
         mainwindow.cpp \    
     helicopterhandler.cpp \
     networkmission.cpp \
-    missionxmlreader.cpp
+    missionxmlreader.cpp \
+    missionwaypoint.cpp
 
 
 
 HEADERS  += mainwindow.h \    
     helicopterhandler.h \
     networkmission.h \
-    missionxmlreader.h
+    missionxmlreader.h \
+    missionwaypoint.h
 
 
 

@@ -4,6 +4,7 @@
 #include <QTreeWidgetItem>
 #include <qtxml/QXmlStreamReader>
 #include "networkmission.h"
+#include "missionwaypoint.h"
 
 
 #define PRIORITY_NORMAL 2
@@ -32,6 +33,13 @@ private:
     void readTasks(QTreeWidgetItem *item);
     void readTimeStart(QTreeWidgetItem *item);
 
+    void readWaypoint(QTreeWidgetItem *item);
+    void readWaypointName(QTreeWidgetItem *item);
+    void readWaypointDescription(QTreeWidgetItem *item);
+    void readWaypointLatitude(QTreeWidgetItem *item);
+    void readWaypointLongitude(QTreeWidgetItem *item);
+    void readWaypointAltitude(QTreeWidgetItem *item);
+
 
 
     QTreeWidgetItem *createChildItem(QTreeWidgetItem *item);
@@ -39,6 +47,8 @@ private:
     QXmlStreamReader xml;
     QTreeWidget *treeWidget;
     NetworkMission *mission;
+
+    MissionWaypoint *waypointTemp;
 
     QIcon folderIcon;
     QIcon bookmarkIcon;

@@ -4,6 +4,7 @@
 #include <QString>
 #include <QList>
 #include <QObject>
+#include "missionwaypoint.h"
 
 class NetworkMission
 {
@@ -31,18 +32,7 @@ public:
         QString type;
     } environmentType;
 
-    typedef struct
-    {
-        QString name;
-        QString description;
-        int priority;
-        QString prorityXML;
-        QString latitude;
-        QString longitude;
-        QString altitude;
-        QString command;
-        QString commandVector;
-    } missionWaypoinType;
+
 
     typedef struct
     {
@@ -59,7 +49,7 @@ public:
     informationType missionInformation;
     environmentType missionEnvironment;
 
-    QList<NetworkMission::missionWaypoinType> waypointsList;
+    QList<MissionWaypoint> waypointsList;
     QList<missionStaticNodeType> staticNodesList;
 
 private:

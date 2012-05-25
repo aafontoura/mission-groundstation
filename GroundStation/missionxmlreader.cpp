@@ -17,6 +17,8 @@ MissionXMLReader::MissionXMLReader(QTreeWidget *treeWidget, NetworkMission *miss
     folderIcon.addPixmap(style->standardPixmap(QStyle::SP_DirOpenIcon),
                       QIcon::Normal, QIcon::On);
     bookmarkIcon.addPixmap(style->standardPixmap(QStyle::SP_FileIcon));
+
+   waypointTemp = 0;
 }
 
 
@@ -67,15 +69,26 @@ void MissionXMLReader::readMission()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "mission");
 
+    /* If there is no waypoint, create a root node for all waypoints */
+    QTreeWidgetItem *waypointParent;
+
+
     while (xml.readNextStartElement())
     {
         if (xml.name() == "information")
             readInformation(0);
         /*else if (xml.name() == "environment")
-            readInvironment(0);
+            readInvironment(0);*/
         else if (xml.name() == "waypoint")
-            readWaypoint(0);
-        else if (xml.name() == "static_node")
+        {
+            if (mission->waypointsList.isEmpty())
+            {
+                waypointParent = createChildItem(0);
+                waypointParent->setText(0,"Waypoints");
+            }
+            readWaypoint(waypointParent);
+        }
+        /*else if (xml.name() == "static_node")
             readStaticNode(0);*/
         else
             xml.skipCurrentElement();
@@ -123,6 +136,174 @@ void MissionXMLReader::readInformation(QTreeWidgetItem *item)
         else
             readNode(information,xml.name().toString());
     }
+}
+
+
+/*************************************************************************************************/
+/* Name.........: readWaypoint                                                                   */
+/* Inputs.......: item - rootNode treeWidget                                                     */
+/* Outputs......: none                                                                           */
+/* Description..: Read all the waypoints from xml                                                */
+/*************************************************************************************************/
+void MissionXMLReader::readWaypoint(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "waypoint");
+
+    /* create root node for all waypoints */
+    QTreeWidgetItem *waypoint = createChildItem(item);
+
+    /* initialize waypointTemp */
+    waypointTemp = new MissionWaypoint();
+
+    while (xml.readNextStartElement())
+    {
+        if (xml.name() == "name")
+            readWaypointName(waypoint);
+        else if (xml.name() == "description")
+            readWaypointDescription(waypoint);
+        else if (xml.name() == "latitude")
+            readWaypointLatitude(waypoint);
+        else if (xml.name() == "longitude")
+            readWaypointLongitude(waypoint);
+        else if (xml.name() == "altitude")
+            readWaypointAltitude(waypoint);
+        else
+            xml.skipCurrentElement();
+    }
+
+    mission->waypointsList << *waypointTemp;
+    waypointTemp = new MissionWaypoint();
+}
+
+/*************************************************************************************************/
+/* Name.........: readWaypointDescription                                                        */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the descritpion of the waypoint from XML                                  */
+/*************************************************************************************************/
+void MissionXMLReader::readWaypointDescription(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "description");
+
+    /* Read information inside the tag */
+    QString desc = xml.readElementText();
+
+    /* Update waypoint information */
+    waypointTemp->description = desc;
+
+    /* Update Tree (GUI) */
+    if (!desc.isEmpty())
+    {
+        QTreeWidgetItem *newItem = createChildItem(item);
+
+        newItem->setText(0, "description");
+        newItem->setText(1, desc);
+    }
+}
+
+/*************************************************************************************************/
+/* Name.........: readWaypointLatitude                                                           */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the latitude of the waypoint from XML                                     */
+/*************************************************************************************************/
+void MissionXMLReader::readWaypointLatitude(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "latitude");
+
+    /* Read information inside the tag */
+    QString lat = xml.readElementText();
+
+
+
+    /* Update Tree (GUI) */
+    if (!lat.isEmpty())
+    {
+        /* Update waypoint information */
+        waypointTemp->setLatitudeStr(lat);
+
+        QTreeWidgetItem *newItem = createChildItem(item);
+
+        newItem->setText(0, "Latitude");
+        newItem->setText(1, lat);
+    }
+}
+
+/*************************************************************************************************/
+/* Name.........: readWaypointLongitude                                                          */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the longitude of the waypoint from XML                                    */
+/*************************************************************************************************/
+void MissionXMLReader::readWaypointLongitude(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "longitude");
+
+    /* Read information inside the tag */
+    QString longit = xml.readElementText();
+
+
+
+    /* Update Tree (GUI) */
+    if (!longit.isEmpty())
+    {
+        /* Update waypoint information */
+        waypointTemp->setLongitudeStr(longit);
+
+        QTreeWidgetItem *newItem = createChildItem(item);
+
+        newItem->setText(0, "Longitude");
+        newItem->setText(1, longit);
+    }
+}
+
+/*************************************************************************************************/
+/* Name.........: readWaypointAltitude                                                           */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the altitude of the waypoint from XML                                     */
+/*************************************************************************************************/
+void MissionXMLReader::readWaypointAltitude(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "altitude");
+
+    /* Read information inside the tag */
+    QString alt = xml.readElementText();
+
+
+
+    /* Update Tree (GUI) */
+    if (!alt.isEmpty())
+    {
+        /* Update waypoint information */
+        waypointTemp->setAltitudeStr(alt);
+
+        QTreeWidgetItem *newItem = createChildItem(item);
+
+        newItem->setText(0, "Altitude");
+        newItem->setText(1, alt);
+    }
+}
+
+
+/*************************************************************************************************/
+/* Name.........: readWaypointName                                                               */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the name of the waypoint from XML                                         */
+/*************************************************************************************************/
+void MissionXMLReader::readWaypointName(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "name");
+
+    /* Read information inside the tag */
+    QString name = xml.readElementText();
+
+    /* Update mission information */
+    waypointTemp->name = name;
+
+    /* Update Tree (GUI) */
+    item->setText(0, name);
 }
 
 
@@ -236,6 +417,7 @@ void MissionXMLReader::readDescription(QTreeWidgetItem *item)
 }
 
 
+
 /*************************************************************************************************/
 /* Name.........: readInformationName                                                            */
 /* Inputs.......: item                                                                           */
@@ -336,4 +518,7 @@ void MissionXMLReader::readTitle(QTreeWidgetItem *item)
      childItem->setData(0, Qt::UserRole, xml.name().toString());
      return childItem;
  }
+
+
+
 
