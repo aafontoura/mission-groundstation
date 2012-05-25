@@ -5,7 +5,7 @@
 #-------------------------------------------------
 include(./MKProtocol/MKProtocol.pro)
 
-QT       += core gui xml
+QT       += core gui xml webkit network
 
 
 TARGET = GroundStation
@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     helicopterhandler.cpp \
     networkmission.cpp \
     missionxmlreader.cpp \
-    missionwaypoint.cpp
+    missionwaypoint.cpp \
+    map.cpp
 
 
 
@@ -29,8 +30,14 @@ HEADERS  += mainwindow.h \
     helicopterhandler.h \
     networkmission.h \
     missionxmlreader.h \
-    missionwaypoint.h
+    missionwaypoint.h \
+    map.h
 
 
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    groundStation.qrc
+
+OTHER_FILES +=

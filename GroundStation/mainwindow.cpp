@@ -22,6 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mission = new NetworkMission();
 
+    missionMap = new Map(ui->mapWidget);
+    missionMap->show();
+
     SetUpInfoTable();
 
 

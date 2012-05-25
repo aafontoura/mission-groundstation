@@ -144,7 +144,7 @@
         <height>501</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="container">
+      <layout class="QGridLayout" name="container" columnminimumwidth="100,600">
        <item row="0" column="0">
         <widget class="QTreeWidget" name="treeWidget">
          <property name="columnCount">
@@ -161,6 +161,9 @@
           </property>
          </column>
         </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QWidget" name="mapWidget" native="true"/>
        </item>
       </layout>
      </widget>

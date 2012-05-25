@@ -14,6 +14,7 @@
 #include <QtXML/QDomDocument>
 #include <QFile>
 #include <QFileDialog>
+#include "map.h"
 
 
 #define RET_OK true
@@ -35,6 +36,8 @@ private:
     Ui::MainWindow *ui;
     MKProtocol *heliProtocol;
     NetworkMission *mission;
+
+    Map *missionMap;
 
 
     //WaypointsHandler *Waypoints;
