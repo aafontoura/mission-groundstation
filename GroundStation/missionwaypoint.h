@@ -15,6 +15,8 @@ public:
     QString command;
     QString commandVector;
 
+    QString getName();
+
 };
 
 #endif // MISSIONWAYPOINT_H

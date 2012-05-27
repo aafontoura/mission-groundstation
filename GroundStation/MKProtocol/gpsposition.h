@@ -8,6 +8,7 @@ class GPSPosition
 public:
     GPSPosition();
     GPSPosition(double lat, double longit, double alt);
+    GPSPosition(QString longit, QString lat, double alt = 0);
 
     void setPosition(double lat, double longit, double alt = 0);
     void setPosition(QString longit, QString lat, double alt = 0);

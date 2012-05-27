@@ -30,6 +30,8 @@ private:
     void readNode(QTreeWidgetItem *item, const QString &nodeName);
     void readDescription(QTreeWidgetItem *item);
     void readPriority(QTreeWidgetItem *item);
+    void readLatBound(QTreeWidgetItem *item);
+    void readLongBound(QTreeWidgetItem *item);
     void readTasks(QTreeWidgetItem *item);
     void readTimeStart(QTreeWidgetItem *item);
 

@@ -131,8 +131,10 @@ void MissionXMLReader::readInformation(QTreeWidgetItem *item)
             readTasks(information);
         else if (xml.name() == "priority")
             readPriority(information);
-        /*else if (xml.name() == "latitude_boundaries")
-            readLatBound(information);*/
+        else if (xml.name() == "latitude_boundaries")
+            readLatBound(information);
+        else if (xml.name() == "longitude_boundaries")
+            readLongBound(information);
         else
             readNode(information,xml.name().toString());
     }
@@ -357,6 +359,67 @@ void MissionXMLReader::readPriority(QTreeWidgetItem *item)
         newItem->setText(0, "priority");
         newItem->setText(1, priority);
     }
+}
+
+
+/*************************************************************************************************/
+/* Name.........: readLatBound                                                                   */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the  of the mission from XML                                              */
+/*************************************************************************************************/
+void MissionXMLReader::readLatBound(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "latitude_boundaries");
+
+    /* Read information inside the tag */
+    QString lat1 = xml.attributes().value("N").toString();
+    QString lat2 = xml.attributes().value("S").toString();
+
+    mission->missionInformation.NEPointBound.setLatitudeStr(lat1);
+    mission->missionInformation.SWPointBound.setLatitudeStr(lat2);
+
+    xml.readElementText();
+
+/*
+    /* Update mission information *//*
+    if (priority == "NORMAL")
+        mission->missionInformation.priority = PRIORITY_NORMAL;
+    else
+        mission->missionInformation.priority = 0;
+
+    mission->missionInformation.priorityXML = priority;
+
+    /* Update Tree (GUI) *//*
+    if (!priority.isEmpty())
+    {
+        QTreeWidgetItem *newItem = createChildItem(item);
+
+        newItem->setText(0, "priority");
+        newItem->setText(1, priority);
+    }*/
+}
+
+
+/*************************************************************************************************/
+/* Name.........: readLongBound                                                                  */
+/* Inputs.......: item                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..: Read the  of the mission from XML                                              */
+/*************************************************************************************************/
+void MissionXMLReader::readLongBound(QTreeWidgetItem *item)
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == "longitude_boundaries");
+
+    /* Read information inside the tag */
+
+    QString long1 = xml.attributes().value("E").toString();
+    QString long2 = xml.attributes().value("W").toString();
+
+    mission->missionInformation.NEPointBound.setLongitudeStr(long1);
+    mission->missionInformation.SWPointBound.setLongitudeStr(long2);
+
+    xml.readElementText();
 }
 
 /*************************************************************************************************/

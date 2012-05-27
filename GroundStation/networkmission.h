@@ -19,8 +19,10 @@ public:
         QString tasks;
         int priority;
         QString priorityXML;
-        QString latBoundaries;
+        QString latBoundaries;        
         QString longBoundaries;
+        GPSPosition SWPointBound;
+        GPSPosition NEPointBound;
         QString altBoundaries;
 
     } informationType;

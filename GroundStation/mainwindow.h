@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include "map.h"
+#include "gmapwidget.h"
 
 
 #define RET_OK true
@@ -37,7 +38,7 @@ private:
     MKProtocol *heliProtocol;
     NetworkMission *mission;
 
-    Map *missionMap;
+    GMapWidget *missionMap;
 
 
     //WaypointsHandler *Waypoints;

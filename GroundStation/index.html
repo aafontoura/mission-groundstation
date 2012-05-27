@@ -22,7 +22,7 @@ var markerDroneCurrentPosition;
 
 
 function initialize() {
-  var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+  var myLatlng = new google.maps.LatLng(-30.363882,-51.044922);
   var myOptions = {
     zoom: 4,
     center: myLatlng,
@@ -32,8 +32,9 @@ function initialize() {
           position: google.maps.ControlPosition.TOP_LEFT
         },
         navigationControl: true,
+		scaleControl: true ,
         navigationControlOptions: {
-          style: google.maps.NavigationControlStyle.SMALL,
+          style: google.maps.NavigationControlStyle.ZOOM_PAN,
           position: google.maps.ControlPosition.CENTER_LEFT
         },
 
@@ -48,16 +49,33 @@ function initialize() {
     }
     polyTarget = new google.maps.Polyline(polyOptions);
     polyTarget.setMap(map);
-
-	google.maps.event.addListener(map, 'rightclick', function(event){
-            setTarget(event.latLng);
+	
+	//markerDroneCurrentPosition = new google.maps.Marker();
+	
+	//Open(-30.363882,-51.044922);
+	
+	/*DroneCurrentPosition(-30.363882,-53.044922);
+	DroneCurrentPosition(-30.363882,-51.044922);*/
+	
+	
+	google.maps.event.addListener(map, 'click', function(event){
+			var number = markersArray.length+1;
+            setTarget(event.latLng,"#jj");
         });
 	
 }
 
-function setTarget(location) {
+function addWaypoint(latitude,longitude,name)
+{
+	setTarget(new google.maps.LatLng(latitude,longitude),name);
+}
+
+
+function setTarget(location,name) {
 	
-   if(markersArray.length<16){ 
+	
+	//map.setCenter(location);
+    if(markersArray.length<16){ 
 		var path = polyTarget.getPath();
 		path.push(location);
 		
@@ -66,26 +84,35 @@ function setTarget(location) {
 		var clickedLocation = new google.maps.LatLng(location);
 		marker = new google.maps.Marker({
 			position: location,
-			title: '#' + tileNumber,
+			title: name,
 			map: map
 		});
 		markersArray.push(marker);
+		
 	}
+	
 }
 
 
-function Open(x,y,z)
+function Open(x,y)
 {
-    map.setCenter( new GLatLng(x,y),z);
+    map.setCenter( new google.maps.LatLng(x,y));
 }
 
 function DroneCurrentPosition(x,y)
 {
 	var location = new google.maps.LatLng(x,y);
-	markerDroneCurrentPosition = new google.maps.Marker({
-			position: location,			
-			map: map
-		});
+	if (markerDroneCurrentPosition)
+	{
+		markerDroneCurrentPosition.setPosition(location);
+	}
+	else
+	{	
+		markerDroneCurrentPosition = new google.maps.Marker({
+				position: location,			
+				map: map
+			});
+	}
 }
 
 function dummyTxt() {
@@ -97,6 +124,15 @@ function getMarkerPosition(n){
 	return markersArray[n].position.toString();
 
 }
+
+function fitMapBounderies(latNE,longNE,latSW,longSW)
+{
+	var myLatLngNE = new google.maps.LatLng(latNE,longNE);
+	var myLatLngSW = new google.maps.LatLng(latSW,longSW);
+	var bounds = new google.maps.LatLngBounds(myLatLngSW,myLatLngNE);
+	map.fitBounds(bounds);
+}
+
 
 function cleanMarkers(){
 	if (markersArray) {
@@ -134,9 +170,29 @@ function markersNumber(){
 	return markersArray.length.toString();
 }
 
+
+// custom functions
+function setGMapCenter(lat, lng)
+{
+    // map.setCenter(new google.maps.LatLng(lat, lng));
+	var myLatLngNE = new google.maps.LatLng(-30.163882,-51.044922);
+	  var myLatLngSW = new google.maps.LatLng(-30.363882,-51.244922);
+	  var bounds = new google.maps.LatLngBounds(myLatLngSW,myLatLngNE);
+	  map.fitBounds(bound);
+}
+
+function setGMapZoom(zoom)
+{
+    map.setZoom(zoom);
+}
+
+
+    
+      
+
 </script>
 </head>
+  	<div id="map_canvas" style="width:556px;height:499px"></div>
 <body onload="initialize()">
-  	<div id="map_canvas" style="width:100%;height:100%"></div>
 </body>
 </html>

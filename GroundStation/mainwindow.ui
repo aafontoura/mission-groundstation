@@ -144,7 +144,7 @@
         <height>501</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="container" columnminimumwidth="100,600">
+      <layout class="QGridLayout" name="container" columnstretch="500,500">
        <item row="0" column="0">
         <widget class="QTreeWidget" name="treeWidget">
          <property name="columnCount">
@@ -167,6 +167,11 @@
        </item>
       </layout>
      </widget>
+     <zorder>gridLayoutWidget_3</zorder>
+     <zorder>mapWidget</zorder>
+     <zorder>mapWidget</zorder>
+     <zorder>mapWidget</zorder>
+     <zorder>mapWidget</zorder>
     </widget>
    </widget>
    <widget class="QPushButton" name="pushButton_7">

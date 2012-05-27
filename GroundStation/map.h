@@ -40,7 +40,7 @@ public slots:
         void cleanAllMarkers();
         void getAllMarkersPositions(QString markerCoordinates[][5], int *markersNumber);
         int markersNumber();
-        void setDroneCurrentPosition(float latitude, float longitude);
+        void setDroneCurrentPosition(float x, float y);
 
 signals:
         void reloadMap();

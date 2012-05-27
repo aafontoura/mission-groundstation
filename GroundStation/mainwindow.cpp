@@ -22,8 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mission = new NetworkMission();
 
-    missionMap = new Map(ui->mapWidget);
+    missionMap = new GMapWidget(ui->mapWidget);
     missionMap->show();
+    // missionMap->setContextMenuPolicy(Qt::);
+    //missionMap->setDroneCurrentPosition(-30.363882,-51.044922);
+
+    //fitMapBounderies
+
 
     SetUpInfoTable();
 
@@ -228,5 +233,18 @@ void MainWindow::open()
     } else {
         statusBar()->showMessage(tr("File loaded"), 2000);
     }
+    //missionMap->setGMapCenter(-30.363882,-51.044922);
+
+    missionMap->fitMapBounderies(mission->missionInformation.NEPointBound,mission->missionInformation.SWPointBound);
+
+    for (int i = 0 ; i < mission->waypointsList.length() ; i++)
+    {
+        missionMap->addWaypoint(mission->waypointsList[i]);
+
+    }
+
+
+    //missionMap->setGMapCenter(mission->waypointsList[0].getLatitude(),mission->waypointsList[0].getLongitude());
+    //missionMap->setDroneCurrentPosition(-30.363882,-51.044922);
 
 }

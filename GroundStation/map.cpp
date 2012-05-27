@@ -85,12 +85,12 @@ void Map::getAllMarkersPositions(QString markerCoordinates[][5], int *markersNum
 
 void Map::setPosition(float x, float y)
 {
-    this->page()->mainFrame()->evaluateJavaScript("Open(x,y)");
+    this->page()->mainFrame()->evaluateJavaScript("Open(-30.363882,-51.044922)");
 }
 
-void Map::setDroneCurrentPosition(float latitude, float longitude)
+void Map::setDroneCurrentPosition(float x, float y)
 {
-    this->page()->mainFrame()->evaluateJavaScript("DroneCurrentPosition(x,y)");
+    this->page()->mainFrame()->evaluateJavaScript("DroneCurrentPosition(-30.363882,-51.044922)");
 }
 
 void Map::cleanAllMarkers()

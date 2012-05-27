@@ -15,6 +15,10 @@ GPSPosition::GPSPosition(double lat, double longit, double alt)
     altitude = alt;
 }
 
+GPSPosition::GPSPosition(QString longit, QString lat, double alt)
+{
+}
+
 
 void GPSPosition::setPosition(double lat, double longit, double alt)
 {
@@ -27,12 +31,12 @@ void GPSPosition::setPosition(QString longit, QString lat, double alt)
 {
 
     longitude = longit.left(longit.indexOf("°")).toDouble();
-    longit = longit.right(longit.indexOf("°")).toDouble();
+    longit = longit.right(longit.length()-longit.indexOf("°")-1);
     longitude += longit.left(longit.indexOf("'")).toDouble()/60;
-    longit = longit.right(longit.indexOf("'")).toDouble();
-    longitude += longit.left(longit.indexOf("'")).toDouble()/360;
+    longit = longit.right(longit.length()-longit.indexOf("'")-1);
+    longitude += longit.left(longit.indexOf("'")).toDouble()/3600;
 
-    if (longit.endsWith("S"))
+    if (longit.endsWith("O"))
         longitude = -longitude;
 
     latitude = lat.left(lat.indexOf("°")).toDouble();
@@ -41,7 +45,7 @@ void GPSPosition::setPosition(QString longit, QString lat, double alt)
     lat = lat.right(lat.length()-lat.indexOf("'")-1);
     latitude += lat.left(lat.indexOf("'")).toDouble()/3600;
 
-    if (lat.endsWith("O"))
+    if (lat.endsWith("S"))
         latitude = -latitude;
 
     altitude = alt;
@@ -62,7 +66,7 @@ void GPSPosition::setLongitudeStr(QString longit)
     longit = longit.right(longit.length()-longit.indexOf("'")-1);
     longitude += longit.left(longit.indexOf("'")).toDouble()/3600;
 
-    if (longit.endsWith("S"))
+    if (longit.endsWith("O"))
         longitude = -longitude;
 }
 
@@ -97,7 +101,7 @@ void GPSPosition::setLatitudeStr(QString lat)
     lat = lat.right(lat.length()-lat.indexOf("'")-1);
     latitude += lat.left(lat.indexOf("'")).toDouble()/3600;
 
-    if (lat.endsWith("O"))
+    if (lat.endsWith("S"))
         latitude = -latitude;
 }
 
