@@ -1,19 +1,14 @@
 #ifndef MISSIONWAYPOINT_H
 #define MISSIONWAYPOINT_H
 
-#include "MKProtocol/gpsposition.h"
+#include "missionnode.h"
 
-class MissionWaypoint : public GPSPosition
+class MissionWaypoint : public MissionNode
 {
 public:
     MissionWaypoint();
 
     QString name;
-    QString description;
-    int priority;
-    QString prorityXML;
-    QString command;
-    QString commandVector;
 
     QString getName();
 

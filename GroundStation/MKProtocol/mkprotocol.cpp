@@ -2,9 +2,7 @@
 
 
 MKProtocol::MKProtocol()
-{
-    /* Open a serial interface */
-    heliComm = new ZigBeeProtocol();
+{    
 
     ReqModule[UART_FC_REQ].append(UART_FC);
     ReqModule[UART_NC_REQ].append(UART_NC);
@@ -14,36 +12,9 @@ MKProtocol::MKProtocol()
 
 
     actualUART = UART_INIT;
-
-    /* Event Configuration */
-    connect(heliComm,SIGNAL(dataReceived(QByteArray)),this,SLOT(handleBuffer(QByteArray)));
 }
 
-MKProtocol::MKProtocol(const QString &portName)
-{
-    /* Open a zigbee interface */
-    heliComm = new ZigBeeProtocol(portName);
 
-    ReqModule[UART_FC_REQ].append(UART_FC);
-    ReqModule[UART_NC_REQ].append(UART_NC);
-    ReqModule[UART_NC_REQ].append(UART_FC);
-    ReqModule[UART_MK3MAG_REQ].append(UART_MK3MAG);
-    ReqModule[UART_MKGPS_REQ].append(UART_MKGPS);
-
-    actualUART = UART_INIT;
-
-    /* Event Configuration */
-    connect(heliComm,SIGNAL(dataReceived(QByteArray)),this,SLOT(handleBuffer(QByteArray)));
-}
-
-MKProtocol::MKProtocol(PortSettings SerialSetting, const QString &portName)
-{
-    /* Open a serial interface */
-    heliComm = new ZigBeeProtocol(SerialSetting,portName);
-
-    /* Event Configuration */
-    connect(heliComm,SIGNAL(dataReceived(QByteArray)),this,SLOT(handleBuffer(QByteArray)));
-}
 
 /*********************************************************************************/
 /* Name.........: Decode64                                                       */
@@ -155,7 +126,7 @@ quint16 MKProtocol::CalcCRC(QByteArray DataBuffer)
 /*********************************************************************************/
 void MKProtocol::PrepareSendPackage(char Origin, char Destiny, QByteArray reqData)
 {
-    QByteArray sendBuffer, tempBuffer;
+    QByteArray bufferToSend, tempBuffer;
     int sizeOut = reqData.size();
     unsigned int CRC;
 
@@ -168,26 +139,26 @@ void MKProtocol::PrepareSendPackage(char Origin, char Destiny, QByteArray reqDat
         sizeOut += (sizeOut % 4) ? (4 - sizeOut % 4) : 0;
         // sizeOut += 4 - sizeOut % 4;
 
-        sendBuffer.resize(sizeOut + PAYLOAD_PACKAGE);
+        bufferToSend.resize(sizeOut + PAYLOAD_PACKAGE);
 
         tempBuffer = Encode64(reqData);
-        sendBuffer.replace(3,tempBuffer.size(),tempBuffer);
+        bufferToSend.replace(3,tempBuffer.size(),tempBuffer);
     }
     else
-        sendBuffer.resize(PAYLOAD_PACKAGE);
+        bufferToSend.resize(PAYLOAD_PACKAGE);
 
 
-    sendBuffer[0] = START_PACKAGE;
-    sendBuffer[1] = Destiny + ADDRESS_ADD_BYTE;
-    sendBuffer[2] = Origin;
+    bufferToSend[0] = START_PACKAGE;
+    bufferToSend[1] = Destiny + ADDRESS_ADD_BYTE;
+    bufferToSend[2] = Origin;
 
 
-    CRC = CalcCRC(sendBuffer.left(sendBuffer.size()-3));
-    sendBuffer[sendBuffer.size() - 2] = CRC % 64 + INTERFACE_NULL_BYTE;
-    sendBuffer[sendBuffer.size() - 3] = CRC / 64 + INTERFACE_NULL_BYTE;
-    sendBuffer[sendBuffer.size() - 1] = STOP_PACKAGE;
+    CRC = CalcCRC(bufferToSend.left(bufferToSend.size()-3));
+    bufferToSend[bufferToSend.size() - 2] = CRC % 64 + INTERFACE_NULL_BYTE;
+    bufferToSend[bufferToSend.size() - 3] = CRC / 64 + INTERFACE_NULL_BYTE;
+    bufferToSend[bufferToSend.size() - 1] = STOP_PACKAGE;
 
-    heliComm->sendBuffer(sendBuffer);
+    emit(sendBuffer(bufferToSend));
 
 
 }
@@ -254,7 +225,7 @@ void MKProtocol::RequestData(ParameterRequest Setting)
     if(!isUartModule(Setting.getDestDevice()))
     {
         if (Setting.getDestDevice() == NC_ADDRESS)
-            heliComm->sendBuffer(getRequestUartRedirect(Setting.getDestDevice()));
+            emit(sendBuffer(getRequestUartRedirect(Setting.getDestDevice())));
         else
             PrepareSendPackage(REDIRECT_UART_HEADER,getActualAddress(),getRequestUartRedirect(Setting.getDestDevice()));
         this->setUartModule(Setting.getDestDevice());
@@ -368,26 +339,4 @@ void MKProtocol::checkPackages()
 
 }
 
-bool MKProtocol::OpenInterface()
-{
-    if (heliComm)
-        return (heliComm->OpenInterface());
-    else
-        return false;
-}
-
-void MKProtocol::CloseInterface()
-{
-    if (heliComm)
-        if (heliComm->isOpen())
-            heliComm->CloseInterface();
-}
-
-bool MKProtocol::OpenCloseInterface()
-{
-    if (heliComm)
-        return heliComm->OpenCloseInterface();
-    else
-        return false;
-}
 

@@ -23,7 +23,9 @@ SOURCES += main.cpp \
     missionxmlreader.cpp \
     missionwaypoint.cpp \
     map.cpp \
-    gmapwidget.cpp
+    gmapwidget.cpp \
+    missionnode.cpp \
+    missionstaticnode.cpp
 
 
 
@@ -33,7 +35,9 @@ HEADERS  += mainwindow.h \
     missionxmlreader.h \
     missionwaypoint.h \
     map.h \
-    gmapwidget.h
+    gmapwidget.h \
+    missionnode.h \
+    missionstaticnode.h
 
 
 

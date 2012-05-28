@@ -25,6 +25,7 @@ Q_OBJECT
 public:
     HelicopterHandler();
     HelicopterHandler(QByteArray SerialPortName);
+    HelicopterHandler(QString newName, int newAddress);
 
     bool OpenCloseCommunication();
     bool OpenCommunication();
@@ -52,10 +53,20 @@ public:
 
     int getNumberOfWaypoints();
 
+    int getAddress();
+    QString getName();
+    void setAddress(int newAddress);
+    void setName(QString newName);
+
+
 
 
 
 private:
+    /* Information */
+    QString name;
+    int address;
+
     /* Communication Handler */
     MKProtocol *heliProtocol;
 
@@ -80,6 +91,8 @@ private:
     int previousState;
     int RequestMode;
     bool initState;
+
+
 
     char expectedCommandType;
     char expectedCommandFrom;

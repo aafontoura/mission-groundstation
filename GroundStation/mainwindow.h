@@ -14,6 +14,8 @@
 #include <QtXML/QDomDocument>
 #include <QFile>
 #include <QFileDialog>
+#include <QList>
+#include <QSpinBox>
 #include "map.h"
 #include "gmapwidget.h"
 
@@ -35,6 +37,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    QList<QTabWidget*> mobileNodesWidgetList;
+
     MKProtocol *heliProtocol;
     NetworkMission *mission;
 
@@ -46,7 +51,7 @@ private:
     HelicopterHandler *QuadCopter;
 
     QTableWidgetItem FC3DDebugItems[NUM_3D_DEBUGS];
-    void SetUpInfoTable();
+    void SetUpInfoTable(QTableWidget *tableView);
 
 
 
@@ -67,6 +72,7 @@ private slots:
     void on_MainWindow_destroyed();
     void on_nameSpace_clicked(const QModelIndex &index);
     void open();
+    void on_addNewMobileNode_clicked();
 };
 
 #endif // MAINWINDOW_H

@@ -4,12 +4,16 @@
 #include <QString>
 #include <QList>
 #include <QObject>
+#include "zigbeeprotocol.h"
+#include "helicopterhandler.h"
 #include "missionwaypoint.h"
+#include "missionstaticnode.h"
 
 class NetworkMission
 {
 public:
     NetworkMission();
+    NetworkMission(const QString &portName);
     /* NetworkMission(NetworkMission *newMission); */
 
     typedef struct
@@ -52,11 +56,19 @@ public:
     environmentType missionEnvironment;
 
     QList<MissionWaypoint> waypointsList;
-    QList<missionStaticNodeType> staticNodesList;
+    QList<MissionStaticNode> staticNodesList;
+    QList<HelicopterHandler*> mobileNodesList;
+
+    void addMobileNode(QString name, int address);
 
 private:
+    ZigBeeProtocol *missionNodesComm;
+    //slots:
 
 
+private slots:
+    void networkPackageSender(QByteArray data, int address);
+    void networkPackageReceiver(QByteArray data, int address);
 
 
 };

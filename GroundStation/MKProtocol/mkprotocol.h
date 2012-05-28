@@ -18,9 +18,6 @@ class MKPROTOCOLSHARED_EXPORT  MKProtocol: public QObject
 public:
     MKProtocol();
 
-    /* Constructors for Serial as comm interface */
-    MKProtocol(const QString &portName);
-    MKProtocol(PortSettings SerialSetting, const QString &portName);
 
     void RequestData(char Origin, char Destiny, QByteArray reqData);
     void RequestData(ParameterRequest Setting);
@@ -47,7 +44,7 @@ private:
     /* Communication interface */
     /* Serial comm interface */
     //SerialHandler *heliComm;
-    ZigBeeProtocol *heliComm;
+    //ZigBeeProtocol *heliComm;
 
     QByteArray incomingData;
 
@@ -60,6 +57,7 @@ private slots:
 
 signals:
     void dataReceived(char,char,QByteArray);
+    void sendBuffer(QByteArray);
 };
 
 #endif // MKPROTOCOL_H

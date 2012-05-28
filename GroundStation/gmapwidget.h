@@ -7,6 +7,7 @@
 #include <QNetworkReply>
 #include "MKProtocol/gpsposition.h"
 #include "missionwaypoint.h"
+#include "missionstaticnode.h"
 
 class GMapWidget : public QWebView
 {
@@ -21,6 +22,7 @@ public slots:
     void fitMapBounderies(double latNE,double longNE,double latSW,double longSW);
     void fitMapBounderies(GPSPosition NEPoint, GPSPosition SWPoint);
     void addWaypoint(MissionWaypoint Waypoint);
+    void addStaticNode(MissionStaticNode staticNode);
 
     void setGMapZoom(int zoomLevel);
 

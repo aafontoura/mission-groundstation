@@ -75,6 +75,13 @@ void GMapWidget::addWaypoint(MissionWaypoint Waypoint)
     runScript(argument);
 }
 
+void GMapWidget::addStaticNode(MissionStaticNode staticNode)
+{
+    QString argument = QString("addStaticNode(%1,%2,\"").arg(staticNode.getLatitude()).arg(staticNode.getLongitude());
+    argument += staticNode.identifier + "\")";
+    runScript(argument);
+}
+
 // set a zoom level on the map
 void GMapWidget::setGMapZoom(int zoomLevel)
 {

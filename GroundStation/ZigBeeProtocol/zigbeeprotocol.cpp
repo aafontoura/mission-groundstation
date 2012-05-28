@@ -63,7 +63,7 @@ void ZigBeeProtocol::handleBuffer(QByteArray Data)
 void ZigBeeProtocol::sendBuffer(QByteArray Data)
 {
     //serialComm->sendBuffer(Data);
-    PrepareSendPackage(0x01,0,Data);
+//    PrepareSendPackage(0x08,0,Data);
 }
 
 void ZigBeeProtocol::PrepareSendPackage(char atCommandID, quint16 addrDestiny, QByteArray Data)
@@ -173,8 +173,8 @@ void ZigBeeProtocol::PrepareSendPackage(char atCommandID, quint16 addrDestiny, Q
             dataOut.data = (char*)&frameAtData;
             frameAtData.atCommandId = 0x08;
             frameAtData.frameId = 0x52;
-            frameAtData.command[0] = 'C';
-            frameAtData.command[1] = 'C';
+            frameAtData.command[0] = 'P';
+            frameAtData.command[1] = '1';
             frameAtData.parameterValue = 0;
 
             tempLength = 4;

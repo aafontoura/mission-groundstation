@@ -4,8 +4,52 @@ HelicopterHandler::HelicopterHandler()
 {
 }
 
-HelicopterHandler::HelicopterHandler(QByteArray SerialPortName)
+/*HelicopterHandler::HelicopterHandler(QByteArray SerialPortName)
+{*/
+    /* Helicopter Attributes */
+    /*FCVersion = new VersionInfo(FC_ADDRESS);
+    NCVersion = new VersionInfo(NC_ADDRESS);
+    FCDebugOut = new DebugAnalogs(FC_ADDRESS);
+    NCDebugOut = new DebugAnalogs(NC_ADDRESS);
+    FCMovementData = new Data3D(FC_ADDRESS,FREQ_INTERVAL_10HZ);
+    NCMovementData = new Data3D(NC_ADDRESS,FREQ_INTERVAL_10HZ);
+    Waypoints = new WaypointsHandler();*/
+
+    /* Config General Timer */
+    /*GeneralTimer = new QTimer(this);
+    connect(GeneralTimer,SIGNAL(timeout()),this,SLOT(RequestHelicopterState()));
+
+
+    TimeOutCommand = new QTimer(this);
+    connect(TimeOutCommand,SIGNAL(timeout()),this,SLOT(timedOut()));
+
+    RequestState = GET_FC_VERSION;
+    RequestMode = NORMAL_REQUEST_MODE;
+    initState = true;*/
+
+    /* Configure communication interface */
+    /*heliProtocol = new MKProtocol(SerialPortName);
+    if (heliProtocol->OpenInterface())
+    {
+        connect(heliProtocol,SIGNAL(dataReceived(char,char,QByteArray)),
+                this,SLOT(processData(char,char,QByteArray)));
+    }
+    else
+    {
+        emit commError();
+    }*/
+
+    //GeneralTimer->start();
+    /*RequestHelicopterState();*/
+    //GeneralTimer->singleShot(1,this,SLOT(RequestHelicopterState()));
+/*}*/
+
+HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
 {
+    /* Informations */
+    name = newName;
+    address = newAddress;
+
     /* Helicopter Attributes */
     FCVersion = new VersionInfo(FC_ADDRESS);
     NCVersion = new VersionInfo(NC_ADDRESS);
@@ -14,6 +58,7 @@ HelicopterHandler::HelicopterHandler(QByteArray SerialPortName)
     FCMovementData = new Data3D(FC_ADDRESS,FREQ_INTERVAL_10HZ);
     NCMovementData = new Data3D(NC_ADDRESS,FREQ_INTERVAL_10HZ);
     Waypoints = new WaypointsHandler();
+
 
     /* Config General Timer */
     GeneralTimer = new QTimer(this);
@@ -28,23 +73,14 @@ HelicopterHandler::HelicopterHandler(QByteArray SerialPortName)
     initState = true;
 
     /* Configure communication interface */
-    heliProtocol = new MKProtocol(SerialPortName);
-    if (heliProtocol->OpenInterface())
-    {
-        connect(heliProtocol,SIGNAL(dataReceived(char,char,QByteArray)),
-                this,SLOT(processData(char,char,QByteArray)));
-    }
-    else
-    {
-        emit commError();
-    }
+    heliProtocol = new MKProtocol();
 
-    //GeneralTimer->start();
-    RequestHelicopterState();
-    //GeneralTimer->singleShot(1,this,SLOT(RequestHelicopterState()));
+    connect(heliProtocol,SIGNAL(dataReceived(char,char,QByteArray)),
+            this,SLOT(processData(char,char,QByteArray)));
+
 }
 
-bool HelicopterHandler::OpenCloseCommunication()
+/*bool HelicopterHandler::OpenCloseCommunication()
 {
     return (heliProtocol->OpenCloseInterface());
 }
@@ -57,7 +93,7 @@ bool HelicopterHandler::OpenCommunication()
 void HelicopterHandler::CloseCommunication()
 {
     heliProtocol->CloseInterface();
-}
+}*/
 
 
 
@@ -146,6 +182,26 @@ void HelicopterHandler::SendWaypoint()
 int HelicopterHandler::getNumberOfWaypoints()
 {
     return (Waypoints->getNumberOfWaypoints());
+}
+
+int HelicopterHandler::getAddress()
+{
+    return address;
+}
+
+QString HelicopterHandler::getName()
+{
+    return name;
+}
+
+void HelicopterHandler::setAddress(int newAddress)
+{
+    address = newAddress;
+}
+
+void HelicopterHandler::setName(QString newName)
+{
+    name = newName;
 }
 
 void HelicopterHandler::checkTimeOut(char OriginAddress, char ModuleType)

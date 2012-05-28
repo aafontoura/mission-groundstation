@@ -17,6 +17,7 @@ var map;
 var polyTarget;
 var markersArray = [];
 var marker;
+var staticNodesList;
 var i;
 var markerDroneCurrentPosition;
 
@@ -54,13 +55,14 @@ function initialize() {
 	
 	//Open(-30.363882,-51.044922);
 	
-	/*DroneCurrentPosition(-30.363882,-53.044922);
-	DroneCurrentPosition(-30.363882,-51.044922);*/
+	/*DroneCurrentPosition(-30.363882,-53.044922);*/
+	DroneCurrentPosition(-30.363882,-51.044922);
+	//addWaypoint(-30.0365,-51.2187,"way01")
 	
 	
 	google.maps.event.addListener(map, 'click', function(event){
 			var number = markersArray.length+1;
-            setTarget(event.latLng,"#jj");
+            setStaticNode(event.latLng,"#jj");
         });
 	
 }
@@ -69,11 +71,31 @@ function addWaypoint(latitude,longitude,name)
 {
 	setTarget(new google.maps.LatLng(latitude,longitude),name);
 }
+function addStaticNode(latitude,longitude,name)
+{
+	setStaticNode(new google.maps.LatLng(latitude,longitude),name);
+}
+
+function setStaticNode(location,name) {			
+		var pinIcon = new google.maps.MarkerImage(
+		"./staticNode2.png",
+		null, /* size is determined at runtime */
+		null, /* origin is 0,0 */
+		new google.maps.Point(15, 33), /* anchor is bottom center of the scaled image */
+		new google.maps.Size(30, 33)
+		);
+		marker = new google.maps.Marker({
+				position: location,			
+				map: map
+			});
+		marker.setIcon(pinIcon);
+		staticNodesList.push(marker);	
+}
 
 
-function setTarget(location,name) {
-	
-	
+
+
+function setTarget(location,name) {	
 	//map.setCenter(location);
     if(markersArray.length<16){ 
 		var path = polyTarget.getPath();
@@ -81,16 +103,21 @@ function setTarget(location,name) {
 		
 		var tileNumber = markersArray.length +1;
 		
-		var clickedLocation = new google.maps.LatLng(location);
+		var pinIcon = new google.maps.MarkerImage(
+		"./waypointPin.png",
+		null, /* size is determined at runtime */
+		null, /* origin is 0,0 */
+		new google.maps.Point(14, 45), /* anchor is bottom center of the scaled image */
+		new google.maps.Size(28, 45)
+		);
 		marker = new google.maps.Marker({
 			position: location,
 			title: name,
-			map: map
+			map: map			
 		});
+		marker.setIcon(pinIcon);
 		markersArray.push(marker);
-		
-	}
-	
+	}	
 }
 
 
@@ -108,10 +135,18 @@ function DroneCurrentPosition(x,y)
 	}
 	else
 	{	
+		var pinIcon = new google.maps.MarkerImage(
+		"./icon4.png",
+		null, /* size is determined at runtime */
+		null, /* origin is 0,0 */
+		new google.maps.Point(25, 53), /* anchor is bottom center of the scaled image */
+		new google.maps.Size(49, 53)
+		);
 		markerDroneCurrentPosition = new google.maps.Marker({
 				position: location,			
 				map: map
 			});
+		markerDroneCurrentPosition.setIcon(pinIcon);
 	}
 }
 
@@ -119,10 +154,15 @@ function dummyTxt() {
     return 'This works.';
 }
 
+function getStaticNodePosition(n){
+	if (n < staticNodesList.length())
+	{
+		return staticNodesList[n].position.toString();
+	}	
+}
+
 function getMarkerPosition(n){
-
 	return markersArray[n].position.toString();
-
 }
 
 function fitMapBounderies(latNE,longNE,latSW,longSW)
