@@ -1,6 +1,11 @@
 #ifndef HELICOPTERDEFS_H
 #define HELICOPTERDEFS_H
 
+/* if the connection with the communication is direct(port communication) or virtual (external */
+/* singnal to an extern communication handler) */
+#define VIRTUAL_PORT_COMMUNICATION
+//#define REAL_PORT_COMMUNICATION
+
 
 #define START_PACKAGE '#'
 #define STOP_PACKAGE  '\r'

@@ -158,7 +158,7 @@ void MKProtocol::PrepareSendPackage(char Origin, char Destiny, QByteArray reqDat
     bufferToSend[bufferToSend.size() - 3] = CRC / 64 + INTERFACE_NULL_BYTE;
     bufferToSend[bufferToSend.size() - 1] = STOP_PACKAGE;
 
-    emit(sendBuffer(bufferToSend));
+    sendBuffer(bufferToSend);
 
 
 }
@@ -189,6 +189,22 @@ char MKProtocol::getActualAddress()
         return(NC_ADDRESS);
     else
         return(actualUART+1);
+}
+
+/*********************************************************************************/
+/* Name.........: sendBuffer                                                     */
+/* Inputs.......: data                                                           */
+/* Outputs......: none                                                           */
+/* Description..: Send the data requested to the MK                              */
+/*********************************************************************************/
+void MKProtocol::sendBuffer(QByteArray data)
+{
+    /* Send buffer to the communication interface */
+#ifdef VIRTUAL_PORT_COMMUNICATION
+    emit(bufferReady(data));
+#else
+#endif
+
 }
 
 /*********************************************************************************/
@@ -225,7 +241,7 @@ void MKProtocol::RequestData(ParameterRequest Setting)
     if(!isUartModule(Setting.getDestDevice()))
     {
         if (Setting.getDestDevice() == NC_ADDRESS)
-            emit(sendBuffer(getRequestUartRedirect(Setting.getDestDevice())));
+            sendBuffer(getRequestUartRedirect(Setting.getDestDevice()));
         else
             PrepareSendPackage(REDIRECT_UART_HEADER,getActualAddress(),getRequestUartRedirect(Setting.getDestDevice()));
         this->setUartModule(Setting.getDestDevice());

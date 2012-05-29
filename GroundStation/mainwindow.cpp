@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->openAct->setShortcuts(QKeySequence::Open);
     connect(ui->openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-    mission = new NetworkMission();
+    mission = new NetworkMission("COM4");
 
     missionMap = new GMapWidget(ui->mapWidget);
     missionMap->show();
@@ -248,7 +248,7 @@ void MainWindow::open()
 
     for (int i = 0 ; i < mission->staticNodesList.length() ; i++)
     {
-        missionMap->addStaticNode(mission->staticNodesList[i]);
+        missionMap->addStaticNode(*(mission->staticNodesList[i]));
     }
 
 

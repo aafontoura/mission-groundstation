@@ -12,6 +12,8 @@
 #include "modules/HelicopterDefs.h"
 #include "parameterrequest.h"
 
+
+
 class MKPROTOCOLSHARED_EXPORT  MKProtocol: public QObject
 {
     Q_OBJECT
@@ -39,6 +41,7 @@ private:
     QByteArray getRequestUartRedirect(char newUart);
     void setUartModule(char newModule);
     char getActualAddress();
+    void sendBuffer(QByteArray data);
 
 
     /* Communication interface */
@@ -52,12 +55,13 @@ private:
     char actualUART;
 
 
-private slots:
-    void handleBuffer(QByteArray Data);
+public slots:
+    void handleBuffer(QByteArray Data);    
 
 signals:
     void dataReceived(char,char,QByteArray);
-    void sendBuffer(QByteArray);
+    void bufferReady(QByteArray data);
+
 };
 
 #endif // MKPROTOCOL_H

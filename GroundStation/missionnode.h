@@ -6,6 +6,7 @@ class MissionNode : public GPSPosition
 {
 public:
     MissionNode();
+    MissionNode(int address);
 
     QString description;
     int priority;
@@ -13,7 +14,14 @@ public:
     QString command;
     QString commandVector;
 
+    int address;
+
     void setDescription(QString desc);
+    void setAddress(int newAddress);
+
+    int getAddress();
+
+    virtual void dataHandler(QByteArray data);
 
 
 };

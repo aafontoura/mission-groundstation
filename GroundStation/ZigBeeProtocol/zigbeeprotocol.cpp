@@ -9,8 +9,14 @@ ZigBeeProtocol::ZigBeeProtocol(const QString &portName)
     /* Open a serial interface */
     serialComm = new SerialHandler(portName);
 
+    bool returnCode = serialComm->OpenPort();
+
     /* Event Configuration */
     connect(serialComm,SIGNAL(dataReceived(QByteArray)),this,SLOT(handleBuffer(QByteArray)));
+
+    incomingData.clear();
+
+
 }
 
 ZigBeeProtocol::ZigBeeProtocol(PortSettings SerialSetting, const QString &portName)
@@ -20,6 +26,8 @@ ZigBeeProtocol::ZigBeeProtocol(PortSettings SerialSetting, const QString &portNa
 
     /* Event Configuration */
     connect(serialComm,SIGNAL(dataReceived(QByteArray)),this,SLOT(handleBuffer(QByteArray)));
+
+    bool returnCode = serialComm->OpenPort();
 }
 
 
@@ -55,15 +63,88 @@ bool ZigBeeProtocol::isOpen()
 
 void ZigBeeProtocol::handleBuffer(QByteArray Data)
 {
-    emit(dataReceived(Data));
+    /* push back the incoming data on the local buffer */
+    incomingData.append(Data);
+
+    /* Find the start byte of the protocol */
+    int indexSearch = incomingData.indexOf(START_ZIGBEE_PACKAGE);
+
+    int expectedSize = ((int)incomingData[indexSearch+2])+(((int)incomingData[indexSearch+1])>>8);
+
+    /*if ((0 < expectedSize) && (MAX_ZIGBEE_SIZE > expectedSize))
+    {
+        for (int i = indexSearch ; i < expectedSize ; i++)
+        {
+            incomingData[i]
+        }
+    }*/
+
+
+
+
+
+    /* Check if there is a possible valid package (Start and Stop byte) */
+    if ((0 <= indexSearch) && (0 < expectedSize) && (MAX_ZIGBEE_SIZE > expectedSize))
+    {
+        QByteArray incomingBuffer = incomingData.mid(indexSearch+3,expectedSize+1);
+        if (checkByteCecksum(incomingBuffer))
+        {
+
+            /* Ignore bytes */
+            QByteArray incomingBuffer = incomingBuffer.left(expectedSize);
+
+
+            /* Flush Processed Data */
+            incomingData = incomingData.right(incomingData.size()-indexSearch+expectedSize+4-1);
+            //waitingReply = false;
+            dataHandler(incomingBuffer);
+        }
+        else
+        {
+            /* Flush Data */
+            incomingData = incomingData.right(incomingData.size()-indexSearch+4-1);
+        }
+
+
+
+    }
+    else
+    {
+        /* Flush Data */
+        /*if (indexSearch < 0)
+        {
+            incomingData.clear();
+            emit dataReceived(0,0,"Cleared\n");
+        }
+        else
+        {
+            if ((stopProtocolIndex >= 0) && (stopProtocolIndex < indexSearch))
+                incomingData = incomingData.right(incomingData.size()-indexSearch);
+
+            QByteArray index;
+            QByteArray stop;
+
+            index.setNum(indexSearch);
+            stop.setNum(stopProtocolIndex);
+
+            emit dataReceived(0,0,"Waiting: "+index + " - " + stop + "\n"+incomingData+"\n");
+        }*/
+
+
+    }
+
+
+    /*emit(dataReceived(Data, 0));*/
+
+
 }
 
 
 
-void ZigBeeProtocol::sendBuffer(QByteArray Data)
+void ZigBeeProtocol::sendBuffer(QByteArray Data, int address, int type)
 {
     //serialComm->sendBuffer(Data);
-//    PrepareSendPackage(0x08,0,Data);
+    PrepareSendPackage(type,address,Data);
 }
 
 void ZigBeeProtocol::PrepareSendPackage(char atCommandID, quint16 addrDestiny, QByteArray Data)
@@ -126,25 +207,31 @@ void ZigBeeProtocol::PrepareSendPackage(char atCommandID, quint16 addrDestiny, Q
             serialComm->sendBuffer(sendData);
             break;
 
-    case 0x01:
+        /* Serial Emulate Mode */
+    case SERIAL_TX_MODE:
         zigBeeTx16RequestStruct commandTx16;
 
 
         dataOut.data = (char*)&commandTx16;
+
+        /* prepare header */
         commandTx16.frameId = 1;
         commandTx16.atCommandId = atCommandID;
-        commandTx16.addr16Lsb = 0x02;
-        commandTx16.addr16Msb = 0x00;
+        commandTx16.addr16Lsb = addrDestiny & 0xFF; // 0x02;
+        commandTx16.addr16Msb = (addrDestiny >> 8) & 0xFF;
         commandTx16.commandOption = 0;
+
+        /* encapsulate data */
         commandTx16.data = Data.data();
 
-        //dataOut.length = 14 + Data.length();
+        /* Adjust package size*/
         tempLength = 5 + Data.length();
         dataOut.length[0] = (tempLength >> 8) & 0xFF;
         dataOut.length[1] = tempLength & 0xFF;
 
         ptrBuffer = dataOut.data;
 
+        /* Calculate checksum */
         tempChecksum = 0;
         for (int i = 0 ; i < 5 ; i++)
         {
@@ -157,14 +244,18 @@ void ZigBeeProtocol::PrepareSendPackage(char atCommandID, quint16 addrDestiny, Q
             tempChecksum += ptrBuffer[i];
         }
 
+        /* Fill checksum field */
         dataOut.checksum = 0xFF - tempChecksum;
 
+        /* Agregate data */
         sendData.append((char*)&dataOut,3);
         sendData.append((char*)&commandTx16,5);
         sendData.append(Data);
         sendData.append(dataOut.checksum);
 
+        /* send to the communication interface */
         serialComm->sendBuffer(sendData);
+
         break;
 
         case 0x08:
@@ -233,4 +324,31 @@ void ZigBeeProtocol::PrepareSendPackage(char atCommandID, quint16 addrDestiny, Q
             break;
     }
 
+}
+
+bool ZigBeeProtocol::checkByteCecksum(QByteArray data)
+{
+    char tempChecksum = 0;
+    for (int i = 0 ; i < data.length() ; i++)
+    {
+        tempChecksum += data[i];
+    }
+    tempChecksum++;
+
+    return(!tempChecksum);
+}
+
+void ZigBeeProtocol::dataHandler(QByteArray data)
+{
+    QByteArray nodeData;
+    int address;
+    switch(data[0])
+    {
+        case 0x83:
+            nodeData = data.right(data.length()-3);
+            address = (int)data[2]+(((int)incomingData[1])>>8);
+
+            emit(dataReceived(nodeData,address));
+            break;
+    }
 }

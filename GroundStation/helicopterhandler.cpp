@@ -4,19 +4,25 @@ HelicopterHandler::HelicopterHandler()
 {
 }
 
-/*HelicopterHandler::HelicopterHandler(QByteArray SerialPortName)
-{*/
+#ifdef REAL_PORT_COMMUNICATION
+HelicopterHandler::HelicopterHandler(QByteArray SerialPortName, QString newName, int newAddress)
+{
+
+    /* Informations */
+    name = newName;
+    address = newAddress;
+
     /* Helicopter Attributes */
-    /*FCVersion = new VersionInfo(FC_ADDRESS);
+    FCVersion = new VersionInfo(FC_ADDRESS);
     NCVersion = new VersionInfo(NC_ADDRESS);
     FCDebugOut = new DebugAnalogs(FC_ADDRESS);
     NCDebugOut = new DebugAnalogs(NC_ADDRESS);
     FCMovementData = new Data3D(FC_ADDRESS,FREQ_INTERVAL_10HZ);
     NCMovementData = new Data3D(NC_ADDRESS,FREQ_INTERVAL_10HZ);
-    Waypoints = new WaypointsHandler();*/
+    Waypoints = new WaypointsHandler();
 
     /* Config General Timer */
-    /*GeneralTimer = new QTimer(this);
+    GeneralTimer = new QTimer(this);
     connect(GeneralTimer,SIGNAL(timeout()),this,SLOT(RequestHelicopterState()));
 
 
@@ -28,7 +34,7 @@ HelicopterHandler::HelicopterHandler()
     initState = true;*/
 
     /* Configure communication interface */
-    /*heliProtocol = new MKProtocol(SerialPortName);
+    heliProtocol = new MKProtocol(SerialPortName);
     if (heliProtocol->OpenInterface())
     {
         connect(heliProtocol,SIGNAL(dataReceived(char,char,QByteArray)),
@@ -37,12 +43,10 @@ HelicopterHandler::HelicopterHandler()
     else
     {
         emit commError();
-    }*/
-
-    //GeneralTimer->start();
-    /*RequestHelicopterState();*/
-    //GeneralTimer->singleShot(1,this,SLOT(RequestHelicopterState()));
-/*}*/
+    }
+    RequestHelicopterState();
+}
+#endif
 
 HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
 {
@@ -75,12 +79,16 @@ HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
     /* Configure communication interface */
     heliProtocol = new MKProtocol();
 
+    connect(heliProtocol,SIGNAL(bufferReady(QByteArray)),this,SLOT(hubOutProtocol(QByteArray)));
+
+
     connect(heliProtocol,SIGNAL(dataReceived(char,char,QByteArray)),
             this,SLOT(processData(char,char,QByteArray)));
 
 }
 
-/*bool HelicopterHandler::OpenCloseCommunication()
+#ifdef REAL_PORT_COMMUNICATION
+bool HelicopterHandler::OpenCloseCommunication()
 {
     return (heliProtocol->OpenCloseInterface());
 }
@@ -93,7 +101,8 @@ bool HelicopterHandler::OpenCommunication()
 void HelicopterHandler::CloseCommunication()
 {
     heliProtocol->CloseInterface();
-}*/
+}
+#endif
 
 
 
@@ -202,6 +211,11 @@ void HelicopterHandler::setAddress(int newAddress)
 void HelicopterHandler::setName(QString newName)
 {
     name = newName;
+}
+
+void HelicopterHandler::hubInProtocol(QByteArray data)
+{
+    heliProtocol->handleBuffer(data);
 }
 
 void HelicopterHandler::checkTimeOut(char OriginAddress, char ModuleType)
@@ -320,6 +334,11 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
 
     /* Check if there are more valid packages available in the incoming buffer */
     heliProtocol->checkPackages();
+}
+
+void HelicopterHandler::hubOutProtocol(QByteArray data)
+{
+    emit (sendBuffer(data,this->getAddress()));
 }
 
 /*************************************************************************************************/
@@ -517,6 +536,11 @@ void HelicopterHandler::TriggerTimerState()
         default:
             break;
     }
+}
+
+void HelicopterHandler::initMachineState()
+{
+    RequestHelicopterState();
 }
 
 void HelicopterHandler::timedOut()

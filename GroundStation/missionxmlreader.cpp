@@ -183,7 +183,7 @@ void MissionXMLReader::readStaticNode(QTreeWidgetItem *item)
             xml.skipCurrentElement();
     }
 
-    mission->staticNodesList << *staticNodeTemp;
+    mission->staticNodesList << staticNodeTemp;
     staticNodeTemp = new MissionStaticNode();
 }
 

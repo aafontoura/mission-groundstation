@@ -3,3 +3,9 @@
 MissionStaticNode::MissionStaticNode()
 {
 }
+
+MissionStaticNode::MissionStaticNode(int newAddress) : MissionNode(newAddress)
+{
+}
+
+

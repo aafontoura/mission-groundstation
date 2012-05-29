@@ -24,8 +24,11 @@ SOURCES += main.cpp \
     missionwaypoint.cpp \
     map.cpp \
     gmapwidget.cpp \
-    missionnode.cpp \
-    missionstaticnode.cpp
+    missionstaticnode.cpp \
+    zigbeetransparentstaticnode.cpp \
+    missionnode.cpp
+
+
 
 
 
@@ -36,8 +39,11 @@ HEADERS  += mainwindow.h \
     missionwaypoint.h \
     map.h \
     gmapwidget.h \
-    missionnode.h \
-    missionstaticnode.h
+    missionstaticnode.h \
+    zigbeetransparentstaticnode.h \
+    missionnode.h
+
+
 
 
 

@@ -7,6 +7,13 @@
 #include "ZigBeeProtocol_global.h"
 #include "serialhandler.h"
 
+#define SERIAL_TX_MODE          0x01
+#define REQUEST_SENSOR_MODE     0x08
+
+#define START_ZIGBEE_PACKAGE    0x7E
+
+#define MAX_ZIGBEE_SIZE 2000
+
 class ZIGBEEPROTOCOLSHARED_EXPORT ZigBeeProtocol : public QObject
 {
     Q_OBJECT
@@ -21,7 +28,7 @@ public:
     void CloseInterface();
     bool OpenCloseInterface();
     bool isOpen();
-    void sendBuffer(QByteArray Data);
+    void sendBuffer(QByteArray Data, int address, int type);
 
 
 
@@ -88,13 +95,15 @@ private:
     QByteArray incomingData;
 
     void PrepareSendPackage(char atCommandID, quint16 addrDestiny, QByteArray Data);
+    bool checkByteCecksum(QByteArray data);
+    void dataHandler(QByteArray data);
 
 private slots:
 
     void handleBuffer(QByteArray Data);
 
 signals:
-    void dataReceived(QByteArray);
+    void dataReceived(QByteArray,int);
 
 
 };

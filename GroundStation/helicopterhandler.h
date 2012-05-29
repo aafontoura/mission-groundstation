@@ -5,12 +5,12 @@
 #include <QByteArray>
 #include <QTimer>
 #include "MKProtocol.h"
-#include "modules/versioninfo.h"
-#include "modules/HelicopterDefs.h"
-#include "parameterrequest.h"
-#include "modules/debuganalogs.h"
-#include "modules/data3d.h"
-#include "modules/waypointshandler.h"
+#include "MKProtocol/modules/versioninfo.h"
+#include "MKProtocol/modules/HelicopterDefs.h"
+#include "MKProtocol/parameterrequest.h"
+#include "MKProtocol/modules/debuganalogs.h"
+#include "MKProtocol/modules/data3d.h"
+#include "MKProtocol/modules/waypointshandler.h"
 
 #include "structureparser.h"
 #include <qapplication.h>
@@ -24,8 +24,13 @@ class HelicopterHandler : public QObject
 Q_OBJECT
 public:
     HelicopterHandler();
-    HelicopterHandler(QByteArray SerialPortName);
     HelicopterHandler(QString newName, int newAddress);
+
+#ifdef REAL_PORT_COMMUNICATION
+    HelicopterHandler(QByteArray SerialPortName, QString newName, int newAddress);
+#endif
+
+
 
     bool OpenCloseCommunication();
     bool OpenCommunication();
@@ -33,6 +38,8 @@ public:
 
     void CalculateNextState();
     void TriggerTimerState();
+
+    void initMachineState();
 
     void startTimeout(char expectedType, char expectedFrom, ParameterRequest request);
 
@@ -57,6 +64,8 @@ public:
     QString getName();
     void setAddress(int newAddress);
     void setName(QString newName);
+
+    void hubInProtocol(QByteArray data);
 
 
 
@@ -108,17 +117,21 @@ private:
 
 private slots:
     void processData(char OriginAddress, char ModuleType, QByteArray Data);
+    void hubOutProtocol(QByteArray data);
     void RequestHelicopterState();
     void timedOut();
 
 signals:
+
     void dataReceived(char,char);    
+    void sendBuffer(QByteArray, int);
     void commError();
     void FCVersionReceived();
     void NCVersionReceived();
     void FC3DDatareceived();
     void NumberOfWaypointsReceived();
     void retried(char typeCommand ,char origin);
+
 
 };
 
