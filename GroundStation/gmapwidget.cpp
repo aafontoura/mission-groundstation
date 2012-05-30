@@ -78,7 +78,7 @@ void GMapWidget::addWaypoint(MissionWaypoint Waypoint)
 void GMapWidget::addStaticNode(MissionStaticNode staticNode)
 {
     QString argument = QString("addStaticNode(%1,%2,\"").arg(staticNode.getLatitude()).arg(staticNode.getLongitude());
-    argument += staticNode.identifier + "\")";
+    argument += staticNode.getIdentifier() + "\")";
     runScript(argument);
 }
 

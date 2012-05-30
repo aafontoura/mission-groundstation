@@ -71,72 +71,36 @@ void ZigBeeProtocol::handleBuffer(QByteArray Data)
 
     int expectedSize = ((int)incomingData[indexSearch+2])+(((int)incomingData[indexSearch+1])>>8);
 
-    /*if ((0 < expectedSize) && (MAX_ZIGBEE_SIZE > expectedSize))
-    {
-        for (int i = indexSearch ; i < expectedSize ; i++)
-        {
-            incomingData[i]
-        }
-    }*/
-
-
-
-
-
+    /* TODO: handle an over capacity of package (overtraffic)
     /* Check if there is a possible valid package (Start and Stop byte) */
-    if ((0 <= indexSearch) && (0 < expectedSize) && (MAX_ZIGBEE_SIZE > expectedSize))
+    while ((0 <= indexSearch) && (0 < expectedSize) && (MAX_ZIGBEE_SIZE > expectedSize)
+           && (expectedSize <= (incomingData.length()-3)))
     {
         QByteArray incomingBuffer = incomingData.mid(indexSearch+3,expectedSize+1);
         if (checkByteCecksum(incomingBuffer))
         {
 
             /* Ignore bytes */
-            QByteArray incomingBuffer = incomingBuffer.left(expectedSize);
+            incomingBuffer = incomingBuffer.left(expectedSize);
 
 
             /* Flush Processed Data */
-            incomingData = incomingData.right(incomingData.size()-indexSearch+expectedSize+4-1);
+            incomingData = incomingData.right(incomingData.length()-indexSearch-expectedSize-4);
             //waitingReply = false;
             dataHandler(incomingBuffer);
         }
         else
         {
             /* Flush Data */
-            incomingData = incomingData.right(incomingData.size()-indexSearch+4-1);
+            incomingData = incomingData.right(incomingData.length()-indexSearch-4);
         }
 
-
-
-    }
-    else
-    {
-        /* Flush Data */
-        /*if (indexSearch < 0)
-        {
-            incomingData.clear();
-            emit dataReceived(0,0,"Cleared\n");
-        }
-        else
-        {
-            if ((stopProtocolIndex >= 0) && (stopProtocolIndex < indexSearch))
-                incomingData = incomingData.right(incomingData.size()-indexSearch);
-
-            QByteArray index;
-            QByteArray stop;
-
-            index.setNum(indexSearch);
-            stop.setNum(stopProtocolIndex);
-
-            emit dataReceived(0,0,"Waiting: "+index + " - " + stop + "\n"+incomingData+"\n");
-        }*/
-
-
+        indexSearch = incomingData.indexOf(START_ZIGBEE_PACKAGE);
+        expectedSize = ((int)incomingData[indexSearch+2])+(((int)incomingData[indexSearch+1])>>8);
     }
 
-
-    /*emit(dataReceived(Data, 0));*/
-
-
+    if (0 > indexSearch)
+        incomingData.clear();
 }
 
 
@@ -342,13 +306,17 @@ void ZigBeeProtocol::dataHandler(QByteArray data)
 {
     QByteArray nodeData;
     int address;
-    switch(data[0])
+    unsigned char type = data[0];
+    switch(type)
     {
         case 0x83:
             nodeData = data.right(data.length()-3);
             address = (int)data[2]+(((int)incomingData[1])>>8);
 
             emit(dataReceived(nodeData,address));
+            break;
+        default:
+            address = 0;
             break;
     }
 }

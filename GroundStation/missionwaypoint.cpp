@@ -4,7 +4,3 @@ MissionWaypoint::MissionWaypoint()
 {
 }
 
-QString MissionWaypoint::getName()
-{
-    return name;
-}

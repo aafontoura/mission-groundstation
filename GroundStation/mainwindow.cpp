@@ -99,8 +99,8 @@ void MainWindow::SetUpInfoTable(QTableWidget* tableView)
 
 void MainWindow::UpdateFCVersion()
 {
-    QTableWidgetItem *newVersion = new QTableWidgetItem(tr(QuadCopter->getFCVersion()));
-    QTableWidgetItem *newProtoVersion = new QTableWidgetItem(tr(QuadCopter->getFCProtoVersion()));
+    //QTableWidgetItem *newVersion = new QTableWidgetItem(tr(QuadCopter->getFCVersion()));
+    //QTableWidgetItem *newProtoVersion = new QTableWidgetItem(tr(QuadCopter->getFCProtoVersion()));
     /*ui->HelicopterAttView->setItem(1,1,newProtoVersion);
     ui->HelicopterAttView->setItem(0,1,newVersion);*/
 
@@ -108,8 +108,8 @@ void MainWindow::UpdateFCVersion()
 
 void MainWindow::UpdateNCVersion()
 {
-    QTableWidgetItem *newVersion = new QTableWidgetItem(tr(QuadCopter->getNCVersion()));
-    QTableWidgetItem *newProtoVersion = new QTableWidgetItem(tr(QuadCopter->getNCProtoVersion()));
+    //QTableWidgetItem *newVersion = new QTableWidgetItem(tr(QuadCopter->getNCVersion()));
+    //QTableWidgetItem *newProtoVersion = new QTableWidgetItem(tr(QuadCopter->getNCProtoVersion()));
     /*ui->HelicopterAttView->setItem(3,1,newProtoVersion);
     ui->HelicopterAttView->setItem(2,1,newVersion);*/
 }
@@ -188,7 +188,7 @@ void MainWindow::on_pushButton_7_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    QTableWidgetItem *newItem = new QTableWidgetItem("teste");
+    //QTableWidgetItem *newItem = new QTableWidgetItem("teste");
 
     /*ui->HelicopterAttView->setRowCount(10);
     ui->HelicopterAttView->setColumnCount(2);
@@ -260,7 +260,7 @@ void MainWindow::open()
 void MainWindow::on_addNewMobileNode_clicked()
 {
     QTabWidget *tabWidget;
-    QWidget *tab,*tab_4;
+    QWidget *tab;
     QPushButton *pushButton;
     QTableWidget *HelicopterAttView;
     QSpinBox *addressSpinBox;
@@ -319,7 +319,7 @@ void MainWindow::on_addNewMobileNode_clicked()
 
     /* Add Widget (MobileNode) to the list */
     mobileNodesWidgetList << tabWidget;
-    mission->addMobileNode(MobileNodeName, mobileNodesWidgetList.length());
+    mission->addMobileNode(MobileNodeName, mobileNodesWidgetList.length()+1);
 
 
     /* Hide all others Mobile Nodes */

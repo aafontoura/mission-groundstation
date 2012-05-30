@@ -312,7 +312,7 @@ void MissionXMLReader::readStaticNodeId(QTreeWidgetItem *item)
     QString identifier = xml.readElementText();
 
     /* Update mission information */
-    staticNodeTemp->identifier = identifier;
+    staticNodeTemp->setIdentifier(identifier);
 
     /* Update Tree (GUI) */
     item->setText(0, identifier);

@@ -72,7 +72,8 @@ public:
     QList<HelicopterHandler*> mobileNodesList;
     QList<translateCommunicationType> typeTranslation;
 
-    void addMobileNode(QString name, int address);
+    void addMobileNode(QString name, int address);    
+    void addStaticNode(QString identifier, int address);
 
 private:
     ZigBeeProtocol *missionNodesComm;

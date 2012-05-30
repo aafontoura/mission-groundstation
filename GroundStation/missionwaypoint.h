@@ -8,9 +8,7 @@ class MissionWaypoint : public MissionNode
 public:
     MissionWaypoint();
 
-    QString name;
 
-    QString getName();
 
 };
 

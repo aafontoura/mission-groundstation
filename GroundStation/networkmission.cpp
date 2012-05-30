@@ -10,30 +10,65 @@ NetworkMission::NetworkMission(const QString &portName)
 
     connect(missionNodesComm,SIGNAL(dataReceived(QByteArray,int)),this,SLOT(networkPackageReceiver(QByteArray,int)));
 
-    //ZigBeeTransparentStaticNode *testNode = new ZigBeeTransparentStaticNode(0x02);
-
-    //staticNodesList << testNode;
+    addStaticNode("Teste1",0x03);
 
 
 }
 
+/*************************************************************************************************/
+/* Name.........: addMobileNode                                                                  */
+/* Inputs.......: name,address                                                                   */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 void NetworkMission::addMobileNode(QString name, int address)
 {
     HelicopterHandler *newHelicopter = new HelicopterHandler(name,address);
     translateCommunicationType newNode;
 
+    /* Configure translation table */
     newNode.address = address;
     newNode.type = MOBILE_API_NODE_TYPE;
 
+    /* Connect the sender data handler */
     connect(newHelicopter,SIGNAL(sendBuffer(QByteArray,int)),this,SLOT(networkPackageSender(QByteArray,int)));
-    //connect(newHelicopter,SIGNAL(sendBuffer(QByteArray,int)),this,SLOT(networkPackageSender(QByteArray,int)));
 
     typeTranslation << newNode;
     mobileNodesList << newHelicopter;
 
+    /* Initialize the helicopter protocol process */
     newHelicopter->initMachineState();
 }
 
+
+/*************************************************************************************************/
+/* Name.........: addStaticNode                                                                  */
+/* Inputs.......: name, address                                                                  */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
+void NetworkMission::addStaticNode(QString identifier, int address)
+{
+    ZigBeeTransparentStaticNode *newStaticNode = new ZigBeeTransparentStaticNode(identifier,address);
+    translateCommunicationType newNode;
+
+    newNode.address = address;
+    newNode.type = STATIC_TRANSPARENT_NODE_TYPE;
+
+    //connect(newStaticNode,SIGNAL(sendBuffer(QByteArray,int)),this,SLOT(networkPackageSender(QByteArray,int)));
+
+    typeTranslation << newNode;
+
+    staticNodesList << newStaticNode;
+}
+
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 void NetworkMission::networkPackageSender(QByteArray data, int address)
 {
     int type = 0;
@@ -55,8 +90,17 @@ void NetworkMission::networkPackageSender(QByteArray data, int address)
 
 }
 
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 void NetworkMission::networkPackageReceiver(QByteArray data, int address)
 {
+
+    /* TODO: Inheritize MobileNode also from missionNode */
     for(int i = 0 ; i < mobileNodesList.length(); i++)
     {
         if (mobileNodesList[i]->getAddress() == address)
@@ -70,7 +114,12 @@ void NetworkMission::networkPackageReceiver(QByteArray data, int address)
     {
         if (staticNodesList[i]->getAddress() == address)
         {
-            staticNodesList[i]->dataHandler(data);
+            /* GAMBIARRA (workaround)!!! */
+            /* TODO: find another way. Just one list for all kind of nodes (inherited) but the
+              data handler must be especialized */
+            ZigBeeTransparentStaticNode *tempTest = (ZigBeeTransparentStaticNode*)staticNodesList[i];
+            tempTest->dataHandler(data);
+
             break;
         }
     }

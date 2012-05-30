@@ -9,8 +9,17 @@ class MissionStaticNode : public MissionNode
 public:
     MissionStaticNode();
     MissionStaticNode(int newAddress);
+    MissionStaticNode(QString identifier,int newAddress);
 
-    QString identifier;
+    QString getIdentifier();
+    void setIdentifier(QString newIdentifier);
+
+
+
+
+
+
+
 
 
 
