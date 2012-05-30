@@ -126,10 +126,10 @@ signals:
     void dataReceived(char,char);    
     void sendBuffer(QByteArray, int);
     void commError();
-    void FCVersionReceived();
-    void NCVersionReceived();
-    void FC3DDatareceived();
-    void NumberOfWaypointsReceived();
+    void FCVersionReceived(int);
+    void NCVersionReceived(int);
+    void FC3DDatareceived(int);
+    void NumberOfWaypointsReceived(int);
     void retried(char typeCommand ,char origin);
 
 

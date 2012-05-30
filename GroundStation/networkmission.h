@@ -84,6 +84,18 @@ private slots:
     void networkPackageSender(QByteArray data, int address);
     void networkPackageReceiver(QByteArray data, int address);
 
+    void handleFCVersionReceived(int address);
+    void handleNCVersionReceived(int address);
+    void handleFC3DDatareceived(int address);
+    void handleNumberOfWaypointsReceived(int address);
+
+signals:
+    void commError();
+    void mobileNodeFCVersionReceived(int);
+    void mobileNodeNCVersionReceived(int);
+    void mobileNodeFC3DDatareceived(int);
+    void mobileNodeNumberOfWaypointsReceived(int);
+
 
 };
 

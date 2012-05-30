@@ -56,10 +56,10 @@ private:
 
 
 private slots:
-    void UpdateFCVersion();
-    void UpdateNCVersion();
-    void UpdateFC3DData();
-    void UpdateNumberOfWP();
+    void UpdateFCVersion(int address);
+    void UpdateNCVersion(int address);
+    void UpdateFC3DData(int address);
+    void UpdateNumberOfWP(int address);
     void CommError();
     void informRetry(char typeCommand, char origin);
     void on_pushButton_clicked();

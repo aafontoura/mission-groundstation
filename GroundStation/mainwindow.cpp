@@ -97,7 +97,7 @@ void MainWindow::SetUpInfoTable(QTableWidget* tableView)
 
 }
 
-void MainWindow::UpdateFCVersion()
+void MainWindow::UpdateFCVersion(int address)
 {
     //QTableWidgetItem *newVersion = new QTableWidgetItem(tr(QuadCopter->getFCVersion()));
     //QTableWidgetItem *newProtoVersion = new QTableWidgetItem(tr(QuadCopter->getFCProtoVersion()));
@@ -106,7 +106,7 @@ void MainWindow::UpdateFCVersion()
 
 }
 
-void MainWindow::UpdateNCVersion()
+void MainWindow::UpdateNCVersion(int address)
 {
     //QTableWidgetItem *newVersion = new QTableWidgetItem(tr(QuadCopter->getNCVersion()));
     //QTableWidgetItem *newProtoVersion = new QTableWidgetItem(tr(QuadCopter->getNCProtoVersion()));
@@ -114,7 +114,7 @@ void MainWindow::UpdateNCVersion()
     ui->HelicopterAttView->setItem(2,1,newVersion);*/
 }
 
-void MainWindow::UpdateFC3DData()
+void MainWindow::UpdateFC3DData(int address)
 {
 
     FC3DDebugItems[0].setText(QString::number((QuadCopter->getFCMovementData()->getWinkel(0)+1800)/36));
@@ -127,7 +127,7 @@ void MainWindow::UpdateFC3DData()
 
 }
 
-void MainWindow::UpdateNumberOfWP()
+void MainWindow::UpdateNumberOfWP(int address)
 {
     //ui->WPNumber->display(QuadCopter->getNumberOfWaypoints());
 }
@@ -297,11 +297,6 @@ void MainWindow::on_addNewMobileNode_clicked()
             addressSpinBox->setMaximum(65534);
             addressSpinBox->setMinimum(1);
             addressSpinBox->setSingleStep(1);
-
-
-
-
-
 
         tabWidget->addTab(tab, QString());
         tabWidget->setTabText(0,"Info");

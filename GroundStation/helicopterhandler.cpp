@@ -253,7 +253,7 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
             case SEND_WAYPOINT_REPLY:
                 Waypoints->UpdateNumberOfWaypoints(Data);
 
-                emit NumberOfWaypointsReceived();
+                emit NumberOfWaypointsReceived(this->getAddress());
                 break;
 
             case REQUEST_WAYPOINT_REPLY:
@@ -268,12 +268,12 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                     case FC_ADDRESS_REPLY:
                         FCVersion->UpdateData(Data);
                         manageStateMachine(FCVersion->isPeriodic(), OriginAddress, ModuleType);
-                        emit FCVersionReceived();
+                        emit FCVersionReceived(this->getAddress());
                         break;
                     case NC_ADDRESS_REPLY:
                         NCVersion->UpdateData(Data);
                         manageStateMachine(NCVersion->isPeriodic(), OriginAddress, ModuleType);
-                        emit NCVersionReceived();
+                        emit NCVersionReceived(this->getAddress());
 
                         break;
                     default:
@@ -287,7 +287,7 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                     case FC_ADDRESS_REPLY:
                         TriggerTimerState();
                         FCDebugOut->UpdateData(Data);
-                        emit FC3DDatareceived();
+                        emit FC3DDatareceived(this->getAddress());
 
                         break;
                     case NC_ADDRESS_REPLY:
@@ -308,7 +308,7 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                     case FC_ADDRESS_REPLY:
                         FCMovementData->UpdateData(Data);
                         manageStateMachine(FCMovementData->isPeriodic(), OriginAddress, ModuleType);
-                        emit FC3DDatareceived();
+                        emit FC3DDatareceived(this->getAddress());
 
                         break;
                     case NC_ADDRESS_REPLY:

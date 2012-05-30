@@ -33,6 +33,12 @@ void NetworkMission::addMobileNode(QString name, int address)
     /* Connect the sender data handler */
     connect(newHelicopter,SIGNAL(sendBuffer(QByteArray,int)),this,SLOT(networkPackageSender(QByteArray,int)));
 
+    connect(newHelicopter,SIGNAL(FCVersionReceived(int)),this,SLOT(handleFCVersionReceived(int)));
+    connect(newHelicopter,SIGNAL(NCVersionReceived(int)),this,SLOT(handleNCVersionReceived(int)));
+    connect(newHelicopter,SIGNAL(FC3DDatareceived(int)),this,SLOT(handleFC3DDatareceived(int)));
+    connect(newHelicopter,SIGNAL(NumberOfWaypointsReceived(int)),this,SLOT(handleNumberOfWaypointsReceived(int)));
+
+
     typeTranslation << newNode;
     mobileNodesList << newHelicopter;
 
@@ -124,5 +130,25 @@ void NetworkMission::networkPackageReceiver(QByteArray data, int address)
         }
     }
 
+}
+
+void NetworkMission::handleFCVersionReceived(int address)
+{
+    emit(mobileNodeFCVersionReceived(address));
+}
+
+void NetworkMission::handleNCVersionReceived(int address)
+{
+    emit(mobileNodeNCVersionReceived(address));
+}
+
+void NetworkMission::handleFC3DDatareceived(int address)
+{
+    emit(mobileNodeFC3DDatareceived(address));
+}
+
+void NetworkMission::handleNumberOfWaypointsReceived(int address)
+{
+    emit(mobileNodeNumberOfWaypointsReceived(address));
 }
 
