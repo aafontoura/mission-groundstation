@@ -3,6 +3,7 @@
 
 #include <QTreeWidgetItem>
 #include <qtxml/QXmlStreamReader>
+#include "missionnode.h"
 #include "networkmission.h"
 #include "missionwaypoint.h"
 #include "missionstaticnode.h"

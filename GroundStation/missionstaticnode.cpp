@@ -21,3 +21,7 @@ void MissionStaticNode::setIdentifier(QString newIdentifier)
 {
     this->setName(newIdentifier);
 }
+
+void MissionStaticNode::dataHandler(QByteArray data)
+{
+}

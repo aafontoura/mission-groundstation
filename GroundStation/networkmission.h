@@ -4,6 +4,7 @@
 #include <QString>
 #include <QList>
 #include <QObject>
+#include "missionnode.h"
 #include "zigbeeprotocol.h"
 #include "helicopterhandler.h"
 #include "missionwaypoint.h"
@@ -67,9 +68,13 @@ public:
     informationType missionInformation;
     environmentType missionEnvironment;
 
+
     QList<MissionWaypoint> waypointsList;
-    QList<MissionStaticNode*> staticNodesList;
+
+    QList<MissionNode*> staticNodesList;
     QList<HelicopterHandler*> mobileNodesList;
+    QList<MissionNode*> missionNodesList;
+
     QList<translateCommunicationType> typeTranslation;
 
     void addMobileNode(QString name, int address);    
@@ -88,6 +93,8 @@ private slots:
     void handleNCVersionReceived(int address);
     void handleFC3DDatareceived(int address);
     void handleNumberOfWaypointsReceived(int address);
+
+    void changeNodeAddress(int address,int newAddress);
 
 signals:
     void commError();

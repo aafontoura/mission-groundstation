@@ -22,12 +22,13 @@ SOURCES += main.cpp \
     networkmission.cpp \
     missionxmlreader.cpp \
     missionwaypoint.cpp \
-    map.cpp \
     gmapwidget.cpp \
     missionstaticnode.cpp \
+    missionnode.cpp \
     zigbeetransparentstaticnode.cpp \
-    missionnode.cpp
-
+    map.cpp \
+    mkwidget.cpp \
+    staticnodebuttonwidget.cpp
 
 
 
@@ -37,11 +38,13 @@ HEADERS  += mainwindow.h \
     networkmission.h \
     missionxmlreader.h \
     missionwaypoint.h \
-    map.h \
     gmapwidget.h \
     missionstaticnode.h \
+    missionnode.h \
     zigbeetransparentstaticnode.h \
-    missionnode.h
+    map.h \
+    mkwidget.h \
+    staticnodebuttonwidget.h
 
 
 

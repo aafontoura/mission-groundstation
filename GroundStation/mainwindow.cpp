@@ -25,7 +25,10 @@ MainWindow::MainWindow(QWidget *parent) :
     missionMap = new GMapWidget(ui->mapWidget);
     missionMap->show();
 
-    mobileNodesWidgetList = QList<QTabWidget*>();
+    mobileNodesWidgetList = QList<QWidget*>();
+    staticNodeWidgetList = QList<QWidget*>();
+
+
 
     //ui->tabWidget->hide();
     // missionMap->setContextMenuPolicy(Qt::);
@@ -211,9 +214,9 @@ void MainWindow::on_nameSpace_clicked(const QModelIndex &index)
 void MainWindow::open()
 {
     QString fileName =
-            QFileDialog::getOpenFileName(this, tr("Open Bookmark File"),
+            QFileDialog::getOpenFileName(this, tr("Open MDL File"),
                                          QDir::currentPath(),
-                                         tr("XBEL Files (*.xbel *.xml)"));
+                                         tr("MDL Files (*.xml)"));
     if (fileName.isEmpty())
         return;
 
@@ -221,7 +224,7 @@ void MainWindow::open()
 
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("QXmlStream Bookmarks"),
+        QMessageBox::warning(this, tr("QXmlStream MDL"),
                              tr("Cannot read file %1:\n%2.")
                              .arg(fileName)
                              .arg(file.errorString()));
@@ -230,7 +233,7 @@ void MainWindow::open()
 
     MissionXMLReader reader(ui->treeWidget, mission);
     if (!reader.read(&file)) {
-        QMessageBox::warning(this, tr("QXmlStream Bookmarks"),
+        QMessageBox::warning(this, tr("QXmlStream MDL"),
                              tr("Parse error in file %1:\n\n%2")
                              .arg(fileName)
                              .arg(reader.errorString()));
@@ -239,6 +242,7 @@ void MainWindow::open()
     }
     //missionMap->setGMapCenter(-30.363882,-51.044922);
 
+    /* Adjust map view */
     missionMap->fitMapBounderies(mission->missionInformation.NEPointBound,mission->missionInformation.SWPointBound);
 
     for (int i = 0 ; i < mission->waypointsList.length() ; i++)
@@ -246,9 +250,31 @@ void MainWindow::open()
         missionMap->addWaypoint(mission->waypointsList[i]);
     }
 
-    for (int i = 0 ; i < mission->staticNodesList.length() ; i++)
+    /* Add Widgets in the GUI according to the descripted mission */
+    for (int i = 0 ; i < mission->missionNodesList.length() ; i++)
     {
-        missionMap->addStaticNode(*(mission->staticNodesList[i]));
+        MissionStaticNode* tempStaticNode;
+        tempStaticNode = dynamic_cast<MissionStaticNode*>(mission->missionNodesList[i]);
+
+
+        if (tempStaticNode!=0)
+        {
+            missionMap->addStaticNode(*tempStaticNode);
+
+            staticNodeButtonWidget *newStaticNodeButton = new staticNodeButtonWidget(ui->gridLayoutWidget_2);
+            newStaticNodeButton->setAddress(tempStaticNode->getAddress());
+
+            staticNodeWidgetList << newStaticNodeButton;
+            QTreeWidgetItem *staticNodeItem = new QTreeWidgetItem(ui->staticNodesTreeWidget);
+            staticNodeItem->setData(0, Qt::UserRole, tempStaticNode->getName());
+
+            connect(newStaticNodeButton,SIGNAL(addressChanged(int,int)),mission,SLOT(changeNodeAddress(int,int)));
+        }
+    }
+
+    if (0 < staticNodeWidgetList.length())
+    {
+        ui->gridLayout_2->addWidget(staticNodeWidgetList[0], 0, 1, 1, 1);
     }
 
 
@@ -259,52 +285,15 @@ void MainWindow::open()
 
 void MainWindow::on_addNewMobileNode_clicked()
 {
-    QTabWidget *tabWidget;
-    QWidget *tab;
-    QPushButton *pushButton;
-    QTableWidget *HelicopterAttView;
-    QSpinBox *addressSpinBox;
+
+    MKWidget *newMkCopter;
+
+    newMkCopter = new MKWidget(ui->gridLayoutWidget);
+
+    newMkCopter->setObjectName(QString::fromUtf8("MobileNode" + QString::number(mobileNodesWidgetList.length()+1).toLatin1()));
 
 
-
-    /* Create Tab Widget */
-    tabWidget = new QTabWidget(ui->gridLayoutWidget);
-    tabWidget->setObjectName(QString::fromUtf8("MobileNode" + QString::number(mobileNodesWidgetList.length()+1).toLatin1()));
-    tabWidget->setEnabled(true);
-
-        /* Create Tab */
-        tab = new QWidget();
-        tab->setObjectName(QString::fromUtf8("tab"));
-
-            /* Create info table */
-            HelicopterAttView = new QTableWidget(tab);
-            HelicopterAttView->setObjectName(QString::fromUtf8("HelicopterAttView"));
-            HelicopterAttView->setGeometry(QRect(20, 20, 411, 300));
-
-            SetUpInfoTable(HelicopterAttView);
-
-            /* Create a pushbutton */
-            pushButton = new QPushButton(tab);
-            pushButton->setObjectName(QString::fromUtf8("pushButton_7"));
-            pushButton->setGeometry(QRect(10, 470, 150, 23));
-            pushButton->setText("Open Communication");
-
-            /* Create an address spinBox */
-            addressSpinBox = new QSpinBox(tab);
-            addressSpinBox->setObjectName(QString::fromUtf8("addressSpinBox"));
-            addressSpinBox->setGeometry(QRect(450, 20, 75, 23));
-            addressSpinBox->setValue(mobileNodesWidgetList.length()+1);
-            addressSpinBox->setMaximum(65534);
-            addressSpinBox->setMinimum(1);
-            addressSpinBox->setSingleStep(1);
-
-        tabWidget->addTab(tab, QString());
-        tabWidget->setTabText(0,"Info");
-
-        /* Create Tab */
-        tab = new QWidget();
-        tab->setObjectName(QString::fromUtf8("tab_4"));
-        tabWidget->addTab(tab, QString());
+    newMkCopter->addressSpinBox->setValue(mobileNodesWidgetList.length()+1);
 
 
 
@@ -313,7 +302,9 @@ void MainWindow::on_addNewMobileNode_clicked()
     QString MobileNodeName = "Quadcopter " + QString::number(mobileNodesWidgetList.length()+1);
 
     /* Add Widget (MobileNode) to the list */
-    mobileNodesWidgetList << tabWidget;
+    mobileNodesWidgetList << newMkCopter;
+
+    /* Add mobile Node to the mission */
     mission->addMobileNode(MobileNodeName, mobileNodesWidgetList.length()+1);
 
 
@@ -326,7 +317,7 @@ void MainWindow::on_addNewMobileNode_clicked()
     }
 
 
-    ui->gridLayout->addWidget(tabWidget, 1, 0, 1, 3);
+    ui->gridLayout->addWidget(newMkCopter, 1, 0, 1, 3);
 
 
     ui->mobileNodeNameLabel->setText(MobileNodeName.toLatin1());

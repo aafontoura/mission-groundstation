@@ -18,6 +18,8 @@
 #include <QSpinBox>
 #include "map.h"
 #include "gmapwidget.h"
+#include "mkwidget.h"
+#include "staticnodebuttonwidget.h"
 
 
 #define RET_OK true
@@ -38,7 +40,8 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QList<QTabWidget*> mobileNodesWidgetList;
+    QList<QWidget*> mobileNodesWidgetList;
+    QList<QWidget*> staticNodeWidgetList;
 
     MKProtocol *heliProtocol;
     NetworkMission *mission;

@@ -1,9 +1,11 @@
 #ifndef MISSIONNODE_H
 #define MISSIONNODE_H
 #include "MKProtocol/gpsposition.h"
+#include <QObject>
 
-class MissionNode : public GPSPosition
+class MissionNode : public QObject, public GPSPosition
 {
+    Q_OBJECT
 public:
     MissionNode();
     MissionNode(int address);
@@ -24,12 +26,16 @@ public:
     QString getName();
 
     void setDescription(QString desc);
-    void setAddress(int newAddress);
+
     void setName(QString newName);
 
     int getAddress();
 
-    void dataHandler(QByteArray data);
+    virtual void dataHandler(QByteArray data) = 0;
+
+
+public slots:
+    void setAddress(int newAddress);
 
 
 };

@@ -14,6 +14,8 @@ public:
     QString getIdentifier();
     void setIdentifier(QString newIdentifier);
 
+    void dataHandler(QByteArray data);
+
 
 
 

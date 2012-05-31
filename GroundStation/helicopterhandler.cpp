@@ -218,6 +218,11 @@ void HelicopterHandler::hubInProtocol(QByteArray data)
     heliProtocol->handleBuffer(data);
 }
 
+void HelicopterHandler::dataHandler(QByteArray data)
+{
+    heliProtocol->handleBuffer(data);
+}
+
 void HelicopterHandler::checkTimeOut(char OriginAddress, char ModuleType)
 {
     if (TimeOutCommand->isActive())

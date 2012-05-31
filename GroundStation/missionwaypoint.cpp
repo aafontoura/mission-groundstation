@@ -4,3 +4,7 @@ MissionWaypoint::MissionWaypoint()
 {
 }
 
+void MissionWaypoint::dataHandler(QByteArray data)
+{
+}
+

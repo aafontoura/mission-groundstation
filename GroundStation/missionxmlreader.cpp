@@ -92,7 +92,7 @@ void MissionXMLReader::readMission()
         }
         else if (xml.name() == "static_node")
         {
-            if (mission->staticNodesList.isEmpty())
+            if (mission->missionNodesList.isEmpty())
             {
                 staticNodeParent = createChildItem(0);
                 staticNodeParent->setText(0,"Static Nodes");
@@ -183,7 +183,12 @@ void MissionXMLReader::readStaticNode(QTreeWidgetItem *item)
             xml.skipCurrentElement();
     }
 
-    mission->staticNodesList << staticNodeTemp;
+    if (0 < mission->missionNodesList.length())
+        staticNodeTemp->setAddress(mission->missionNodesList[mission->missionNodesList.length()-1]->getAddress()+1);
+    else
+        staticNodeTemp->setAddress(1);
+
+    mission->missionNodesList << staticNodeTemp;
     staticNodeTemp = new MissionStaticNode();
 }
 

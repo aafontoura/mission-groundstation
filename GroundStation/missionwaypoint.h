@@ -8,6 +8,8 @@ class MissionWaypoint : public MissionNode
 public:
     MissionWaypoint();
 
+    void dataHandler(QByteArray data);
+
 
 
 };

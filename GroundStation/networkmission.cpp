@@ -11,6 +11,7 @@ NetworkMission::NetworkMission(const QString &portName)
     connect(missionNodesComm,SIGNAL(dataReceived(QByteArray,int)),this,SLOT(networkPackageReceiver(QByteArray,int)));
 
     addStaticNode("Teste1",0x03);
+    addStaticNode("Teste2",0x04);
 
 
 }
@@ -65,7 +66,8 @@ void NetworkMission::addStaticNode(QString identifier, int address)
 
     typeTranslation << newNode;
 
-    staticNodesList << newStaticNode;
+    //staticNodesList << newStaticNode;
+    missionNodesList << newStaticNode;
 }
 
 
@@ -116,15 +118,14 @@ void NetworkMission::networkPackageReceiver(QByteArray data, int address)
         }
     }
 
-    for(int i = 0 ; i < staticNodesList.length(); i++)
+    for(int i = 0 ; i < missionNodesList.length(); i++)
     {
-        if (staticNodesList[i]->getAddress() == address)
+        if (missionNodesList[i]->getAddress() == address)
         {
             /* GAMBIARRA (workaround)!!! */
             /* TODO: find another way. Just one list for all kind of nodes (inherited) but the
               data handler must be especialized */
-            ZigBeeTransparentStaticNode *tempTest = (ZigBeeTransparentStaticNode*)staticNodesList[i];
-            tempTest->dataHandler(data);
+            missionNodesList[i]->dataHandler(data);
 
             break;
         }
@@ -150,5 +151,29 @@ void NetworkMission::handleFC3DDatareceived(int address)
 void NetworkMission::handleNumberOfWaypointsReceived(int address)
 {
     emit(mobileNodeNumberOfWaypointsReceived(address));
+}
+
+void NetworkMission::changeNodeAddress(int address, int newAddress)
+{
+    MissionNode *tempNode = 0;
+    for(int i = 0 ; i < missionNodesList.length(); i++)
+    {
+        /* Check if the newAddress is repeated */
+        if (missionNodesList[i]->getAddress() == newAddress)
+            return;
+        else
+        {
+            /* Check the node to change de address */
+            if (missionNodesList[i]->getAddress() == address)
+            {
+                tempNode = missionNodesList[i];
+            }
+        }
+    }
+
+    /* if the node was found, change address */
+    if (tempNode!=0)
+        tempNode->setAddress(newAddress);
+
 }
 

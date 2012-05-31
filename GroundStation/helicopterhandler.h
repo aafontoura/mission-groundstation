@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QByteArray>
 #include <QTimer>
+#include "missionnode.h"
 #include "MKProtocol.h"
 #include "MKProtocol/modules/versioninfo.h"
 #include "MKProtocol/modules/HelicopterDefs.h"
@@ -19,9 +20,8 @@
 #include <qmainwindow.h>
 #include <qlabel.h>
 
-class HelicopterHandler : public QObject
+class HelicopterHandler : public MissionNode
 {
-Q_OBJECT
 public:
     HelicopterHandler();
     HelicopterHandler(QString newName, int newAddress);
@@ -66,6 +66,7 @@ public:
     void setName(QString newName);
 
     void hubInProtocol(QByteArray data);
+    void dataHandler(QByteArray data);
 
 
 
