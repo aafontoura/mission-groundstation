@@ -5,6 +5,7 @@
 
 class ZigBeeTransparentStaticNode : public MissionStaticNode
 {
+    Q_OBJECT
 public:
     ZigBeeTransparentStaticNode();
     ZigBeeTransparentStaticNode(int address);
@@ -19,6 +20,9 @@ private:
     int RSSI;
     int discretes;
 
+signals:
+    void discrete1Changed(bool);
+    void newRSSIReceived(int);
 };
 
 #endif // ZIGBEETRANSPARENTSTATICNODE_H

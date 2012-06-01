@@ -10,9 +10,9 @@
 #include "missionwaypoint.h"
 #include "missionstaticnode.h"
 #include "zigbeetransparentstaticnode.h"
+#include "zigBeeDefs.h"
 
-#define MOBILE_API_NODE_TYPE            SERIAL_TX_MODE
-#define STATIC_TRANSPARENT_NODE_TYPE    REQUEST_SENSOR_MODE
+
 
 
 class NetworkMission : public QObject
@@ -69,7 +69,7 @@ public:
     environmentType missionEnvironment;
 
 
-    QList<MissionWaypoint> waypointsList;
+    QList<MissionWaypoint*> waypointsList;
 
     QList<MissionNode*> staticNodesList;
     QList<HelicopterHandler*> mobileNodesList;

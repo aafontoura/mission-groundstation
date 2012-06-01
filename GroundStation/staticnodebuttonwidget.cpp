@@ -81,7 +81,7 @@ staticNodeButtonWidget::staticNodeButtonWidget(QWidget *gridLayout) : QWidget(gr
     gridLayout_3->setContentsMargins(0, 0, 0, 0);
     RSSILevelBar = new QProgressBar(gridLayoutWidget_4);
     RSSILevelBar->setObjectName(QString::fromUtf8("RSSILevelBar"));
-    RSSILevelBar->setValue(24);
+    RSSILevelBar->setValue(0);
 
     gridLayout_3->addWidget(RSSILevelBar, 1, 0, 1, 1);
 
@@ -126,8 +126,9 @@ staticNodeButtonWidget::staticNodeButtonWidget(QWidget *gridLayout) : QWidget(gr
     addressLabel->setText("Address:");
     addressNodeLabel->setText("TextLabel");
     changeAddressButton->setText("Change Address");
-    staticNodeTabWidget->setTabText(staticNodeTabWidget->indexOf(tab_5), "Page");
-    RSSILevelLabel->setText("Signal Quality:");
+    staticNodeTabWidget->setTabText(staticNodeTabWidget->indexOf(tab_5), "Informations");
+    staticNodeTabWidget->setTabText(staticNodeTabWidget->indexOf(tab_3), "Data");
+    RSSILevelLabel->setText("Signal Atenuation(-dB):");
     buttonLabel->setText("Button:");
     isPressedLabel->setText("Released");
 
@@ -148,4 +149,25 @@ void staticNodeButtonWidget::changeAddresButton_Clicked()
 
 
 
+}
+
+void staticNodeButtonWidget::buttonStateChanged(bool state)
+{
+    if (state)
+    {
+        isPressedLabel->setText("Pressed");
+    }
+    else
+    {
+        isPressedLabel->setText("Released");
+    }
+}
+
+void staticNodeButtonWidget::changeSignalQuality(int newValue)
+{
+    /*qreal tempReal = qPow((qreal)10,(qreal)((qreal)newValue/(qreal)20));
+    tempReal = 63.1/tempReal;
+    int newInt = (int)(tempReal*100);*/
+
+    RSSILevelBar->setValue(newValue);
 }

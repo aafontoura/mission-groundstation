@@ -21,8 +21,8 @@ public slots:
     void setGMapCenter(qreal lat, qreal lng);
     void fitMapBounderies(double latNE,double longNE,double latSW,double longSW);
     void fitMapBounderies(GPSPosition NEPoint, GPSPosition SWPoint);
-    void addWaypoint(MissionWaypoint Waypoint);
-    void addStaticNode(MissionStaticNode staticNode);
+    void addWaypoint(MissionWaypoint *Waypoint);
+    void addStaticNode(MissionStaticNode *staticNode);
 
     void setGMapZoom(int zoomLevel);
 

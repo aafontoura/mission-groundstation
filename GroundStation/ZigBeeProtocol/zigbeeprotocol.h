@@ -6,13 +6,10 @@
 
 #include "ZigBeeProtocol_global.h"
 #include "serialhandler.h"
+#include "zigBeeDefs.h"
 
-#define SERIAL_TX_MODE          0x01
-#define REQUEST_SENSOR_MODE     0x08
 
-#define START_ZIGBEE_PACKAGE    0x7E
 
-#define MAX_ZIGBEE_SIZE 2000
 
 class ZIGBEEPROTOCOLSHARED_EXPORT ZigBeeProtocol : public QObject
 {

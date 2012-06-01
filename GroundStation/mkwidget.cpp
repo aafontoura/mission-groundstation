@@ -1,45 +1,83 @@
 #include "mkwidget.h"
 
-MKWidget::MKWidget(QWidget *gridLayout) : QTabWidget(gridLayout)
+MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
 {
-    /* Create Tab Widget */
-    //tabWidget = new QTabWidget(gridLayout);
-    /*tabWidget->setObjectName(QString::fromUtf8("MobileNode" + QString::number(mobileNodesWidgetList.length()+1).toLatin1()));*/
-    this->setEnabled(true);
+    //heliWidget = new QWidget(gridLayoutWidget);
+    //heliWidget->setObjectName(QString::fromUtf8("heliWidget"));
+    MKTabWidget_2 = new QTabWidget(this);
+    MKTabWidget_2->setObjectName(QString::fromUtf8("MKTabWidget_2"));
+    MKTabWidget_2->setGeometry(QRect(0, 0, 1171, 561));
+    tab_6 = new QWidget();
+    tab_6->setObjectName(QString::fromUtf8("tab_6"));
+    tableWidget_2 = new QTableWidget(tab_6);
+    tableWidget_2->setObjectName(QString::fromUtf8("tableWidget_2"));
+    tableWidget_2->setGeometry(QRect(20, 20, 301, 501));
+    addressGroupBox_2 = new QGroupBox(tab_6);
+    addressGroupBox_2->setObjectName(QString::fromUtf8("addressGroupBox_2"));
+    addressGroupBox_2->setGeometry(QRect(360, 20, 201, 151));
+    horizontalLayoutWidget_3 = new QWidget(addressGroupBox_2);
+    horizontalLayoutWidget_3->setObjectName(QString::fromUtf8("horizontalLayoutWidget_3"));
+    horizontalLayoutWidget_3->setGeometry(QRect(10, 20, 181, 41));
+    horizontalLayout_3 = new QHBoxLayout(horizontalLayoutWidget_3);
+    horizontalLayout_3->setSpacing(6);
+    horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
+    horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+    horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
+    addressInfLabel_2 = new QLabel(horizontalLayoutWidget_3);
+    addressInfLabel_2->setObjectName(QString::fromUtf8("addressInfLabel_2"));
+    QFont font1;
+    font1.setPointSize(10);
+    font1.setBold(true);
+    font1.setWeight(75);
+    addressInfLabel_2->setFont(font1);
 
-        /* Create Tab */
-        tabVersion = new QWidget();
-        tabVersion->setObjectName(QString::fromUtf8("tabVersion"));
+    horizontalLayout_3->addWidget(addressInfLabel_2);
 
-            /* Create info table */
-            HelicopterAttView = new QTableWidget(tabVersion);
-            HelicopterAttView->setObjectName(QString::fromUtf8("HelicopterAttView"));
-            HelicopterAttView->setGeometry(QRect(20, 20, 411, 300));
+    addressIndicationLabel_2 = new QLabel(horizontalLayoutWidget_3);
+    addressIndicationLabel_2->setObjectName(QString::fromUtf8("addressIndicationLabel_2"));
+    QFont font2;
+    font2.setPointSize(10);
+    addressIndicationLabel_2->setFont(font2);
+    addressIndicationLabel_2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-            SetUpInfoTable(HelicopterAttView);
+    horizontalLayout_3->addWidget(addressIndicationLabel_2);
 
-            /* Create a pushbutton */
-            pushButton = new QPushButton(tabVersion);
-            pushButton->setObjectName(QString::fromUtf8("pushButton_7"));
-            pushButton->setGeometry(QRect(10, 470, 150, 23));
-            pushButton->setText("Open Communication");
+    verticalLayoutWidget_3 = new QWidget(addressGroupBox_2);
+    verticalLayoutWidget_3->setObjectName(QString::fromUtf8("verticalLayoutWidget_3"));
+    verticalLayoutWidget_3->setGeometry(QRect(10, 60, 181, 81));
+    verticalLayout_3 = new QVBoxLayout(verticalLayoutWidget_3);
+    verticalLayout_3->setSpacing(6);
+    verticalLayout_3->setContentsMargins(11, 11, 11, 11);
+    verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+    verticalLayout_3->setContentsMargins(0, 0, 0, 0);
+    addressSpinBox_3 = new QSpinBox(verticalLayoutWidget_3);
+    addressSpinBox_3->setObjectName(QString::fromUtf8("addressSpinBox_3"));
+    addressSpinBox_3->setFont(font2);
+    addressSpinBox_3->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
 
-            /* Create an address spinBox */
-            addressSpinBox = new QSpinBox(tabVersion);
-            addressSpinBox->setObjectName(QString::fromUtf8("addressSpinBox"));
-            addressSpinBox->setGeometry(QRect(450, 20, 75, 23));
-            /* addressSpinBox->setValue(mobileNodesWidgetList.length()+1); */
-            addressSpinBox->setMaximum(65534);
-            addressSpinBox->setMinimum(1);
-            addressSpinBox->setSingleStep(1);
+    verticalLayout_3->addWidget(addressSpinBox_3);
 
-        this->addTab(tabVersion, QString());
-        this->setTabText(0,"Info");
+    changeAddressButton_3 = new QPushButton(verticalLayoutWidget_3);
+    changeAddressButton_3->setObjectName(QString::fromUtf8("changeAddressButton_3"));
 
-        /* Create Tab */
-        tabTerminal = new QWidget();
-        tabTerminal->setObjectName(QString::fromUtf8("tabTerminal"));
-        this->addTab(tabTerminal, QString());
+    verticalLayout_3->addWidget(changeAddressButton_3);
+
+    MKTabWidget_2->addTab(tab_6, QString());
+    tab_7 = new QWidget();
+    tab_7->setObjectName(QString::fromUtf8("tab_7"));
+    terminalPlainTextEdit_2 = new QPlainTextEdit(tab_7);
+    terminalPlainTextEdit_2->setObjectName(QString::fromUtf8("terminalPlainTextEdit_2"));
+    terminalPlainTextEdit_2->setGeometry(QRect(10, 20, 1141, 501));
+    MKTabWidget_2->addTab(tab_7, QString());
+
+    addressGroupBox_2->setTitle("Address");
+    addressInfLabel_2->setText("Address:");
+    addressIndicationLabel_2->setText("0");
+    changeAddressButton_3->setText("Change Address");
+    MKTabWidget_2->setTabText(MKTabWidget_2->indexOf(tab_6), "Information");
+    MKTabWidget_2->setTabText(MKTabWidget_2->indexOf(tab_7), "Terminal");
+
+    SetUpInfoTable(tableWidget_2);
 }
 
 

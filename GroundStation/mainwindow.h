@@ -76,6 +76,7 @@ private slots:
     void on_nameSpace_clicked(const QModelIndex &index);
     void open();
     void on_addNewMobileNode_clicked();
+    void on_staticNodesTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
 };
 
 #endif // MAINWINDOW_H

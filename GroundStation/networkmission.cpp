@@ -10,8 +10,8 @@ NetworkMission::NetworkMission(const QString &portName)
 
     connect(missionNodesComm,SIGNAL(dataReceived(QByteArray,int)),this,SLOT(networkPackageReceiver(QByteArray,int)));
 
-    addStaticNode("Teste1",0x03);
-    addStaticNode("Teste2",0x04);
+    //addStaticNode("Teste1",0x03);
+    //addStaticNode("Teste2",0x04);
 
 
 }
@@ -153,9 +153,18 @@ void NetworkMission::handleNumberOfWaypointsReceived(int address)
     emit(mobileNodeNumberOfWaypointsReceived(address));
 }
 
+
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 void NetworkMission::changeNodeAddress(int address, int newAddress)
 {
-    MissionNode *tempNode = 0;
+    MissionNode *tempMissionNode = 0;
+
     for(int i = 0 ; i < missionNodesList.length(); i++)
     {
         /* Check if the newAddress is repeated */
@@ -166,14 +175,30 @@ void NetworkMission::changeNodeAddress(int address, int newAddress)
             /* Check the node to change de address */
             if (missionNodesList[i]->getAddress() == address)
             {
-                tempNode = missionNodesList[i];
+                tempMissionNode = missionNodesList[i];
             }
         }
     }
 
+    /* TODO: as soon as the helicopter is inserted in the missionNodeList, this
+      isn't need anymore */
+    for(int i = 0 ; i < typeTranslation.length(); i++)
+    {
+        if (typeTranslation[i].address == address)
+        {
+            typeTranslation[i].address = newAddress;
+            break;
+        }
+    }
+
+
+
     /* if the node was found, change address */
-    if (tempNode!=0)
-        tempNode->setAddress(newAddress);
+    if (tempMissionNode!=0)
+    {
+        tempMissionNode->setAddress(newAddress);
+    }
+
 
 }
 

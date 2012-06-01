@@ -10,6 +10,7 @@
 #include <QProgressBar>
 #include <QString>
 #include <QObject>
+/* #include <QtCore/qmath.h> */
 
 
 class staticNodeButtonWidget : public QWidget
@@ -49,6 +50,8 @@ public:
 
 private slots:
     void changeAddresButton_Clicked();
+    void buttonStateChanged(bool state);
+    void changeSignalQuality(int newValue);
 
 signals:
     /* Current address, new address */

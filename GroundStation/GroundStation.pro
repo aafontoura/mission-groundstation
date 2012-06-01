@@ -5,7 +5,7 @@
 #-------------------------------------------------
 include(./MKProtocol/MKProtocol.pro)
 
-QT       += core gui xml webkit network
+QT       += core gui xml webkit network qwt
 
 
 TARGET = GroundStation
@@ -44,7 +44,8 @@ HEADERS  += mainwindow.h \
     zigbeetransparentstaticnode.h \
     map.h \
     mkwidget.h \
-    staticnodebuttonwidget.h
+    staticnodebuttonwidget.h \
+    zigBeeDefs.h
 
 
 

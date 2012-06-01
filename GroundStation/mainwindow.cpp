@@ -253,24 +253,45 @@ void MainWindow::open()
     /* Add Widgets in the GUI according to the descripted mission */
     for (int i = 0 ; i < mission->missionNodesList.length() ; i++)
     {
+        /* Analisar possivel BUG!!!
+          dynamic cast pra ponteiro */
         MissionStaticNode* tempStaticNode;
         tempStaticNode = dynamic_cast<MissionStaticNode*>(mission->missionNodesList[i]);
 
 
         if (tempStaticNode!=0)
         {
-            missionMap->addStaticNode(*tempStaticNode);
+            missionMap->addStaticNode(tempStaticNode);
 
             staticNodeButtonWidget *newStaticNodeButton = new staticNodeButtonWidget(ui->gridLayoutWidget_2);
             newStaticNodeButton->setAddress(tempStaticNode->getAddress());
+            newStaticNodeButton->nameLabel->setText(tempStaticNode->getName());
 
             staticNodeWidgetList << newStaticNodeButton;
+
             QTreeWidgetItem *staticNodeItem = new QTreeWidgetItem(ui->staticNodesTreeWidget);
-            staticNodeItem->setData(0, Qt::UserRole, tempStaticNode->getName());
+            staticNodeItem->setText(0, tempStaticNode->getName());
 
             connect(newStaticNodeButton,SIGNAL(addressChanged(int,int)),mission,SLOT(changeNodeAddress(int,int)));
+
+            ZigBeeTransparentStaticNode* tempZigBeeNode =dynamic_cast<ZigBeeTransparentStaticNode*>(mission->missionNodesList[i]);
+            if (tempZigBeeNode!=0)
+            {
+                connect(tempZigBeeNode,SIGNAL(discrete1Changed(bool)),newStaticNodeButton,SLOT(buttonStateChanged(bool)));
+                connect(tempZigBeeNode,SIGNAL(newRSSIReceived(int)),newStaticNodeButton,SLOT(changeSignalQuality(int)));
+            }
+
         }
     }
+    if (0 < mission->missionNodesList.length())
+    {
+        ui->gridLayout_2->removeWidget(ui->staticNodeWidget);
+        ui->staticNodeWidget->hide();
+
+        ui->gridLayout_2->addWidget(staticNodeWidgetList[mission->missionNodesList.length()-1], 0, 1, 1, 1);
+    }
+
+
 
     if (0 < staticNodeWidgetList.length())
     {
@@ -290,14 +311,11 @@ void MainWindow::on_addNewMobileNode_clicked()
 
     newMkCopter = new MKWidget(ui->gridLayoutWidget);
 
-    newMkCopter->setObjectName(QString::fromUtf8("MobileNode" + QString::number(mobileNodesWidgetList.length()+1).toLatin1()));
+    //newMkCopter->setObjectName(QString::fromUtf8("MobileNode" + QString::number(mobileNodesWidgetList.length()+1).toLatin1()));
 
 
-    newMkCopter->addressSpinBox->setValue(mobileNodesWidgetList.length()+1);
-
-
-
-
+    newMkCopter->addressSpinBox_3->setValue(mobileNodesWidgetList.length()+1);
+    newMkCopter->addressIndicationLabel_2->setText(mobileNodesWidgetList.length()+1);
 
     QString MobileNodeName = "Quadcopter " + QString::number(mobileNodesWidgetList.length()+1);
 
@@ -309,7 +327,8 @@ void MainWindow::on_addNewMobileNode_clicked()
 
 
     /* Hide all others Mobile Nodes */
-    ui->gridLayout->removeItem(ui->tempSpacer);
+    ui->gridLayout->removeItem(ui->heliWidget->layout());
+    ui->heliWidget->hide();
     if (mobileNodesWidgetList.length()>1)
     {
         ui->gridLayout->removeWidget(mobileNodesWidgetList[mobileNodesWidgetList.length()-2]);
@@ -323,5 +342,21 @@ void MainWindow::on_addNewMobileNode_clicked()
     ui->mobileNodeNameLabel->setText(MobileNodeName.toLatin1());
     ui->selectMobileNodeCombo->addItem(MobileNodeName);
     ui->selectMobileNodeCombo->setCurrentIndex(ui->selectMobileNodeCombo->count()-1);
+
+}
+
+void MainWindow::on_staticNodesTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+    if (0 < mission->missionNodesList.length())
+    {
+        ui->gridLayout_2->itemAtPosition(0,1)->widget()->hide();
+        ui->gridLayout_2->removeWidget(ui->gridLayout_2->itemAtPosition(0,1)->widget());
+
+
+        int i = ui->staticNodesTreeWidget->indexOfTopLevelItem(item);
+
+        ui->gridLayout_2->addWidget(staticNodeWidgetList[i], 0, 1, 1, 1);
+        staticNodeWidgetList[i]->show();
+    }
 
 }

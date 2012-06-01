@@ -165,7 +165,7 @@ void MissionXMLReader::readStaticNode(QTreeWidgetItem *item)
     QTreeWidgetItem *staticNode = createChildItem(item);
 
     /* initialize staticNodeTemp */
-    staticNodeTemp = new MissionStaticNode();
+    staticNodeTemp = new ZigBeeTransparentStaticNode();
 
     while (xml.readNextStartElement())
     {
@@ -189,7 +189,7 @@ void MissionXMLReader::readStaticNode(QTreeWidgetItem *item)
         staticNodeTemp->setAddress(1);
 
     mission->missionNodesList << staticNodeTemp;
-    staticNodeTemp = new MissionStaticNode();
+    staticNodeTemp = new ZigBeeTransparentStaticNode();
 }
 
 /*************************************************************************************************/
@@ -356,7 +356,7 @@ void MissionXMLReader::readWaypoint(QTreeWidgetItem *item)
             xml.skipCurrentElement();
     }
 
-    mission->waypointsList << *waypointTemp;
+    mission->waypointsList << waypointTemp;
     waypointTemp = new MissionWaypoint();
 }
 

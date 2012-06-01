@@ -22,6 +22,7 @@
 
 class HelicopterHandler : public MissionNode
 {
+    Q_OBJECT
 public:
     HelicopterHandler();
     HelicopterHandler(QString newName, int newAddress);

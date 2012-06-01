@@ -60,7 +60,7 @@ private:
     NetworkMission *mission;
 
     MissionWaypoint *waypointTemp;
-    MissionStaticNode *staticNodeTemp;
+    ZigBeeTransparentStaticNode *staticNodeTemp;
 
     QIcon folderIcon;
     QIcon bookmarkIcon;

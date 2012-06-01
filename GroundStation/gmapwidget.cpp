@@ -68,17 +68,17 @@ void GMapWidget::fitMapBounderies(GPSPosition NEPoint, GPSPosition SWPoint)
 
 
 
-void GMapWidget::addWaypoint(MissionWaypoint Waypoint)
+void GMapWidget::addWaypoint(MissionWaypoint *Waypoint)
 {
-    QString argument = QString("addWaypoint(%1,%2,\"").arg(Waypoint.getLatitude()).arg(Waypoint.getLongitude());
-    argument += Waypoint.getName() + "\")";
+    QString argument = QString("addWaypoint(%1,%2,\"").arg(Waypoint->getLatitude()).arg(Waypoint->getLongitude());
+    argument += Waypoint->getName() + "\")";
     runScript(argument);
 }
 
-void GMapWidget::addStaticNode(MissionStaticNode staticNode)
+void GMapWidget::addStaticNode(MissionStaticNode *staticNode)
 {
-    QString argument = QString("addStaticNode(%1,%2,\"").arg(staticNode.getLatitude()).arg(staticNode.getLongitude());
-    argument += staticNode.getName() + "\")";
+    QString argument = QString("addStaticNode(%1,%2,\"").arg(staticNode->getLatitude()).arg(staticNode->getLongitude());
+    argument += staticNode->getName() + "\")";
     runScript(argument);
 }
 

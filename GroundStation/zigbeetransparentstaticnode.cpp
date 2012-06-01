@@ -23,7 +23,13 @@ void ZigBeeTransparentStaticNode::dataHandler(QByteArray data)
     int maskIn = (((int)data[3])>>8) + (int)data[4];
     int dataIn = (((int)data[5])>>8) + (int)data[6];
 
-    discretes = (dataIn & maskIn);
+    if (discretes != (dataIn & maskIn))
+    {
+        discretes = (dataIn & maskIn);
+        emit(discrete1Changed(!(discretes&0x01)));
+    }
+
+    emit(newRSSIReceived(RSSI));
 }
 
 bool ZigBeeTransparentStaticNode::getDIO(int selDIO)
