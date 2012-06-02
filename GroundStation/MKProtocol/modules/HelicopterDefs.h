@@ -77,7 +77,6 @@
 #define TIMER_1_MILI    1
 
 /* Table Index */
-#define DEBUG_FC_3D_ROW 4
 #define NUM_3D_DEBUGS   3
 
 

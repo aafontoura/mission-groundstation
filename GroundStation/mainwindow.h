@@ -37,11 +37,14 @@ public:
     ~MainWindow();    
 
 
+
+
 private:
     Ui::MainWindow *ui;
 
-    QList<QWidget*> mobileNodesWidgetList;
-    QList<QWidget*> staticNodeWidgetList;
+    // QList<QWidget*> mobileNodesWidgetList;
+    // QList<QWidget*> staticNodeWidgetList;
+    QList<QWidget*> nodesWidgetList;
 
     MKProtocol *heliProtocol;
     NetworkMission *mission;
@@ -55,13 +58,17 @@ private:
 
     QTableWidgetItem FC3DDebugItems[NUM_3D_DEBUGS];
     void SetUpInfoTable(QTableWidget *tableView);
+    void addMkCopter();
+
+
+    MKWidget *getMkCopterNode(int address);
 
 
 
 private slots:
-    void UpdateFCVersion(int address);
-    void UpdateNCVersion(int address);
-    void UpdateFC3DData(int address);
+    void UpdateFCVersion(QString version, int address);
+    void UpdateNCVersion(QString version, int address);
+    void UpdateFC3DData(int winkel0, int winkel1, int winkel2, int address);
     void UpdateNumberOfWP(int address);
     void CommError();
     void informRetry(char typeCommand, char origin);
@@ -77,6 +84,7 @@ private slots:
     void open();
     void on_addNewMobileNode_clicked();
     void on_staticNodesTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
+    void UpdateTerminal(QByteArray data,int address);
 };
 
 #endif // MAINWINDOW_H

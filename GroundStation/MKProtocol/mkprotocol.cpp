@@ -244,6 +244,10 @@ void MKProtocol::RequestData(ParameterRequest Setting)
             sendBuffer(getRequestUartRedirect(Setting.getDestDevice()));
         else
             PrepareSendPackage(REDIRECT_UART_HEADER,getActualAddress(),getRequestUartRedirect(Setting.getDestDevice()));
+
+        /* --------------------------------------------------------KNOWN BUG---------------------------------------------------- */
+        /* If the helicopter is turned off, the UartModule won't change */
+        /* When the helicopter turns on, the execution won't run this part of the code */
         this->setUartModule(Setting.getDestDevice());
 
         /* Works only with this delay */
@@ -287,21 +291,27 @@ void MKProtocol::handleBuffer(QByteArray Data)
         /* Ignore bytes */
         QByteArray incomingBuffer = incomingData.mid(indexSearch,stopProtocolIndex-indexSearch+1);
 
+
         /* Calculate CRC, ignoring the CRC sent and the stop BIT */
         CRC = CalcCRC(incomingBuffer.left(stopProtocolIndex-indexSearch-2));
         if (((int)incomingBuffer[incomingBuffer.size() - 2] == (CRC % 64 + INTERFACE_NULL_BYTE)) &&
             ((int)incomingBuffer[incomingBuffer.size() - 3] == (CRC / 64 + INTERFACE_NULL_BYTE)))
         {
+
             /* Flush Processed Data */
+            QByteArray temp = incomingData.left(stopProtocolIndex+1);
+            emit(terminalData(temp));
             incomingData = incomingData.right(incomingData.size()-stopProtocolIndex - 1);
             //waitingReply = false;
             emit dataReceived(incomingBuffer[1],incomingBuffer[2],Decode64(incomingBuffer.mid(3,incomingBuffer.size()-PAYLOAD_PACKAGE)));
+
         }
         else
         {
             /* Flush Data */
+            emit(terminalData(incomingData.left(stopProtocolIndex+1)));
             incomingData = incomingData.right(incomingData.size()-stopProtocolIndex - 1);
-            emit dataReceived(0,0,"Data Flushed\n");
+            //emit dataReceived(0,0,"Data Flushed\n");
         }
 
 
@@ -311,13 +321,17 @@ void MKProtocol::handleBuffer(QByteArray Data)
         /* Flush Data */
         if (indexSearch < 0)
         {
+            emit(terminalData(incomingData));
             incomingData.clear();
-            emit dataReceived(0,0,"Cleared\n");
+            //emit dataReceived(0,0,"Cleared\n");
         }
         else
         {
             if ((stopProtocolIndex >= 0) && (stopProtocolIndex < indexSearch))
+            {
+                emit(terminalData(incomingData.left(indexSearch)));
                 incomingData = incomingData.right(incomingData.size()-indexSearch);
+            }
 
             QByteArray index;
             QByteArray stop;
@@ -325,7 +339,7 @@ void MKProtocol::handleBuffer(QByteArray Data)
             index.setNum(indexSearch);
             stop.setNum(stopProtocolIndex);
 
-            emit dataReceived(0,0,"Waiting: "+index + " - " + stop + "\n"+incomingData+"\n");
+            //emit dataReceived(0,0,"Waiting: "+index + " - " + stop + "\n"+incomingData+"\n");
         }
 
 

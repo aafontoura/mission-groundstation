@@ -60,7 +60,8 @@ public slots:
 
 signals:
     void dataReceived(char,char,QByteArray);
-    void bufferReady(QByteArray data);
+    void bufferReady(QByteArray);
+    void terminalData(QByteArray);
 
 };
 

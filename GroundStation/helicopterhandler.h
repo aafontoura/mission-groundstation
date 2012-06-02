@@ -75,8 +75,8 @@ public:
 
 private:
     /* Information */
-    QString name;
-    int address;
+    //QString name;
+    //int address;
 
     /* Communication Handler */
     MKProtocol *heliProtocol;
@@ -121,6 +121,7 @@ private slots:
     void processData(char OriginAddress, char ModuleType, QByteArray Data);
     void hubOutProtocol(QByteArray data);
     void RequestHelicopterState();
+    void handleTerminalData(QByteArray data);
     void timedOut();
 
 signals:
@@ -128,11 +129,13 @@ signals:
     void dataReceived(char,char);    
     void sendBuffer(QByteArray, int);
     void commError();
-    void FCVersionReceived(int);
-    void NCVersionReceived(int);
-    void FC3DDatareceived(int);
-    void NumberOfWaypointsReceived(int);
-    void retried(char typeCommand ,char origin);
+    void FCVersionReceived(QString,int);
+    void NCVersionReceived(QString,int);
+    void FC3DDatareceived(int,int,int,int);
+    void NumberOfWaypointsReceived(int,int);
+    void retried(char,char);
+    void terminalData(QByteArray,int);
+
 
 
 };

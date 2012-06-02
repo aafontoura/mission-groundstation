@@ -77,8 +77,10 @@ public:
 
     QList<translateCommunicationType> typeTranslation;
 
-    void addMobileNode(QString name, int address);    
+    HelicopterHandler *addMobileNode(QString name, int address);
     void addStaticNode(QString identifier, int address);
+
+     int getEmptyAddress();
 
 private:
     ZigBeeProtocol *missionNodesComm;
@@ -89,10 +91,7 @@ private slots:
     void networkPackageSender(QByteArray data, int address);
     void networkPackageReceiver(QByteArray data, int address);
 
-    void handleFCVersionReceived(int address);
-    void handleNCVersionReceived(int address);
-    void handleFC3DDatareceived(int address);
-    void handleNumberOfWaypointsReceived(int address);
+
 
     void changeNodeAddress(int address,int newAddress);
 

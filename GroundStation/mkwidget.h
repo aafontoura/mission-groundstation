@@ -10,9 +10,13 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPlainTextEdit>
+#include <QProgressBar>
+
+#define DEBUG_FC_3D_ROW 2
 
 class MKWidget : public QWidget
 {
+    Q_OBJECT
 public:
     MKWidget(QWidget *gridLayout);
 
@@ -32,8 +36,25 @@ public:
     QWidget *tab_7;
     QPlainTextEdit *terminalPlainTextEdit_2;
 
+    QProgressBar *progressBarRoll;
+    QProgressBar *progressBarPitch;
+    QProgressBar *progressBarYaw;
+
+
     void SetUpInfoTable(QTableWidget* tableView);
 
+public slots:
+    void changeAddresButton_Clicked();
+
+    void UpdateFCVersion(QString version);
+    void UpdateNCVersion(QString version);
+    void UpdateFC3DData(int winkel0, int winkel1, int winkel2);
+
+    void updateTerminal(QByteArray newData);
+
+signals:
+    /* Current address, new address */
+    void addressChanged(int,int);
 
 };
 

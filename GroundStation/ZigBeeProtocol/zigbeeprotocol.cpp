@@ -309,12 +309,15 @@ void ZigBeeProtocol::dataHandler(QByteArray data)
     unsigned char type = data[0];
     switch(type)
     {
+        case 0x81:
         case 0x83:
             nodeData = data.right(data.length()-3);
             address = (int)data[2]+(((int)incomingData[1])>>8);
 
             emit(dataReceived(nodeData,address));
-            break;
+            break;        
+
+
         default:
             address = 0;
             break;

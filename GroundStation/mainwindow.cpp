@@ -25,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     missionMap = new GMapWidget(ui->mapWidget);
     missionMap->show();
 
-    mobileNodesWidgetList = QList<QWidget*>();
-    staticNodeWidgetList = QList<QWidget*>();
+    //mobileNodesWidgetList = QList<QWidget*>();
+    nodesWidgetList = QList<QWidget*>();
 
 
 
@@ -53,6 +53,7 @@ MainWindow::~MainWindow()
     //heliProtocol->CloseInterface();
     delete ui;
 }
+
 
 void MainWindow::SetUpInfoTable(QTableWidget* tableView)
 {
@@ -100,33 +101,86 @@ void MainWindow::SetUpInfoTable(QTableWidget* tableView)
 
 }
 
-void MainWindow::UpdateFCVersion(int address)
+MKWidget *MainWindow::getMkCopterNode(int address)
 {
-    //QTableWidgetItem *newVersion = new QTableWidgetItem(tr(QuadCopter->getFCVersion()));
-    //QTableWidgetItem *newProtoVersion = new QTableWidgetItem(tr(QuadCopter->getFCProtoVersion()));
-    /*ui->HelicopterAttView->setItem(1,1,newProtoVersion);
-    ui->HelicopterAttView->setItem(0,1,newVersion);*/
+    for (int i = 0 ; i < nodesWidgetList.length() ; i++)
+    {
+        MKWidget* MkCopterWidget = dynamic_cast<MKWidget*>(nodesWidgetList[i]);
+        if (0 != MkCopterWidget)
+        {
+            if (address == MkCopterWidget->addressIndicationLabel_2->text().toInt())
+            {
+                return MkCopterWidget;
+            }
+        }
+    }
+    return 0;
 
 }
 
-void MainWindow::UpdateNCVersion(int address)
-{
-    //QTableWidgetItem *newVersion = new QTableWidgetItem(tr(QuadCopter->getNCVersion()));
-    //QTableWidgetItem *newProtoVersion = new QTableWidgetItem(tr(QuadCopter->getNCProtoVersion()));
-    /*ui->HelicopterAttView->setItem(3,1,newProtoVersion);
-    ui->HelicopterAttView->setItem(2,1,newVersion);*/
+
+void MainWindow::UpdateFCVersion(QString version, int address)
+{    
+    for (int i = 0 ; i < nodesWidgetList.length() ; i++)
+    {
+        MKWidget* MkCopterWidget = dynamic_cast<MKWidget*>(nodesWidgetList[i]);
+        if (0 != MkCopterWidget)
+        {
+            if (address == MkCopterWidget->addressIndicationLabel_2->text().toInt())
+            {
+                QTableWidgetItem *newVersion = new QTableWidgetItem(version);
+                MkCopterWidget->tableWidget_2->setItem(0,1,newVersion);
+            }
+        }
+    }
+
 }
 
-void MainWindow::UpdateFC3DData(int address)
+void MainWindow::UpdateNCVersion(QString version, int address)
 {
+    for (int i = 0 ; i < nodesWidgetList.length() ; i++)
+    {
+        MKWidget* MkCopterWidget = dynamic_cast<MKWidget*>(nodesWidgetList[i]);
+        if (0 != MkCopterWidget)
+        {
+            if (address == MkCopterWidget->addressIndicationLabel_2->text().toInt())
+            {
+                MkCopterWidget->UpdateNCVersion(version);
+            }
+        }
+    }
 
-    FC3DDebugItems[0].setText(QString::number((QuadCopter->getFCMovementData()->getWinkel(0)+1800)/36));
-    FC3DDebugItems[1].setText(QString::number((QuadCopter->getFCMovementData()->getWinkel(1)+1800)/36));
-    FC3DDebugItems[2].setText(QString::number(QuadCopter->getFCMovementData()->getWinkel(2)/36));
+}
 
-    /*ui->progressBar->setValue((QuadCopter->getFCMovementData()->getWinkel(0)+1800)/36);
-    ui->progressBar_2->setValue((QuadCopter->getFCMovementData()->getWinkel(1)+1800)/36);
-    ui->progressBar_3->setValue(QuadCopter->getFCMovementData()->getWinkel(2)/36);*/
+void MainWindow::UpdateFC3DData(int winkel0, int winkel1, int winkel2, int address)
+{
+    for (int i = 0 ; i < nodesWidgetList.length() ; i++)
+    {
+        MKWidget* MkCopterWidget = dynamic_cast<MKWidget*>(nodesWidgetList[i]);
+        if (0 != MkCopterWidget)
+        {
+            if (address == MkCopterWidget->addressIndicationLabel_2->text().toInt())
+            {
+                MkCopterWidget->UpdateFC3DData(winkel0,winkel1,winkel2);
+            }
+        }
+    }
+
+}
+
+void MainWindow::UpdateTerminal(QByteArray data, int address)
+{
+    for (int i = 0 ; i < nodesWidgetList.length() ; i++)
+    {
+        MKWidget* MkCopterWidget = dynamic_cast<MKWidget*>(nodesWidgetList[i]);
+        if (0 != MkCopterWidget)
+        {
+            if (address == MkCopterWidget->addressIndicationLabel_2->text().toInt())
+            {
+                MkCopterWidget->updateTerminal(data);
+            }
+        }
+    }
 
 }
 
@@ -267,7 +321,7 @@ void MainWindow::open()
             newStaticNodeButton->setAddress(tempStaticNode->getAddress());
             newStaticNodeButton->nameLabel->setText(tempStaticNode->getName());
 
-            staticNodeWidgetList << newStaticNodeButton;
+            nodesWidgetList << newStaticNodeButton;
 
             QTreeWidgetItem *staticNodeItem = new QTreeWidgetItem(ui->staticNodesTreeWidget);
             staticNodeItem->setText(0, tempStaticNode->getName());
@@ -288,14 +342,14 @@ void MainWindow::open()
         ui->gridLayout_2->removeWidget(ui->staticNodeWidget);
         ui->staticNodeWidget->hide();
 
-        ui->gridLayout_2->addWidget(staticNodeWidgetList[mission->missionNodesList.length()-1], 0, 1, 1, 1);
+        ui->gridLayout_2->addWidget(nodesWidgetList[mission->missionNodesList.length()-1], 0, 1, 1, 1);
     }
 
 
 
-    if (0 < staticNodeWidgetList.length())
+    if (0 < nodesWidgetList.length())
     {
-        ui->gridLayout_2->addWidget(staticNodeWidgetList[0], 0, 1, 1, 1);
+        ui->gridLayout_2->addWidget(nodesWidgetList[0], 0, 1, 1, 1);
     }
 
 
@@ -306,44 +360,58 @@ void MainWindow::open()
 
 void MainWindow::on_addNewMobileNode_clicked()
 {
+    addMkCopter();
+}
 
+void MainWindow::addMkCopter()
+{
     MKWidget *newMkCopter;
-
-    newMkCopter = new MKWidget(ui->gridLayoutWidget);
-
-    //newMkCopter->setObjectName(QString::fromUtf8("MobileNode" + QString::number(mobileNodesWidgetList.length()+1).toLatin1()));
+    int nodeAddress = mission->getEmptyAddress();
+    newMkCopter = new MKWidget(ui->gridLayoutWidget_2);
 
 
-    newMkCopter->addressSpinBox_3->setValue(mobileNodesWidgetList.length()+1);
-    newMkCopter->addressIndicationLabel_2->setText(mobileNodesWidgetList.length()+1);
-
-    QString MobileNodeName = "Quadcopter " + QString::number(mobileNodesWidgetList.length()+1);
+    QString MobileNodeName = "Quadcopter " + QString::number(nodesWidgetList.length()+1);
 
     /* Add Widget (MobileNode) to the list */
-    mobileNodesWidgetList << newMkCopter;
+    nodesWidgetList << newMkCopter;
 
     /* Add mobile Node to the mission */
-    mission->addMobileNode(MobileNodeName, mobileNodesWidgetList.length()+1);
+
+    newMkCopter->addressSpinBox_3->setValue(nodeAddress);
+    newMkCopter->addressIndicationLabel_2->setText(QString::number(nodeAddress));
+
+    HelicopterHandler *heliHandlerTemp = mission->addMobileNode(MobileNodeName, nodeAddress);
+    connect(heliHandlerTemp,SIGNAL(FCVersionReceived(QString,int)),this,SLOT(UpdateFCVersion(QString,int)));
+    connect(heliHandlerTemp,SIGNAL(NCVersionReceived(QString,int)),this,SLOT(UpdateNCVersion(QString,int)));
+    connect(heliHandlerTemp,SIGNAL(FC3DDatareceived(int,int,int,int)),this,SLOT(UpdateFC3DData(int,int,int,int)));
+    //connect(newHelicopter,SIGNAL(NumberOfWaypointsReceived(int)),newMkCopter,SLOT(UpdateNumberOfWaypoints(int)));
+
+    //connect(heliHandlerTemp,SIGNAL(terminalData(QByteArray,int)),this,SLOT(UpdateTerminal(QByteArray,int)));
+
+
 
 
     /* Hide all others Mobile Nodes */
-    ui->gridLayout->removeItem(ui->heliWidget->layout());
-    ui->heliWidget->hide();
-    if (mobileNodesWidgetList.length()>1)
+    //ui->gridLayout->removeItem(ui->heliWidget->layout());
+    //ui->heliWidget->hide();
+    if (0 < nodesWidgetList.length())
     {
-        ui->gridLayout->removeWidget(mobileNodesWidgetList[mobileNodesWidgetList.length()-2]);
-        mobileNodesWidgetList[mobileNodesWidgetList.length()-2]->hide();
+        ui->gridLayout_2->itemAtPosition(0,1)->widget()->hide();
+        ui->gridLayout_2->removeWidget(ui->gridLayout_2->itemAtPosition(0,1)->widget());
+
     }
 
+    ui->gridLayout_2->addWidget(newMkCopter, 0, 1, 1, 1);
+    newMkCopter->show();
 
-    ui->gridLayout->addWidget(newMkCopter, 1, 0, 1, 3);
+    QTreeWidgetItem *staticNodeItem = new QTreeWidgetItem(ui->staticNodesTreeWidget);
+    staticNodeItem->setText(0, heliHandlerTemp->getName());
 
-
-    ui->mobileNodeNameLabel->setText(MobileNodeName.toLatin1());
-    ui->selectMobileNodeCombo->addItem(MobileNodeName);
-    ui->selectMobileNodeCombo->setCurrentIndex(ui->selectMobileNodeCombo->count()-1);
-
+    connect(newMkCopter,SIGNAL(addressChanged(int,int)),mission,SLOT(changeNodeAddress(int,int)));
 }
+
+
+
 
 void MainWindow::on_staticNodesTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
@@ -355,8 +423,10 @@ void MainWindow::on_staticNodesTreeWidget_itemClicked(QTreeWidgetItem *item, int
 
         int i = ui->staticNodesTreeWidget->indexOfTopLevelItem(item);
 
-        ui->gridLayout_2->addWidget(staticNodeWidgetList[i], 0, 1, 1, 1);
-        staticNodeWidgetList[i]->show();
+        ui->gridLayout_2->addWidget(nodesWidgetList[i], 0, 1, 1, 1);
+        nodesWidgetList[i]->show();
     }
 
 }
+
+

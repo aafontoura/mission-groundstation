@@ -51,8 +51,8 @@ HelicopterHandler::HelicopterHandler(QByteArray SerialPortName, QString newName,
 HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
 {
     /* Informations */
-    name = newName;
-    address = newAddress;
+    this->setName(newName);
+    this->setAddress(newAddress);
 
     /* Helicopter Attributes */
     FCVersion = new VersionInfo(FC_ADDRESS);
@@ -81,9 +81,10 @@ HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
 
     connect(heliProtocol,SIGNAL(bufferReady(QByteArray)),this,SLOT(hubOutProtocol(QByteArray)));
 
-
     connect(heliProtocol,SIGNAL(dataReceived(char,char,QByteArray)),
             this,SLOT(processData(char,char,QByteArray)));
+
+    connect(heliProtocol,SIGNAL(terminalData(QByteArray)),this,SLOT(handleTerminalData(QByteArray)));
 
 }
 
@@ -214,7 +215,7 @@ void HelicopterHandler::setName(QString newName)
 }
 
 void HelicopterHandler::hubInProtocol(QByteArray data)
-{
+{    
     heliProtocol->handleBuffer(data);
 }
 
@@ -258,7 +259,7 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
             case SEND_WAYPOINT_REPLY:
                 Waypoints->UpdateNumberOfWaypoints(Data);
 
-                emit NumberOfWaypointsReceived(this->getAddress());
+                emit NumberOfWaypointsReceived(this->getNumberOfWaypoints(),this->getAddress());
                 break;
 
             case REQUEST_WAYPOINT_REPLY:
@@ -273,12 +274,12 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                     case FC_ADDRESS_REPLY:
                         FCVersion->UpdateData(Data);
                         manageStateMachine(FCVersion->isPeriodic(), OriginAddress, ModuleType);
-                        emit FCVersionReceived(this->getAddress());
+                        emit FCVersionReceived(this->getFCVersion(),this->getAddress());
                         break;
                     case NC_ADDRESS_REPLY:
                         NCVersion->UpdateData(Data);
                         manageStateMachine(NCVersion->isPeriodic(), OriginAddress, ModuleType);
-                        emit NCVersionReceived(this->getAddress());
+                        emit NCVersionReceived(this->getNCVersion(),this->getAddress());
 
                         break;
                     default:
@@ -292,7 +293,10 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                     case FC_ADDRESS_REPLY:
                         TriggerTimerState();
                         FCDebugOut->UpdateData(Data);
-                        emit FC3DDatareceived(this->getAddress());
+                        emit FC3DDatareceived(this->getFCMovementData()->getWinkel(0),
+                                              this->getFCMovementData()->getWinkel(1),
+                                              this->getFCMovementData()->getWinkel(2),
+                                              this->getAddress());
 
                         break;
                     case NC_ADDRESS_REPLY:
@@ -313,7 +317,10 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                     case FC_ADDRESS_REPLY:
                         FCMovementData->UpdateData(Data);
                         manageStateMachine(FCMovementData->isPeriodic(), OriginAddress, ModuleType);
-                        emit FC3DDatareceived(this->getAddress());
+                        emit FC3DDatareceived(this->getFCMovementData()->getWinkel(0),
+                                              this->getFCMovementData()->getWinkel(1),
+                                              this->getFCMovementData()->getWinkel(2),
+                                              this->getAddress());
 
                         break;
                     case NC_ADDRESS_REPLY:
@@ -417,6 +424,11 @@ void HelicopterHandler::RequestHelicopterState()
         default:
             break;
     }*/
+}
+
+void HelicopterHandler::handleTerminalData(QByteArray data)
+{
+    emit(terminalData(data,this->getAddress()));
 }
 
 void HelicopterHandler::manageTimeOut(char OriginAddress, char ModuleType)

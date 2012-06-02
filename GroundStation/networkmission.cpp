@@ -22,7 +22,7 @@ NetworkMission::NetworkMission(const QString &portName)
 /* Outputs......: none                                                                           */
 /* Description..:                                                                                */
 /*************************************************************************************************/
-void NetworkMission::addMobileNode(QString name, int address)
+HelicopterHandler* NetworkMission::addMobileNode(QString name, int address)
 {
     HelicopterHandler *newHelicopter = new HelicopterHandler(name,address);
     translateCommunicationType newNode;
@@ -34,14 +34,15 @@ void NetworkMission::addMobileNode(QString name, int address)
     /* Connect the sender data handler */
     connect(newHelicopter,SIGNAL(sendBuffer(QByteArray,int)),this,SLOT(networkPackageSender(QByteArray,int)));
 
-    connect(newHelicopter,SIGNAL(FCVersionReceived(int)),this,SLOT(handleFCVersionReceived(int)));
-    connect(newHelicopter,SIGNAL(NCVersionReceived(int)),this,SLOT(handleNCVersionReceived(int)));
-    connect(newHelicopter,SIGNAL(FC3DDatareceived(int)),this,SLOT(handleFC3DDatareceived(int)));
-    connect(newHelicopter,SIGNAL(NumberOfWaypointsReceived(int)),this,SLOT(handleNumberOfWaypointsReceived(int)));
+    /*connect(newHelicopter,SIGNAL(FCVersionReceived(QString)),this,SLOT(handleFCVersionReceived(QString)));
+    connect(newHelicopter,SIGNAL(NCVersionReceived(QString)),this,SLOT(handleNCVersionReceived(QString)));
+    connect(newHelicopter,SIGNAL(FC3DDatareceived(int,int,int)),this,SLOT(handleFC3DDatareceived(int,int,int)));
+    connect(newHelicopter,SIGNAL(NumberOfWaypointsReceived(int)),this,SLOT(handleNumberOfWaypointsReceived(int)));*/
 
 
     typeTranslation << newNode;
     mobileNodesList << newHelicopter;
+    missionNodesList << newHelicopter;
 
     /* Initialize the helicopter protocol process */
     newHelicopter->initMachineState();
@@ -68,6 +69,27 @@ void NetworkMission::addStaticNode(QString identifier, int address)
 
     //staticNodesList << newStaticNode;
     missionNodesList << newStaticNode;
+}
+
+int NetworkMission::getEmptyAddress()
+{
+    bool emptyAddr = true;
+    /* 500 is arbitrary number, just to prevent loop forever */
+    for (int nAddress = 1; nAddress < 500 ; nAddress++)
+    {
+        emptyAddr = true;
+        for(int i = 0 ; i < missionNodesList.length(); i++)
+        {
+            if (missionNodesList[i]->getAddress() == nAddress)
+            {
+                emptyAddr = false;
+                break;
+            }
+        }
+        if (emptyAddr)
+            return nAddress;
+    }
+
 }
 
 
@@ -109,14 +131,14 @@ void NetworkMission::networkPackageReceiver(QByteArray data, int address)
 {
 
     /* TODO: Inheritize MobileNode also from missionNode */
-    for(int i = 0 ; i < mobileNodesList.length(); i++)
+   /* for(int i = 0 ; i < mobileNodesList.length(); i++)
     {
         if (mobileNodesList[i]->getAddress() == address)
         {
-            mobileNodesList[i]->hubInProtocol(data);
+            mobileNodesList[i]->hubInProtocol(data.right(data.length()-2));
             break;
         }
-    }
+    }*/
 
     for(int i = 0 ; i < missionNodesList.length(); i++)
     {
@@ -133,25 +155,6 @@ void NetworkMission::networkPackageReceiver(QByteArray data, int address)
 
 }
 
-void NetworkMission::handleFCVersionReceived(int address)
-{
-    emit(mobileNodeFCVersionReceived(address));
-}
-
-void NetworkMission::handleNCVersionReceived(int address)
-{
-    emit(mobileNodeNCVersionReceived(address));
-}
-
-void NetworkMission::handleFC3DDatareceived(int address)
-{
-    emit(mobileNodeFC3DDatareceived(address));
-}
-
-void NetworkMission::handleNumberOfWaypointsReceived(int address)
-{
-    emit(mobileNodeNumberOfWaypointsReceived(address));
-}
 
 
 
@@ -176,6 +179,7 @@ void NetworkMission::changeNodeAddress(int address, int newAddress)
             if (missionNodesList[i]->getAddress() == address)
             {
                 tempMissionNode = missionNodesList[i];
+
             }
         }
     }
