@@ -61,6 +61,7 @@ HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
     NCDebugOut = new DebugAnalogs(NC_ADDRESS);
     FCMovementData = new Data3D(FC_ADDRESS,FREQ_INTERVAL_10HZ);
     NCMovementData = new Data3D(NC_ADDRESS,FREQ_INTERVAL_10HZ);
+    NavigationData = new OSDData();
     Waypoints = new WaypointsHandler();
 
 
@@ -173,6 +174,31 @@ Data3D *HelicopterHandler::getNCMovementData()
     return NCMovementData;
 }
 
+OSDData *HelicopterHandler::getNavigationData()
+{
+    return NavigationData;
+}
+
+double HelicopterHandler::getCurrentLatitude()
+{
+    return NavigationData->getCurrentPosition()->getLatitude();
+}
+
+double HelicopterHandler::getCurrentLongitude()
+{
+    return NavigationData->getCurrentPosition()->getLongitude();
+}
+
+double HelicopterHandler::getCurrentAltitude()
+{
+    return NavigationData->getCurrentPosition()->getAltitude();
+}
+
+GPSPosition* HelicopterHandler::getCurrentPosition()
+{
+    return NavigationData->getCurrentPosition();
+}
+
 /*************************************************************************************************/
 /* Name.........: SendWaypoint                                                                   */
 /* Inputs.......: NewWP - All informations about the new Waypoint                                */
@@ -221,6 +247,7 @@ void HelicopterHandler::hubInProtocol(QByteArray data)
 
 void HelicopterHandler::dataHandler(QByteArray data)
 {
+    data = data.right(data.length()-2);
     heliProtocol->handleBuffer(data);
 }
 
@@ -266,6 +293,10 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                 break;
 
             case REQUEST_OSD_REPLY:
+                NavigationData->UpdateData(Data);
+                emit navigationDataReceived();
+
+
                 break;
 
             case VERSION_INFO_HEADER_REPLY:
@@ -382,6 +413,11 @@ void HelicopterHandler::RequestHelicopterState()
             manageTimeOut(FCMovementData->getDestDevice(),FCMovementData->getAttributeType());
 
             break;
+        case GET_OSD_DATA:
+            heliProtocol->RequestData(NavigationData->RequestNewData());
+            manageTimeOut(NavigationData->getDestDevice(),NavigationData->getAttributeType());
+
+            break;
         case GET_NC_3D_INFO:
             break;
         case DEBUG_FC_MODE:
@@ -485,9 +521,11 @@ void HelicopterHandler::CalculateNextState()
 
                     break;
                 case GET_NC_VERSION:
-                    RequestState = GET_FC_3D_INFO;                   
+                    RequestState = GET_OSD_DATA;//GET_FC_3D_INFO;
                     break;
                 case GET_FC_3D_INFO:                    
+                    break;
+                case GET_OSD_DATA:
                     break;
                 case GET_NC_3D_INFO:
                     break;

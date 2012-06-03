@@ -101,7 +101,7 @@ void MainWindow::SetUpInfoTable(QTableWidget* tableView)
 
 }
 
-MKWidget *MainWindow::getMkCopterNode(int address)
+MKWidget *MainWindow::getMkCopterNodeWidget(int address)
 {
     for (int i = 0 ; i < nodesWidgetList.length() ; i++)
     {
@@ -118,10 +118,21 @@ MKWidget *MainWindow::getMkCopterNode(int address)
 
 }
 
+void MainWindow::UpdateNavigationData()
+{
+
+
+}
+
+
+
 
 void MainWindow::UpdateFCVersion(QString version, int address)
 {    
-    for (int i = 0 ; i < nodesWidgetList.length() ; i++)
+    QTableWidgetItem *newVersion = new QTableWidgetItem(version);
+    this->getMkCopterNodeWidget(address)->tableWidget_2->setItem(0,1,newVersion);
+
+    /*for (int i = 0 ; i < nodesWidgetList.length() ; i++)
     {
         MKWidget* MkCopterWidget = dynamic_cast<MKWidget*>(nodesWidgetList[i]);
         if (0 != MkCopterWidget)
@@ -132,7 +143,7 @@ void MainWindow::UpdateFCVersion(QString version, int address)
                 MkCopterWidget->tableWidget_2->setItem(0,1,newVersion);
             }
         }
-    }
+    }*/
 
 }
 

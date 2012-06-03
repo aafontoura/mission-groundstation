@@ -46,6 +46,8 @@ HelicopterHandler* NetworkMission::addMobileNode(QString name, int address)
 
     /* Initialize the helicopter protocol process */
     newHelicopter->initMachineState();
+
+    return newHelicopter;
 }
 
 
@@ -89,6 +91,8 @@ int NetworkMission::getEmptyAddress()
         if (emptyAddr)
             return nAddress;
     }
+
+    return 0;
 
 }
 

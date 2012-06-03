@@ -11,6 +11,9 @@
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QProgressBar>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLCDNumber>
 
 #define DEBUG_FC_3D_ROW 2
 
@@ -36,15 +39,45 @@ public:
     QWidget *tab_7;
     QPlainTextEdit *terminalPlainTextEdit_2;
 
+    QWidget *tab_2;
+    QGroupBox *groupBox;
+    QSlider *verticalSlider;
+    QWidget *verticalLayoutWidget_2;
+    QVBoxLayout *verticalLayout_2;
+    QCheckBox *enableMotorCheckBox;
+    QComboBox *selectMotorComboBox;
+    QLCDNumber *motorSpeedIndicator;
+
+    QGroupBox *targetPositionBox;
+    QWidget *gridLayoutWidget_6;
+    QGridLayout *gridLayout_5;
+    QLabel *targetLatLabel;
+    QDoubleSpinBox *targetLatEdit;
+    QLabel *targetLongLabel;
+    QDoubleSpinBox *targetLongEdit;
+    QPushButton *sendTargetPosButton;
+
     QProgressBar *progressBarRoll;
     QProgressBar *progressBarPitch;
     QProgressBar *progressBarYaw;
+
+    QTableWidgetItem *latitudeIndication;
+    QTableWidgetItem *longitudeIndication;
+    QTableWidgetItem *altitudeIndication;
+
+    QTableWidgetItem *targetLatitudeIndication;
+    QTableWidgetItem *targetLongitudeIndication;
+    QTableWidgetItem *targetAltitudeIndication;
 
 
     void SetUpInfoTable(QTableWidget* tableView);
 
 public slots:
     void changeAddresButton_Clicked();
+    void sendTargetPosButton_Clicked();
+    void enableMotorCheckBox_Toggled(bool state);
+    void selectMotorComboBox_currentIndexChanged(int index);
+    void verticalSlider_sliderMoved(int value);
 
     void UpdateFCVersion(QString version);
     void UpdateNCVersion(QString version);
@@ -55,6 +88,8 @@ public slots:
 signals:
     /* Current address, new address */
     void addressChanged(int,int);
+    void sendTargetPosition(double,double);
+    void sendMotorSpeed(int,int);
 
 };
 

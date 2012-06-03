@@ -73,7 +73,7 @@ void ZigBeeProtocol::handleBuffer(QByteArray Data)
 
     /* TODO: handle an over capacity of package (overtraffic)
     /* Check if there is a possible valid package (Start and Stop byte) */
-    while ((0 <= indexSearch) && (0 < expectedSize) && (MAX_ZIGBEE_SIZE > expectedSize)
+      while ((0 <= indexSearch) && (0 < expectedSize) && (MAX_ZIGBEE_SIZE > expectedSize)
            && (expectedSize <= (incomingData.length()-3)))
     {
         QByteArray incomingBuffer = incomingData.mid(indexSearch+3,expectedSize+1);
@@ -99,7 +99,7 @@ void ZigBeeProtocol::handleBuffer(QByteArray Data)
         expectedSize = ((int)incomingData[indexSearch+2])+(((int)incomingData[indexSearch+1])>>8);
     }
 
-    if (0 > indexSearch)
+      if ((0 > indexSearch) || (0 == expectedSize))
         incomingData.clear();
 }
 

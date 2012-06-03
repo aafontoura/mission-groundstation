@@ -11,7 +11,9 @@
 #include "MKProtocol/parameterrequest.h"
 #include "MKProtocol/modules/debuganalogs.h"
 #include "MKProtocol/modules/data3d.h"
+#include "MKProtocol/modules/osddata.h"
 #include "MKProtocol/modules/waypointshandler.h"
+#include "MKProtocol/gpsposition.h"
 
 #include "structureparser.h"
 #include <qapplication.h>
@@ -49,12 +51,22 @@ public:
     QByteArray getNCVersion();
     QByteArray getNCProtoVersion();
 
+
     DebugAnalogs* getFCDebug();
     DebugAnalogs* getNCDebug();
 
     WaypointsHandler* getWaypointsHandler();
     Data3D* getFCMovementData();
     Data3D* getNCMovementData();
+
+    OSDData *getNavigationData();
+    double getCurrentLatitude();
+    double getCurrentLongitude();
+    double getCurrentAltitude();
+
+    GPSPosition *getCurrentPosition();
+
+
 
     void SendWaypoint(HeliWaypoint::WaypointStruct NewWP);
     void SendWaypoint();
@@ -68,6 +80,7 @@ public:
 
     void hubInProtocol(QByteArray data);
     void dataHandler(QByteArray data);
+
 
 
 
@@ -88,6 +101,7 @@ private:
     DebugAnalogs     *FCDebugOut;
     Data3D           *NCMovementData;
     Data3D           *FCMovementData;
+    OSDData          *NavigationData;
     WaypointsHandler *Waypoints;
 
     /* Request Timers */
@@ -129,6 +143,7 @@ signals:
     void dataReceived(char,char);    
     void sendBuffer(QByteArray, int);
     void commError();
+    void navigationDataReceived();
     void FCVersionReceived(QString,int);
     void NCVersionReceived(QString,int);
     void FC3DDatareceived(int,int,int,int);

@@ -61,11 +61,12 @@ private:
     void addMkCopter();
 
 
-    MKWidget *getMkCopterNode(int address);
+    MKWidget *getMkCopterNodeWidget(int address);
 
 
 
 private slots:
+    void UpdateNavigationData();
     void UpdateFCVersion(QString version, int address);
     void UpdateNCVersion(QString version, int address);
     void UpdateFC3DData(int winkel0, int winkel1, int winkel2, int address);

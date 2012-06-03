@@ -294,6 +294,8 @@ void MKProtocol::handleBuffer(QByteArray Data)
 
         /* Calculate CRC, ignoring the CRC sent and the stop BIT */
         CRC = CalcCRC(incomingBuffer.left(stopProtocolIndex-indexSearch-2));
+        int i = CRC % 64 + INTERFACE_NULL_BYTE;
+        int i2 = CRC / 64 + INTERFACE_NULL_BYTE;
         if (((int)incomingBuffer[incomingBuffer.size() - 2] == (CRC % 64 + INTERFACE_NULL_BYTE)) &&
             ((int)incomingBuffer[incomingBuffer.size() - 3] == (CRC / 64 + INTERFACE_NULL_BYTE)))
         {

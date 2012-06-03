@@ -2,8 +2,7 @@
 
 MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
 {
-    //heliWidget = new QWidget(gridLayoutWidget);
-    //heliWidget->setObjectName(QString::fromUtf8("heliWidget"));
+
     MKTabWidget_2 = new QTabWidget(this);
     MKTabWidget_2->setObjectName(QString::fromUtf8("MKTabWidget_2"));
     MKTabWidget_2->setGeometry(QRect(0, 0, 851, 569));
@@ -70,25 +69,142 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
     terminalPlainTextEdit_2->setGeometry(QRect(10, 20, 820, 501));
     MKTabWidget_2->addTab(tab_7, QString());
 
+    tab_2 = new QWidget();
+    tab_2->setObjectName(QString::fromUtf8("tab_2"));
+    groupBox = new QGroupBox(tab_2);
+    groupBox->setObjectName(QString::fromUtf8("groupBox"));
+    groupBox->setGeometry(QRect(20, 30, 271, 201));
+    verticalSlider = new QSlider(groupBox);
+    verticalSlider->setObjectName(QString::fromUtf8("verticalSlider"));
+    verticalSlider->setGeometry(QRect(30, 30, 19, 160));
+    verticalSlider->setOrientation(Qt::Vertical);
+    verticalLayoutWidget_2 = new QWidget(groupBox);
+    verticalLayoutWidget_2->setObjectName(QString::fromUtf8("verticalLayoutWidget_2"));
+    verticalLayoutWidget_2->setGeometry(QRect(90, 30, 160, 161));
+    verticalLayout_2 = new QVBoxLayout(verticalLayoutWidget_2);
+    verticalLayout_2->setSpacing(6);
+    verticalLayout_2->setContentsMargins(11, 11, 11, 11);
+    verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+    verticalLayout_2->setContentsMargins(0, 0, 0, 0);
+    enableMotorCheckBox = new QCheckBox(verticalLayoutWidget_2);
+    enableMotorCheckBox->setObjectName(QString::fromUtf8("enableMotorCheckBox"));
+
+    verticalLayout_2->addWidget(enableMotorCheckBox);
+
+    selectMotorComboBox = new QComboBox(verticalLayoutWidget_2);
+    selectMotorComboBox->setObjectName(QString::fromUtf8("selectMotorComboBox"));
+
+    verticalLayout_2->addWidget(selectMotorComboBox);
+
+    motorSpeedIndicator = new QLCDNumber(verticalLayoutWidget_2);
+    motorSpeedIndicator->setObjectName(QString::fromUtf8("motorSpeedIndicator"));
+
+    verticalLayout_2->addWidget(motorSpeedIndicator);
+
+    MKTabWidget_2->addTab(tab_2, QString());
+
+    targetPositionBox = new QGroupBox(tab_6);
+    targetPositionBox->setObjectName(QString::fromUtf8("targetPositionBox"));
+    targetPositionBox->setGeometry(QRect(360, 190, 201, 161));
+    gridLayoutWidget_6 = new QWidget(targetPositionBox);
+    gridLayoutWidget_6->setObjectName(QString::fromUtf8("gridLayoutWidget_6"));
+    gridLayoutWidget_6->setGeometry(QRect(10, 20, 181, 131));
+    gridLayout_5 = new QGridLayout(gridLayoutWidget_6);
+    gridLayout_5->setSpacing(6);
+    gridLayout_5->setContentsMargins(11, 11, 11, 11);
+    gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
+    gridLayout_5->setVerticalSpacing(30);
+    gridLayout_5->setContentsMargins(0, 0, 0, 0);
+    targetLatLabel = new QLabel(gridLayoutWidget_6);
+    targetLatLabel->setObjectName(QString::fromUtf8("targetLatLabel"));
+
+    gridLayout_5->addWidget(targetLatLabel, 1, 0, 1, 1);
+
+
+
+
+
+    targetLongLabel = new QLabel(gridLayoutWidget_6);
+    targetLongLabel->setObjectName(QString::fromUtf8("targetLongLabel"));
+
+    gridLayout_5->addWidget(targetLongLabel, 2, 0, 1, 1);
+
+    targetLatEdit = new QDoubleSpinBox(gridLayoutWidget_6);
+    targetLatEdit->setObjectName(QString::fromUtf8("targetLatEdit"));
+    targetLatEdit->setDecimals(5);
+    targetLatEdit->setMinimum(-180);
+    targetLatEdit->setMaximum(180);
+
+    gridLayout_5->addWidget(targetLatEdit, 1, 1, 1, 1);
+
+    targetLongEdit = new QDoubleSpinBox(gridLayoutWidget_6);
+    targetLongEdit->setObjectName(QString::fromUtf8("targetLongEdit"));
+    targetLongEdit->setDecimals(5);
+    targetLongEdit->setMinimum(-180);
+    targetLongEdit->setMaximum(180);
+
+    gridLayout_5->addWidget(targetLongEdit, 2, 1, 1, 1);
+
+
+    sendTargetPosButton = new QPushButton(gridLayoutWidget_6);
+    sendTargetPosButton->setObjectName(QString::fromUtf8("sendTargetPosButton"));
+
+    gridLayout_5->addWidget(sendTargetPosButton, 3, 0, 1, 2);
+
     addressGroupBox_2->setTitle("Address");
     addressInfLabel_2->setText("Address:");
     addressIndicationLabel_2->setText("0");
     changeAddressButton_3->setText("Change Address");
     MKTabWidget_2->setTabText(MKTabWidget_2->indexOf(tab_6), "Information");
     MKTabWidget_2->setTabText(MKTabWidget_2->indexOf(tab_7), "Terminal");
+    MKTabWidget_2->setTabText(MKTabWidget_2->indexOf(tab_2), "Tests");
+
+    targetPositionBox->setTitle("Target Position");
+    targetLatLabel->setText("Latitude");
+    targetLongLabel->setText("Longitude");
+    sendTargetPosButton->setText("Send Target Position");
+
+    groupBox->setTitle("Motor Test");
+    enableMotorCheckBox->setText("Enable");
+    selectMotorComboBox->clear();
+    selectMotorComboBox->insertItems(0, QStringList()
+     << "1"
+     << "2"
+     << "3"
+     << "4"
+     << "5"
+     << "6"
+     << "7"
+     << "8"
+     << "9"
+     << "10"
+     << "11"
+     << "12"
+     << "13"
+     << "14"
+     << "15"
+     << "16"
+    );
 
     SetUpInfoTable(tableWidget_2);
 
     connect(changeAddressButton_3,SIGNAL(clicked()),this,SLOT(changeAddresButton_Clicked()));
+    connect(sendTargetPosButton,SIGNAL(clicked()),this,SLOT(sendTargetPosButton_Clicked()));
+
+    connect(enableMotorCheckBox,SIGNAL(toggled(bool)),this,SLOT(enableMotorCheckBox_Toggled(bool)));
+    connect(selectMotorComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectMotorComboBox_currentIndexChanged(int)));
+    connect(verticalSlider,SIGNAL(sliderMoved(int)),this,SLOT(verticalSlider_sliderMoved(int)));
+    connect(verticalSlider,SIGNAL(valueChanged(int)),this,SLOT(verticalSlider_sliderMoved(int)));
+
+
 }
 
 
 void MKWidget::SetUpInfoTable(QTableWidget* tableView)
 {
-    tableView->setRowCount(5);
+    tableView->setRowCount(8);
     tableView->setColumnCount(2);
 
-    QTableWidgetItem *newItem1,*newItem2,*newItem3,*newItem4,*newItem5;    
     QStringList header;
 
     progressBarRoll = new QProgressBar();
@@ -97,27 +213,17 @@ void MKWidget::SetUpInfoTable(QTableWidget* tableView)
 
     header << "FlightControl Version" << "NaviCtrl Version";
     header << "Roll" << "Pitch" << "Yaw";
+    header << "Latitude" << "Longitude" << "Altitude";
+    header << "Target Latitude" << "Target Longitude" << "Target Altitude";
+
 
     tableView->setVerticalHeaderLabels(header);
 
-    //for (int i = 0; i < 3; i++)
-    //{
-        //tableView->setItem(DEBUG_FC_3D_ROW+i,1,&(FC3DDebugItems[i]));
-        tableView->setCellWidget(DEBUG_FC_3D_ROW,1,progressBarRoll);
-        tableView->setCellWidget(DEBUG_FC_3D_ROW+1,1,progressBarPitch);
-        tableView->setCellWidget(DEBUG_FC_3D_ROW+2,1,progressBarYaw);
-    //}
 
-    newItem1 = new QTableWidgetItem("FlightControl Version");    
-    newItem2 = new QTableWidgetItem("NaviCtrl Version");    
-    newItem3 = new QTableWidgetItem("3D 1");
-    newItem4 = new QTableWidgetItem("3D 2");
-    newItem5 = new QTableWidgetItem("3D 3");
-    tableView->setItem(0,0,newItem1);    
-    tableView->setItem(1,0,newItem2);
-    tableView->setItem(2,0,newItem3);
-    tableView->setItem(3,0,newItem4);
-    tableView->setItem(4,0,newItem5);
+    tableView->setCellWidget(DEBUG_FC_3D_ROW,1,progressBarRoll);
+    tableView->setCellWidget(DEBUG_FC_3D_ROW+1,1,progressBarPitch);
+    tableView->setCellWidget(DEBUG_FC_3D_ROW+2,1,progressBarYaw);
+
     tableView->setColumnHidden(0,true);
 
 
@@ -130,24 +236,45 @@ void MKWidget::SetUpInfoTable(QTableWidget* tableView)
 
 void MKWidget::changeAddresButton_Clicked()
 {
-    //emit(addrChanged(addressIndicationLabel_2->text().toInt(),addressSpinBox_3->value()));
     emit(addressChanged(addressIndicationLabel_2->text().toInt(),addressSpinBox_3->value()));
     addressIndicationLabel_2->setText(QString::number(addressSpinBox_3->value()));
 
+}
+
+void MKWidget::sendTargetPosButton_Clicked()
+{
+    emit sendTargetPosition(targetLatEdit->value(),targetLongEdit->value());
+}
+
+void MKWidget::enableMotorCheckBox_Toggled(bool state)
+{
+    verticalSlider->setValue(0);
+    verticalSlider_sliderMoved(0);
+}
+
+void MKWidget::selectMotorComboBox_currentIndexChanged(int index)
+{
+    enableMotorCheckBox_Toggled(0);
+}
+
+void MKWidget::verticalSlider_sliderMoved(int value)
+{
+    motorSpeedIndicator->display(value);
+    emit sendMotorSpeed(value,selectMotorComboBox->currentIndex());
 }
 
 
 void MKWidget::UpdateFCVersion(QString version)
 {
     QTableWidgetItem *newVersion = new QTableWidgetItem(version);
-    tableWidget_2->setItem(0,1,newVersion);
+    tableWidget_2->setItem(0,0,newVersion);
 
 }
 
 void MKWidget::UpdateNCVersion(QString version)
 {
     QTableWidgetItem *newVersion = new QTableWidgetItem(version);
-    tableWidget_2->setItem(1,1,newVersion);
+    tableWidget_2->setItem(1,0,newVersion);
 }
 
 void MKWidget::UpdateFC3DData(int winkel0, int winkel1, int winkel2 )

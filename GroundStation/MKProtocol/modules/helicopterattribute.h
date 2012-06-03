@@ -12,7 +12,7 @@ public:
     HelicopterAttribute(char attrType,char dstType, QByteArray newReqData);
     HelicopterAttribute(char attrType,char dstType, QByteArray newReqData, bool isPeriodicAtt);
     ParameterRequest RequestNewData();
-    void UpdateData(QByteArray NewData);
+    virtual void UpdateData(QByteArray NewData) = 0;
 
     char getAttributeType();
     char getDestDevice();
