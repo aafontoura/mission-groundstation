@@ -118,8 +118,23 @@ MKWidget *MainWindow::getMkCopterNodeWidget(int address)
 
 }
 
-void MainWindow::UpdateNavigationData()
+void MainWindow::UpdateNavigationData(int address)
 {
+    MKWidget *tempCopterWidget = this->getMkCopterNodeWidget(address);
+    tempCopterWidget->latitudeIndication->setText(QString::number(mission->getMisisonNode(address)->getLatitude()));
+    tempCopterWidget->longitudeIndication->setText(QString::number(mission->getMisisonNode(address)->getLongitude()));
+    tempCopterWidget->altitudeIndication->setText(QString::number(mission->getMisisonNode(address)->getAltitude()));
+
+    HelicopterHandler *tempNode = dynamic_cast<HelicopterHandler*>(mission->getMisisonNode(address));
+    if(0 != tempNode)
+    {
+
+        tempCopterWidget->targetLatitudeIndication->setText(QString::number(((double)tempNode->getNavigationData()->getData()->TargetPosition.Latitude / (double) 10000000)));
+        tempCopterWidget->targetLongitudeIndication->setText(QString::number(((double)tempNode->getNavigationData()->getData()->TargetPosition.Longitude) / (double)10000000));
+        tempCopterWidget->targetAltitudeIndication->setText(QString::number(((double)tempNode->getNavigationData()->getData()->TargetPosition.Altitude) / (double)1000));
+    }
+
+    missionMap->setMobileNodePosition(mission->getMisisonNode(address));
 
 
 }
@@ -149,7 +164,9 @@ void MainWindow::UpdateFCVersion(QString version, int address)
 
 void MainWindow::UpdateNCVersion(QString version, int address)
 {
-    for (int i = 0 ; i < nodesWidgetList.length() ; i++)
+    QTableWidgetItem *newVersion = new QTableWidgetItem(version);
+    this->getMkCopterNodeWidget(address)->tableWidget_2->setItem(1,1,newVersion);
+    /*for (int i = 0 ; i < nodesWidgetList.length() ; i++)
     {
         MKWidget* MkCopterWidget = dynamic_cast<MKWidget*>(nodesWidgetList[i]);
         if (0 != MkCopterWidget)
@@ -159,7 +176,7 @@ void MainWindow::UpdateNCVersion(QString version, int address)
                 MkCopterWidget->UpdateNCVersion(version);
             }
         }
-    }
+    }*/
 
 }
 
@@ -199,6 +216,13 @@ void MainWindow::UpdateNumberOfWP(int address)
 {
     //ui->WPNumber->display(QuadCopter->getNumberOfWaypoints());
 }
+
+void MainWindow::changeMapNodeAddress(int address, int newAddress)
+{
+    missionMap->changeNodeAddress(address,newAddress);
+}
+
+
 
 void MainWindow::CommError()
 {
@@ -364,8 +388,6 @@ void MainWindow::open()
     }
 
 
-    //missionMap->setGMapCenter(mission->waypointsList[0].getLatitude(),mission->waypointsList[0].getLongitude());
-    //missionMap->setDroneCurrentPosition(-30.363882,-51.044922);
 
 }
 
@@ -395,16 +417,12 @@ void MainWindow::addMkCopter()
     connect(heliHandlerTemp,SIGNAL(FCVersionReceived(QString,int)),this,SLOT(UpdateFCVersion(QString,int)));
     connect(heliHandlerTemp,SIGNAL(NCVersionReceived(QString,int)),this,SLOT(UpdateNCVersion(QString,int)));
     connect(heliHandlerTemp,SIGNAL(FC3DDatareceived(int,int,int,int)),this,SLOT(UpdateFC3DData(int,int,int,int)));
-    //connect(newHelicopter,SIGNAL(NumberOfWaypointsReceived(int)),newMkCopter,SLOT(UpdateNumberOfWaypoints(int)));
-
-    //connect(heliHandlerTemp,SIGNAL(terminalData(QByteArray,int)),this,SLOT(UpdateTerminal(QByteArray,int)));
+    connect(heliHandlerTemp,SIGNAL(navigationDataReceived(int)),this,SLOT(UpdateNavigationData(int)));
 
 
 
 
     /* Hide all others Mobile Nodes */
-    //ui->gridLayout->removeItem(ui->heliWidget->layout());
-    //ui->heliWidget->hide();
     if (0 < nodesWidgetList.length())
     {
         ui->gridLayout_2->itemAtPosition(0,1)->widget()->hide();
@@ -418,7 +436,12 @@ void MainWindow::addMkCopter()
     QTreeWidgetItem *staticNodeItem = new QTreeWidgetItem(ui->staticNodesTreeWidget);
     staticNodeItem->setText(0, heliHandlerTemp->getName());
 
+    missionMap->addMobileNode(heliHandlerTemp);
+
     connect(newMkCopter,SIGNAL(addressChanged(int,int)),mission,SLOT(changeNodeAddress(int,int)));
+    connect(newMkCopter,SIGNAL(addressChanged(int,int)),this,SLOT(changeMapNodeAddress(int,int)));
+    connect(newMkCopter,SIGNAL(sendTargetPosition(double,double,int)),mission,SLOT(sendTargetPosition(double,double,int)));
+
 }
 
 

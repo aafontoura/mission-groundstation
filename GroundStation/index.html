@@ -13,7 +13,9 @@
 <script type="text/javascript">
  
 
+ 
 var map;
+var nodesList = [];
 var polyTarget;
 var markersArray = [];
 var marker;
@@ -52,18 +54,24 @@ function initialize() {
     polyTarget.setMap(map);
 	
 	//markerDroneCurrentPosition = new google.maps.Marker();
-	
+	//addMobileNode(0,0,"teste2",1);
+	//setMobilePosition(-30.0363,-51.1949,1);
 	//Open(-30.363882,-51.044922);
-	
+	//addStaticNode(-30.363882,-51.044922,"teste",1);	
+	//changeNodeIcon(1,"./staticNode2Alert.png");
+	/*addStaticNode(-30.363882,-53.044922,"teste",1);
+	addMobileNode(-30.463882,-51.044922,"teste2",2);
+	addMobileNode(-30.463882,-55.044922,"teste2",2);
+	addMobileNode(-31.463882,-51.044922,"teste2",2);*/
 	/*DroneCurrentPosition(-30.363882,-53.044922);*/
-	DroneCurrentPosition(-30.363882,-51.044922);
+	//DroneCurrentPosition(-30.363882,-51.044922);
 	//addWaypoint(-30.0365,-51.2187,"way01")
 	
 	
-	google.maps.event.addListener(map, 'click', function(event){
+	/*google.maps.event.addListener(map, 'click', function(event){
 			var number = markersArray.length+1;
-            setStaticNode(event.latLng,"#jj");
-        });
+            setMobileNode(event.latLng,"#jj");
+        });*/
 	
 }
 
@@ -71,12 +79,54 @@ function addWaypoint(latitude,longitude,name)
 {
 	setTarget(new google.maps.LatLng(latitude,longitude),name);
 }
-function addStaticNode(latitude,longitude,name)
+
+
+function changeNodeAddress(address,newAddress)
 {
-	setStaticNode(new google.maps.LatLng(latitude,longitude),name);
+	for (var i = 0 ; i < nodesList.length ; i++)
+	{
+		if (nodesList[i].address == address)
+		{
+			nodesList[i].address = newAddress;
+			return;
+		}
+	}
 }
 
-function setStaticNode(location,name) {			
+function changeNodeIcon(address,iconFileName)
+{
+	for (var i = 0 ; i < nodesList.length ; i++)
+	{
+		if (nodesList[i].address == address)
+		{
+			var pinIcon = new google.maps.MarkerImage(
+				iconFileName,				
+				null, /* size is determined at runtime */
+				null, /* origin is 0,0 */
+				new google.maps.Point(15, 33), /* anchor is bottom center of the scaled image */
+				new google.maps.Size(30, 33)
+				);
+				
+			nodesList[i].marker.setIcon(pinIcon);
+			return;
+		}
+	}
+}
+
+function addStaticNode(latitude,longitude,name,address)
+{
+	setStaticNode(new google.maps.LatLng(latitude,longitude),name,address);
+	//setMobileNode(new google.maps.LatLng(latitude,longitude),name,address);
+}
+
+function addMobileNode(latitude,longitude,name,address)
+{
+	setMobileNode(new google.maps.LatLng(latitude,longitude),name,address);
+}
+
+
+
+function setStaticNode(location,name,address) {			
 		var pinIcon = new google.maps.MarkerImage(
 		"./staticNode2.png",
 		null, /* size is determined at runtime */
@@ -84,12 +134,41 @@ function setStaticNode(location,name) {
 		new google.maps.Point(15, 33), /* anchor is bottom center of the scaled image */
 		new google.maps.Size(30, 33)
 		);
-		marker = new google.maps.Marker({
+		var markerStatic = new google.maps.Marker({
 				position: location,			
 				map: map
 			});
-		marker.setIcon(pinIcon);
-		staticNodesList.push(marker);	
+		markerStatic.setIcon(pinIcon);
+		
+		var staticNode = {};
+		staticNode.marker = markerStatic;
+		staticNode.name = name;
+		staticNode.address = address;
+		
+		nodesList.push(staticNode);	
+}
+
+function setMobileNode(location,name,address) {			
+
+		var pinIconMobile = new google.maps.MarkerImage(
+		"./icon4.png",
+		null, /* size is determined at runtime */
+		null, /* origin is 0,0 */
+		new google.maps.Point(25, 53), /* anchor is bottom center of the scaled image */
+		new google.maps.Size(49, 53)
+		);
+		markerMobile = new google.maps.Marker({
+				position: location,			
+				map: map
+			});		
+		
+		markerMobile.setIcon(pinIconMobile);
+		var mobileNode = {};
+		mobileNode.marker = markerMobile;
+		mobileNode.name = name;
+		mobileNode.address = address;
+		
+		nodesList.push(mobileNode);
 }
 
 
@@ -126,6 +205,20 @@ function Open(x,y)
     map.setCenter( new google.maps.LatLng(x,y));
 }
 
+function setMobilePosition(x,y,address)
+{
+
+	for (var i = 0 ; i < nodesList.length ; i++)
+	{
+		if (nodesList[i].address == address)
+		{
+			var location = new google.maps.LatLng(x,y);
+			nodesList[i].marker.setPosition(location);
+			return;
+		}
+	}
+}
+
 function DroneCurrentPosition(x,y)
 {
 	var location = new google.maps.LatLng(x,y);
@@ -155,10 +248,10 @@ function dummyTxt() {
 }
 
 function getStaticNodePosition(n){
-	if (n < staticNodesList.length())
+	/*if (n < nodesList.length())
 	{
-		return staticNodesList[n].position.toString();
-	}	
+		return nodesList[n].position.toString();
+	}*/	
 }
 
 function getMarkerPosition(n){

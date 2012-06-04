@@ -23,6 +23,9 @@ public slots:
     void fitMapBounderies(GPSPosition NEPoint, GPSPosition SWPoint);
     void addWaypoint(MissionWaypoint *Waypoint);
     void addStaticNode(MissionStaticNode *staticNode);
+    void addMobileNode(MissionNode *mobileNode);
+    void setMobileNodePosition(MissionNode *mobileNode);
+    void changeNodeAddress(int oldAddress, int newAdress);
 
     void setGMapZoom(int zoomLevel);
 

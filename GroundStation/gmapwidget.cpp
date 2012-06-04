@@ -78,8 +78,33 @@ void GMapWidget::addWaypoint(MissionWaypoint *Waypoint)
 void GMapWidget::addStaticNode(MissionStaticNode *staticNode)
 {
     QString argument = QString("addStaticNode(%1,%2,\"").arg(staticNode->getLatitude()).arg(staticNode->getLongitude());
-    argument += staticNode->getName() + "\")";
+    argument += staticNode->getName() + "\"," + QString::number(staticNode->getAddress()) + ")";
     runScript(argument);
+}
+
+void GMapWidget::addMobileNode(MissionNode *mobileNode)
+{
+    QString argument = QString("addMobileNode(%1,%2,\"").arg(mobileNode->getLatitude()).arg(mobileNode->getLongitude());
+    argument += mobileNode->getName() + "\"," + QString::number(mobileNode->getAddress()) + ")";
+    runScript(argument);
+}
+
+void GMapWidget::setMobileNodePosition(MissionNode *mobileNode)
+{
+    QString argument = QString("setMobilePosition(%1,%2,%3)")
+            .arg(mobileNode->getLatitude())
+            .arg(mobileNode->getLongitude())
+            .arg(mobileNode->getAddress());
+    runScript(argument);
+}
+
+void GMapWidget::changeNodeAddress(int oldAddress, int newAdress)
+{
+    QString argument = QString("changeNodeAddress(%1,%2)")
+            .arg(oldAddress)
+            .arg(newAdress);
+    runScript(argument);
+
 }
 
 // set a zoom level on the map

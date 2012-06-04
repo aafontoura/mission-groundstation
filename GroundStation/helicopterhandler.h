@@ -60,6 +60,7 @@ public:
     Data3D* getNCMovementData();
 
     OSDData *getNavigationData();
+
     double getCurrentLatitude();
     double getCurrentLongitude();
     double getCurrentAltitude();
@@ -70,6 +71,8 @@ public:
 
     void SendWaypoint(HeliWaypoint::WaypointStruct NewWP);
     void SendWaypoint();
+
+    void sendTargetPosition(double latitude, double longitude);
 
     int getNumberOfWaypoints();
 
@@ -116,6 +119,7 @@ private:
     int previousState;
     int RequestMode;
     bool initState;
+    int timeOutCount;
 
 
 
@@ -143,7 +147,7 @@ signals:
     void dataReceived(char,char);    
     void sendBuffer(QByteArray, int);
     void commError();
-    void navigationDataReceived();
+    void navigationDataReceived(int);
     void FCVersionReceived(QString,int);
     void NCVersionReceived(QString,int);
     void FC3DDatareceived(int,int,int,int);

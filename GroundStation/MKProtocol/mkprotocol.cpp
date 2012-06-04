@@ -251,7 +251,7 @@ void MKProtocol::RequestData(ParameterRequest Setting)
         this->setUartModule(Setting.getDestDevice());
 
         /* Works only with this delay */
-        Sleep(100);
+        Sleep(200);
        // for (int i = 0 ; i<10000000; i++)
        //  h++;
     }
@@ -369,6 +369,11 @@ void MKProtocol::checkPackages()
     if ((0 <= indexSearch) && (stopProtocolIndex > indexSearch))
         this->handleBuffer(0);
 
+}
+
+void MKProtocol::resetUARTModule()
+{
+    actualUART = UART_INIT;
 }
 
 

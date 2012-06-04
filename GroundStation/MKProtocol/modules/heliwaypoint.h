@@ -25,7 +25,7 @@ public:
             quint8  HoldTime;                   // in seconds, if the was once in the tolerance area around a WP, this time defines the delay before the next WP is triggered
             quint8  Event_Flag;                 // future implementation
             quint8  Index;                      // to indentify different waypoints, workaround for bad communications PC <-> NC
-            quint8  Type;                       // typeof Point
+            quint8  pointType;                       // typeof Point
             quint8  WP_EventChannelValue;       //
             quint8  AltitudeRate;               // rate to change the setpoint
             quint8  Speed;                      // rate to change the Position

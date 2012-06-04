@@ -202,7 +202,7 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
 
 void MKWidget::SetUpInfoTable(QTableWidget* tableView)
 {
-    tableView->setRowCount(8);
+    tableView->setRowCount(11);
     tableView->setColumnCount(2);
 
     QStringList header;
@@ -226,6 +226,22 @@ void MKWidget::SetUpInfoTable(QTableWidget* tableView)
 
     tableView->setColumnHidden(0,true);
 
+    latitudeIndication        = new QTableWidgetItem();
+    longitudeIndication       = new QTableWidgetItem();
+    altitudeIndication        = new QTableWidgetItem();
+    targetLatitudeIndication  = new QTableWidgetItem();
+    targetLongitudeIndication = new QTableWidgetItem();
+    targetAltitudeIndication  = new QTableWidgetItem();
+
+    tableWidget_2->setItem(5,1,latitudeIndication);
+    tableWidget_2->setItem(6,1,longitudeIndication);
+    tableWidget_2->setItem(7,1,altitudeIndication);
+    tableWidget_2->setItem(8,1,targetLatitudeIndication);
+    tableWidget_2->setItem(9,1,targetLongitudeIndication);
+    tableWidget_2->setItem(10,1,targetAltitudeIndication);
+
+    latitudeIndication->setText("0");
+
 
 
 
@@ -243,7 +259,7 @@ void MKWidget::changeAddresButton_Clicked()
 
 void MKWidget::sendTargetPosButton_Clicked()
 {
-    emit sendTargetPosition(targetLatEdit->value(),targetLongEdit->value());
+    emit sendTargetPosition(targetLatEdit->value(),targetLongEdit->value(), addressIndicationLabel_2->text().toInt());
 }
 
 void MKWidget::enableMotorCheckBox_Toggled(bool state)

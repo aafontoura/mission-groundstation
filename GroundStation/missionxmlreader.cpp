@@ -92,7 +92,7 @@ void MissionXMLReader::readMission()
         }
         else if (xml.name() == "static_node")
         {
-            if (mission->missionNodesList.isEmpty())
+            if (mission->staticNodesList.isEmpty())
             {
                 staticNodeParent = createChildItem(0);
                 staticNodeParent->setText(0,"Static Nodes");
@@ -189,6 +189,7 @@ void MissionXMLReader::readStaticNode(QTreeWidgetItem *item)
         staticNodeTemp->setAddress(1);
 
     mission->missionNodesList << staticNodeTemp;
+    mission->staticNodesList << staticNodeTemp;
     staticNodeTemp = new ZigBeeTransparentStaticNode();
 }
 

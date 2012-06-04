@@ -76,6 +76,7 @@ HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
     RequestState = GET_FC_VERSION;
     RequestMode = NORMAL_REQUEST_MODE;
     initState = true;
+    timeOutCount = 0;
 
     /* Configure communication interface */
     heliProtocol = new MKProtocol();
@@ -179,25 +180,7 @@ OSDData *HelicopterHandler::getNavigationData()
     return NavigationData;
 }
 
-double HelicopterHandler::getCurrentLatitude()
-{
-    return NavigationData->getCurrentPosition()->getLatitude();
-}
 
-double HelicopterHandler::getCurrentLongitude()
-{
-    return NavigationData->getCurrentPosition()->getLongitude();
-}
-
-double HelicopterHandler::getCurrentAltitude()
-{
-    return NavigationData->getCurrentPosition()->getAltitude();
-}
-
-GPSPosition* HelicopterHandler::getCurrentPosition()
-{
-    return NavigationData->getCurrentPosition();
-}
 
 /*************************************************************************************************/
 /* Name.........: SendWaypoint                                                                   */
@@ -213,6 +196,12 @@ void HelicopterHandler::SendWaypoint(HeliWaypoint::WaypointStruct NewWP)
 void HelicopterHandler::SendWaypoint()
 {
     heliProtocol->RequestData(Waypoints->SendNewWaypoint());
+}
+
+void HelicopterHandler::sendTargetPosition(double latitude, double longitude)
+{
+    HeliWaypoint *tempWP = new HeliWaypoint(latitude,longitude,1,"teste");
+    heliProtocol->RequestData(Waypoints->SendTargetPosition(*tempWP));
 }
 
 int HelicopterHandler::getNumberOfWaypoints()
@@ -294,7 +283,11 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
 
             case REQUEST_OSD_REPLY:
                 NavigationData->UpdateData(Data);
-                emit navigationDataReceived();
+                this->setLatitude((double)NavigationData->getData()->CurrentPosition.Latitude / (double)10000000);
+                this->setLongitude((double)NavigationData->getData()->CurrentPosition.Longitude / (double)10000000);
+                this->setAltitude((double)NavigationData->getData()->CurrentPosition.Altitude / (double)1000);
+                manageStateMachine(NavigationData->isPeriodic(), OriginAddress, ModuleType);
+                emit navigationDataReceived(this->getAddress());
 
 
                 break;
@@ -415,6 +408,7 @@ void HelicopterHandler::RequestHelicopterState()
             break;
         case GET_OSD_DATA:
             heliProtocol->RequestData(NavigationData->RequestNewData());
+            GeneralTimer->start(2000);
             manageTimeOut(NavigationData->getDestDevice(),NavigationData->getAttributeType());
 
             break;
@@ -481,9 +475,11 @@ void HelicopterHandler::manageStateMachine(bool isPeriodic, char OriginAddress, 
     /* If the expected package was received */
     if ((expectedCommandType == ModuleType) && (expectedCommandFrom == OriginAddress))
     {
+        TimeOutCommand->stop();
+        timeOutCount = 0;
         if (!isPeriodic)
         {
-            TimeOutCommand->stop();
+
             expectedCommandType = 0;
             expectedCommandFrom = 0;
             CalculateNextState();
@@ -491,15 +487,20 @@ void HelicopterHandler::manageStateMachine(bool isPeriodic, char OriginAddress, 
         }
         else
         {
-            /* Renew time out */
-            TimeOutCommand->stop();
+            /* Renew time out */            
             //GeneralTimer->blockSignals(true);
             TimeOutCommand->start(500);
             //expectedCommandType = 0;
             //expectedCommandFrom = 0;
             // GeneralTimer->singleShot(2000,this,SLOT(RequestHelicopterState()));
         }
+
     }
+    else
+    {
+        int i=0;
+    }
+
 }
 
 /*************************************************************************************************/
@@ -604,6 +605,8 @@ void HelicopterHandler::timedOut()
     /*heliProtocol->RequestData(FCVersion->RequestNewData());
     startTimeout(VERSION_INFO_HEADER_REPLY,FC_ADDRESS_REPLY,FCVersion->RequestNewData());
     emit retried(expectedCommandType,expectedCommandFrom);*/
+    if (++timeOutCount > 4)
+        heliProtocol->resetUARTModule();
     this->RequestHelicopterState();
 
 

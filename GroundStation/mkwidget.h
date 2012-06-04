@@ -88,7 +88,7 @@ public slots:
 signals:
     /* Current address, new address */
     void addressChanged(int,int);
-    void sendTargetPosition(double,double);
+    void sendTargetPosition(double,double,int);
     void sendMotorSpeed(int,int);
 
 };

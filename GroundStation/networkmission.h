@@ -80,7 +80,11 @@ public:
     HelicopterHandler *addMobileNode(QString name, int address);
     void addStaticNode(QString identifier, int address);
 
-     int getEmptyAddress();
+    int getEmptyAddress();
+
+    MissionNode* getMisisonNode(int address);
+
+
 
 private:
     ZigBeeProtocol *missionNodesComm;
@@ -94,6 +98,7 @@ private slots:
 
 
     void changeNodeAddress(int address,int newAddress);
+    void sendTargetPosition(double latitude,double longitude,int address);
 
 signals:
     void commError();

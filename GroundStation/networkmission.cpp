@@ -96,6 +96,20 @@ int NetworkMission::getEmptyAddress()
 
 }
 
+MissionNode *NetworkMission::getMisisonNode(int address)
+{
+    for(int i = 0 ; i < missionNodesList.length(); i++)
+    {
+        if (missionNodesList[i]->getAddress() == address)
+        {
+            return missionNodesList[i];
+        }
+    }
+    return 0;
+
+
+}
+
 
 /*************************************************************************************************/
 /* Name.........:                                                                                */
@@ -172,6 +186,7 @@ void NetworkMission::changeNodeAddress(int address, int newAddress)
 {
     MissionNode *tempMissionNode = 0;
 
+
     for(int i = 0 ; i < missionNodesList.length(); i++)
     {
         /* Check if the newAddress is repeated */
@@ -208,5 +223,20 @@ void NetworkMission::changeNodeAddress(int address, int newAddress)
     }
 
 
+}
+
+void NetworkMission::sendTargetPosition(double latitude, double longitude, int address)
+{
+    for(int i = 0 ; i < missionNodesList.length(); i++)
+    {
+        if (missionNodesList[i]->getAddress() == address)
+        {
+            HelicopterHandler* nodeTemp = dynamic_cast<HelicopterHandler*>(missionNodesList[i]);
+            nodeTemp->sendTargetPosition(latitude,longitude);
+
+
+
+        }
+    }
 }
 

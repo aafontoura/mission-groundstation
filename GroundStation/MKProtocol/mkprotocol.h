@@ -29,6 +29,7 @@ public:
     bool OpenInterface();
     void CloseInterface();
     bool OpenCloseInterface();
+    void resetUARTModule();
 
 
 private:

@@ -89,12 +89,12 @@ public:
 
     void UpdateData(QByteArray NewData);
     naviDataType *getData();
-    GPSPosition* getCurrentPosition();
+    //GPSPosition* getCurrentPosition();
 
 private:
     QByteArray AutoSendInterval;
     naviDataType navigationData;
-    GPSPosition currentPosition;
+    //GPSPosition currentPosition;
 };
 
 #endif // OSDDATA_H

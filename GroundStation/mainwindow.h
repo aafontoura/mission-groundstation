@@ -66,11 +66,12 @@ private:
 
 
 private slots:
-    void UpdateNavigationData();
+    void UpdateNavigationData(int address);
     void UpdateFCVersion(QString version, int address);
     void UpdateNCVersion(QString version, int address);
     void UpdateFC3DData(int winkel0, int winkel1, int winkel2, int address);
-    void UpdateNumberOfWP(int address);
+    void UpdateNumberOfWP(int address);    
+    void changeMapNodeAddress(int address, int newAddress);
     void CommError();
     void informRetry(char typeCommand, char origin);
     void on_pushButton_clicked();
