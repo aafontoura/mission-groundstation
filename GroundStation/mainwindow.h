@@ -16,6 +16,7 @@
 #include <QFileDialog>
 #include <QList>
 #include <QSpinBox>
+//#include "C:\QtSDK\QWT\examples\dials\cockpit_grid.h"
 #include "map.h"
 #include "gmapwidget.h"
 #include "mkwidget.h"
@@ -46,17 +47,18 @@ private:
     // QList<QWidget*> staticNodeWidgetList;
     QList<QWidget*> nodesWidgetList;
 
-    MKProtocol *heliProtocol;
     NetworkMission *mission;
 
     GMapWidget *missionMap;
 
+    //CockpitGrid *cockpit;
+
 
     //WaypointsHandler *Waypoints;
 
-    HelicopterHandler *QuadCopter;
+    //HelicopterHandler *QuadCopter;
 
-    QTableWidgetItem FC3DDebugItems[NUM_3D_DEBUGS];
+    //QTableWidgetItem FC3DDebugItems[NUM_3D_DEBUGS];
     void SetUpInfoTable(QTableWidget *tableView);
     void addMkCopter();
 
@@ -73,16 +75,6 @@ private slots:
     void UpdateNumberOfWP(int address);    
     void changeMapNodeAddress(int address, int newAddress);
     void CommError();
-    void informRetry(char typeCommand, char origin);
-    void on_pushButton_clicked();
-    void on_pushButton_3_clicked();
-    void on_pushButton_4_clicked();
-    void on_pushButton_5_clicked();
-    void on_pushButton_6_clicked();
-    void on_pushButton_7_clicked();
-    void on_pushButton_2_clicked();
-    void on_MainWindow_destroyed();
-    void on_nameSpace_clicked(const QModelIndex &index);
     void open();
     void on_addNewMobileNode_clicked();
     void on_staticNodesTreeWidget_itemClicked(QTreeWidgetItem *item, int column);

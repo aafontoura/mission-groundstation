@@ -2,9 +2,10 @@
 #define SERIALHANDLER_H
 
 #include <QObject>
-#include <QByteArray>
+#include "serialhandler.h"
 #include <qextserialport.h>
 #include "SerialHandler_global.h"
+
 
 #define RET_OK true
 
@@ -17,7 +18,7 @@
 
 class SERIALHANDLERSHARED_EXPORT SerialHandler : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     SerialHandler();
     SerialHandler(const QString & portName);
@@ -38,7 +39,7 @@ private slots:
     void handleBufferIn();
 
 signals:
-    void dataReceived(QByteArray Data);
+    void dataReceived(QByteArray);
 };
 
 #endif // SERIALHANDLER_H

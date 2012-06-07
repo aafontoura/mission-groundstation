@@ -67,7 +67,7 @@ HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
 
     /* Config General Timer */
     GeneralTimer = new QTimer(this);
-    connect(GeneralTimer,SIGNAL(timeout()),this,SLOT(RequestHelicopterState()));
+    connect(GeneralTimer,SIGNAL(timeout()),this,SLOT(CalculateNextState()));
 
 
     TimeOutCommand = new QTimer(this);
@@ -402,13 +402,13 @@ void HelicopterHandler::RequestHelicopterState()
         case GET_FC_3D_INFO:
 
             heliProtocol->RequestData(FCMovementData->RequestNewData());
-            GeneralTimer->start(2000);
+            GeneralTimer->start(5000);
             manageTimeOut(FCMovementData->getDestDevice(),FCMovementData->getAttributeType());
 
             break;
         case GET_OSD_DATA:
             heliProtocol->RequestData(NavigationData->RequestNewData());
-            GeneralTimer->start(2000);
+            //GeneralTimer->start(1000);
             manageTimeOut(NavigationData->getDestDevice(),NavigationData->getAttributeType());
 
             break;
@@ -483,7 +483,7 @@ void HelicopterHandler::manageStateMachine(bool isPeriodic, char OriginAddress, 
             expectedCommandType = 0;
             expectedCommandFrom = 0;
             CalculateNextState();
-            RequestHelicopterState();
+
         }
         else
         {
@@ -519,14 +519,15 @@ void HelicopterHandler::CalculateNextState()
             {
                 case GET_FC_VERSION:
                     RequestState = GET_NC_VERSION;
-
                     break;
                 case GET_NC_VERSION:
-                    RequestState = GET_OSD_DATA;//GET_FC_3D_INFO;
+                    RequestState = GET_FC_3D_INFO;
                     break;
-                case GET_FC_3D_INFO:                    
+                case GET_FC_3D_INFO:
+                    RequestState = GET_OSD_DATA;
                     break;
                 case GET_OSD_DATA:
+                    RequestState = GET_FC_3D_INFO;
                     break;
                 case GET_NC_3D_INFO:
                     break;
@@ -542,6 +543,8 @@ void HelicopterHandler::CalculateNextState()
         default:
             break;
     }
+    GeneralTimer->stop();
+    RequestHelicopterState();
 
 
 }

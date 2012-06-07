@@ -1,6 +1,6 @@
 #include "osddata.h"
 
-OSDData::OSDData() : HelicopterAttribute(REQUEST_OSD,NC_ADDRESS,0, true)
+OSDData::OSDData() : HelicopterAttribute(REQUEST_OSD,NC_ADDRESS,0, false)
 {
     AutoSendInterval.append(10);
     setRequestData(AutoSendInterval);

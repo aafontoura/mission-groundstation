@@ -151,6 +151,15 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
 
     gridLayout_5->addWidget(sendTargetPosButton, 3, 0, 1, 2);
 
+
+    tab_PFD = new QWidget();
+    tab_PFD->setObjectName(QString::fromUtf8("tab_PFD"));
+    /*terminalPlainTextEdit_2 = new QPlainTextEdit(tab_7);
+    terminalPlainTextEdit_2->setObjectName(QString::fromUtf8("terminalPlainTextEdit_2"));
+    terminalPlainTextEdit_2->setGeometry(QRect(10, 20, 820, 501));*/
+    PFDGrid = new CockpitGrid(tab_PFD);
+    MKTabWidget_2->addTab(tab_PFD, QString());
+
     addressGroupBox_2->setTitle("Address");
     addressInfLabel_2->setText("Address:");
     addressIndicationLabel_2->setText("0");
@@ -195,6 +204,8 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
     connect(selectMotorComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectMotorComboBox_currentIndexChanged(int)));
     connect(verticalSlider,SIGNAL(sliderMoved(int)),this,SLOT(verticalSlider_sliderMoved(int)));
     connect(verticalSlider,SIGNAL(valueChanged(int)),this,SLOT(verticalSlider_sliderMoved(int)));
+
+
 
 
 }
@@ -255,6 +266,8 @@ void MKWidget::changeAddresButton_Clicked()
     emit(addressChanged(addressIndicationLabel_2->text().toInt(),addressSpinBox_3->value()));
     addressIndicationLabel_2->setText(QString::number(addressSpinBox_3->value()));
 
+    PFDGrid->changeAngle(addressSpinBox_3->value());
+
 }
 
 void MKWidget::sendTargetPosButton_Clicked()
@@ -295,8 +308,12 @@ void MKWidget::UpdateNCVersion(QString version)
 
 void MKWidget::UpdateFC3DData(int winkel0, int winkel1, int winkel2 )
 {
-    progressBarRoll->setValue((winkel0+1800)/36);
-    progressBarPitch->setValue((winkel1+1800)/36);
+    PFDGrid->changeAngle((double)winkel1/(double)10);
+    PFDGrid->changeGradient((double)winkel0/(double)1000);
+    PFDGrid->d_compass->setValue((double)winkel2/10);
+
+    progressBarRoll->setValue((winkel1+1800)/36);
+    progressBarPitch->setValue((winkel0+1800)/36);
     progressBarYaw->setValue(winkel2/36);
 }
 

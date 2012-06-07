@@ -1,4 +1,7 @@
 #include "serialhandler.h"
+#include <QByteArray>
+
+
 
 
 
@@ -82,7 +85,7 @@ void SerialHandler::handleBufferIn()
     QByteArray bytes;
     int size = port->bytesAvailable();
     bytes.resize(size);
-    port->read(bytes.data(), bytes.size());
+    port->read(bytes.data(), size);
 
     emit dataReceived(bytes);
 }

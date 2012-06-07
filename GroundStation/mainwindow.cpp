@@ -30,7 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    //ui->tabWidget->hide();
+    //ui->networkMissionTab->removeTab(3);
+    //cockpit = new CockpitGrid(ui->tab);
+
+    ui->networkMissionTab->removeTab(0);
+    //ui->tab->hide();
+    //ui->MobileNodesTab->hide();
     // missionMap->setContextMenuPolicy(Qt::);
     //missionMap->setDroneCurrentPosition(-30.363882,-51.044922);
 
@@ -235,68 +240,6 @@ void MainWindow::CommError()
 
 }
 
-void MainWindow::informRetry(char typeCommand ,char origin)
-{
-    //ui->plainTextEdit->insertPlainText("Retried\n");
-}
-
-
-
-
-void MainWindow::on_pushButton_clicked()
-{
-    QuadCopter->SendWaypoint();
-
-}
-
-void MainWindow::on_pushButton_3_clicked()
-{
-
-
-}
-
-void MainWindow::on_pushButton_4_clicked()
-{
-
-}
-
-void MainWindow::on_pushButton_5_clicked()
-{
-   //WaypointsHandler::WaypointStruct newWP = Waypoints->CreateNewWaypoint();
-   //heliProtocol->RequestData(Waypoints->SendNewWaypoint(newWP));
-   //ui->plainTextEdit->insertPlainText("New WP Sent\n");
-}
-
-void MainWindow::on_pushButton_6_clicked()
-{
-
-}
-
-void MainWindow::on_pushButton_7_clicked()
-{
-    /*QuadCopter->OpenCloseCommunication();*/
-
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    //QTableWidgetItem *newItem = new QTableWidgetItem("teste");
-
-    /*ui->HelicopterAttView->setRowCount(10);
-    ui->HelicopterAttView->setColumnCount(2);
-    ui->HelicopterAttView->setItem(1, 1, newItem);*/
-    //ui->plainTextEdit->insertPlainText("teste\n");
-}
-
-void MainWindow::on_MainWindow_destroyed()
-{
-    // ui->plainTextEdit->insertPlainText("teste\n");
-}
-
-void MainWindow::on_nameSpace_clicked(const QModelIndex &index)
-{
-
-}
 
 
 

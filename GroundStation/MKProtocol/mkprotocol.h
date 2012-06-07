@@ -22,13 +22,8 @@ public:
 
 
     void RequestData(char Origin, char Destiny, QByteArray reqData);
-    void RequestData(ParameterRequest Setting);
-    void configInterface(PortSettings SerialSetting, const QString &portName);
-    void configInterface(const QString &portName);
-    void checkPackages();
-    bool OpenInterface();
-    void CloseInterface();
-    bool OpenCloseInterface();
+    void RequestData(ParameterRequest Setting);    
+    void checkPackages();   
     void resetUARTModule();
 
 

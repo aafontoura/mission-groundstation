@@ -247,11 +247,11 @@ void MKProtocol::RequestData(ParameterRequest Setting)
 
         /* --------------------------------------------------------KNOWN BUG---------------------------------------------------- */
         /* If the helicopter is turned off, the UartModule won't change */
-        /* When the helicopter turns on, the execution won't run this part of the code */
+        /* When the helicopter turns on, the execution won't run this part of the code wich is wrong */
         this->setUartModule(Setting.getDestDevice());
 
         /* Works only with this delay */
-        Sleep(200);
+        Sleep(150);
        // for (int i = 0 ; i<10000000; i++)
        //  h++;
     }
@@ -350,14 +350,6 @@ void MKProtocol::handleBuffer(QByteArray Data)
 
 }
 
-
-void MKProtocol::configInterface(PortSettings SerialSetting, const QString &portName)
-{
-}
-
-void MKProtocol::configInterface(const QString &portName)
-{
-}
 
 void MKProtocol::checkPackages()
 {

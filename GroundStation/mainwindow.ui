@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="MobileNodesTab">
      <attribute name="title">
@@ -842,7 +842,7 @@
     </widget>
     <widget class="QWidget" name="StaticNodesTab">
      <attribute name="title">
-      <string>Static Nodes</string>
+      <string>Mission Nodes</string>
      </attribute>
      <widget class="QWidget" name="gridLayoutWidget_2">
       <property name="geometry">

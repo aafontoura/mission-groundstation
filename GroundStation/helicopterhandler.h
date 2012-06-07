@@ -39,7 +39,7 @@ public:
     bool OpenCommunication();
     void CloseCommunication();
 
-    void CalculateNextState();
+
     void TriggerTimerState();
 
     void initMachineState();
@@ -140,6 +140,7 @@ private slots:
     void hubOutProtocol(QByteArray data);
     void RequestHelicopterState();
     void handleTerminalData(QByteArray data);
+    void CalculateNextState();
     void timedOut();
 
 signals:

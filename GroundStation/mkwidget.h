@@ -14,6 +14,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QLCDNumber>
+#include "PFD/cockpit_grid.h"
 
 #define DEBUG_FC_3D_ROW 2
 
@@ -69,6 +70,11 @@ public:
     QTableWidgetItem *targetLongitudeIndication;
     QTableWidgetItem *targetAltitudeIndication;
 
+    QWidget *tab_PFD;
+
+    CockpitGrid *PFDGrid;
+
+
 
     void SetUpInfoTable(QTableWidget* tableView);
 
@@ -82,6 +88,7 @@ public slots:
     void UpdateFCVersion(QString version);
     void UpdateNCVersion(QString version);
     void UpdateFC3DData(int winkel0, int winkel1, int winkel2);
+
 
     void updateTerminal(QByteArray newData);
 
