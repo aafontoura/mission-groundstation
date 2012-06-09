@@ -13,6 +13,7 @@
 #include "MKProtocol/modules/data3d.h"
 #include "MKProtocol/modules/osddata.h"
 #include "MKProtocol/modules/waypointshandler.h"
+#include "MKProtocol/modules/enginetest.h"
 #include "MKProtocol/gpsposition.h"
 
 #include "structureparser.h"
@@ -73,6 +74,7 @@ public:
     void SendWaypoint();
 
     void sendTargetPosition(double latitude, double longitude);
+    void setEngineValue(int engine, unsigned char newValue);
 
     int getNumberOfWaypoints();
 
@@ -106,11 +108,13 @@ private:
     Data3D           *FCMovementData;
     OSDData          *NavigationData;
     WaypointsHandler *Waypoints;
+    EngineTest       *Engines;
 
     /* Request Timers */
     QTimer *VersionTimer;
     QTimer *MovementTimer;
     QTimer *GeneralTimer;
+    QTimer *engineTimer;
     QTimer *TimeOutCommand;
     bool GeneralTimerIsOn;
 
@@ -130,6 +134,7 @@ private:
 
     void checkTimeOut(char OriginAddress, char ModuleType);
 
+    void RequestHelicopterState();
     void manageTimeOut(char OriginAddress, char ModuleType);
     void manageStateMachine(bool isPeriodic, char OriginAddress, char ModuleType);
 
@@ -138,10 +143,10 @@ private:
 private slots:
     void processData(char OriginAddress, char ModuleType, QByteArray Data);
     void hubOutProtocol(QByteArray data);
-    void RequestHelicopterState();
     void handleTerminalData(QByteArray data);
     void CalculateNextState();
     void timedOut();
+    void sendEngineData();
 
 signals:
 
@@ -155,6 +160,7 @@ signals:
     void NumberOfWaypointsReceived(int,int);
     void retried(char,char);
     void terminalData(QByteArray,int);
+
 
 
 

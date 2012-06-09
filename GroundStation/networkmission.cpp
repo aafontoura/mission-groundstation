@@ -240,3 +240,13 @@ void NetworkMission::sendTargetPosition(double latitude, double longitude, int a
     }
 }
 
+void NetworkMission::sendMotorSpeed(int engine, int newValue, int address)
+{
+    HelicopterHandler* heliTemp = dynamic_cast<HelicopterHandler*>(getMisisonNode(address));
+    if (heliTemp)
+    {
+        if (newValue < 256)
+            heliTemp->setEngineValue(engine,(unsigned char)newValue);
+    }
+}
+

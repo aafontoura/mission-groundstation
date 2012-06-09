@@ -22,7 +22,7 @@ CockpitGrid::CockpitGrid( QWidget *parent ):
     layout->addWidget( d_compass, 0, 1 );
 
     for ( int i = 0; i < layout->columnCount(); i++ )
-        layout->setColumnStretch( i, 1 );
+        layout->setColumnStretch( i, 60 );
 }
 
 QwtDial *CockpitGrid::createDial( int pos )

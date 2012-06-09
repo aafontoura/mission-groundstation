@@ -32,6 +32,7 @@
 #define SEND_WAYPOINT        'w'
 #define REQUEST_WAYPOINT     'x'
 #define REQUEST_OSD          'o'
+#define ENGINE_TEST          't'
 
 #define VERSION_INFO_HEADER_REPLY 'V'
 #define DEBUG_OUT_HEADER_REPLY    'D'
@@ -79,6 +80,8 @@
 
 /* Table Index */
 #define NUM_3D_DEBUGS   3
+
+
 
 
 

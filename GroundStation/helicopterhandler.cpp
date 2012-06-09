@@ -63,15 +63,16 @@ HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
     NCMovementData = new Data3D(NC_ADDRESS,FREQ_INTERVAL_10HZ);
     NavigationData = new OSDData();
     Waypoints = new WaypointsHandler();
+    Engines = new EngineTest();
 
 
     /* Config General Timer */
     GeneralTimer = new QTimer(this);
     connect(GeneralTimer,SIGNAL(timeout()),this,SLOT(CalculateNextState()));
-
-
     TimeOutCommand = new QTimer(this);
     connect(TimeOutCommand,SIGNAL(timeout()),this,SLOT(timedOut()));
+    engineTimer = new QTimer(this);
+    connect(engineTimer,SIGNAL(timeout()),this,SLOT(sendEngineData()));
 
     RequestState = GET_FC_VERSION;
     RequestMode = NORMAL_REQUEST_MODE;
@@ -202,6 +203,26 @@ void HelicopterHandler::sendTargetPosition(double latitude, double longitude)
 {
     HeliWaypoint *tempWP = new HeliWaypoint(latitude,longitude,1,"teste");
     heliProtocol->RequestData(Waypoints->SendTargetPosition(*tempWP));
+    /* delete tempWP; */
+}
+
+void HelicopterHandler::setEngineValue(int engine, unsigned char newValue)
+{
+    if (0 == newValue)
+    {
+        engineTimer->stop();
+    }
+    else
+    {
+        engineTimer->start(Engines->getEngineFreq());
+    }
+
+    Engines->setEngine(engine,newValue);
+}
+
+void HelicopterHandler::sendEngineData()
+{
+    heliProtocol->RequestData(Engines->getParameter());
 }
 
 int HelicopterHandler::getNumberOfWaypoints()
@@ -402,7 +423,7 @@ void HelicopterHandler::RequestHelicopterState()
         case GET_FC_3D_INFO:
 
             heliProtocol->RequestData(FCMovementData->RequestNewData());
-            GeneralTimer->start(5000);
+            GeneralTimer->start(3000);
             manageTimeOut(FCMovementData->getDestDevice(),FCMovementData->getAttributeType());
 
             break;
@@ -497,8 +518,7 @@ void HelicopterHandler::manageStateMachine(bool isPeriodic, char OriginAddress, 
 
     }
     else
-    {
-        int i=0;
+    {     
     }
 
 }
@@ -615,4 +635,6 @@ void HelicopterHandler::timedOut()
 
 
 }
+
+
 

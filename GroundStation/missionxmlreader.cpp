@@ -70,9 +70,9 @@ void MissionXMLReader::readMission()
     Q_ASSERT(xml.isStartElement() && xml.name() == "mission");
 
     /* Create a root node for all waypoints */
-    QTreeWidgetItem *waypointParent;
+    QTreeWidgetItem *waypointParent = 0;
     /* Create a root node for all static nodes */
-    QTreeWidgetItem *staticNodeParent;
+    QTreeWidgetItem *staticNodeParent = 0;
 
 
     while (xml.readNextStartElement())
@@ -88,7 +88,8 @@ void MissionXMLReader::readMission()
                 waypointParent = createChildItem(0);
                 waypointParent->setText(0,"Waypoints");
             }
-            readWaypoint(waypointParent);
+            if (waypointParent)
+                readWaypoint(waypointParent);
         }
         else if (xml.name() == "static_node")
         {
@@ -97,7 +98,8 @@ void MissionXMLReader::readMission()
                 staticNodeParent = createChildItem(0);
                 staticNodeParent->setText(0,"Static Nodes");
             }
-            readStaticNode(staticNodeParent);
+            if (staticNodeParent)
+                readStaticNode(staticNodeParent);
         }
         /*else if (xml.name() == "static_node")
             readStaticNode(0);*/

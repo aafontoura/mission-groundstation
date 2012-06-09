@@ -384,6 +384,7 @@ void MainWindow::addMkCopter()
     connect(newMkCopter,SIGNAL(addressChanged(int,int)),mission,SLOT(changeNodeAddress(int,int)));
     connect(newMkCopter,SIGNAL(addressChanged(int,int)),this,SLOT(changeMapNodeAddress(int,int)));
     connect(newMkCopter,SIGNAL(sendTargetPosition(double,double,int)),mission,SLOT(sendTargetPosition(double,double,int)));
+    connect(newMkCopter,SIGNAL(sendMotorSpeed(int,int,int)),mission,SLOT(sendMotorSpeed(int,int,int)));
 
 }
 

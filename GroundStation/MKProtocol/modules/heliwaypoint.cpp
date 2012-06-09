@@ -33,6 +33,7 @@ HeliWaypoint::WaypointStruct HeliWaypoint::getWaypointData()
     tempWaypoint.Position.Status = NEWDATA;
     tempWaypoint.ToleranceRadius = TOLERANCE_RADIUS_DEFAULT;
     tempWaypoint.Index = waypointIndex;
+    tempWaypoint.pointType = POINT_TYPE_POI; //POINT_TYPE_WPT;
     tempWaypoint.Name[0] = getName()[0].toLatin1();
     tempWaypoint.Name[1] = getName()[1].toLatin1();
     tempWaypoint.Name[2] = getName()[2].toLatin1();

@@ -10,10 +10,10 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
     tab_6->setObjectName(QString::fromUtf8("tab_6"));
     tableWidget_2 = new QTableWidget(tab_6);
     tableWidget_2->setObjectName(QString::fromUtf8("tableWidget_2"));
-    tableWidget_2->setGeometry(QRect(20, 20, 301, 501));
+    tableWidget_2->setGeometry(QRect(20, 20, 281, 151));
     addressGroupBox_2 = new QGroupBox(tab_6);
     addressGroupBox_2->setObjectName(QString::fromUtf8("addressGroupBox_2"));
-    addressGroupBox_2->setGeometry(QRect(360, 20, 201, 151));
+    addressGroupBox_2->setGeometry(QRect(330, 210, 231, 151));
     horizontalLayoutWidget_3 = new QWidget(addressGroupBox_2);
     horizontalLayoutWidget_3->setObjectName(QString::fromUtf8("horizontalLayoutWidget_3"));
     horizontalLayoutWidget_3->setGeometry(QRect(10, 20, 181, 41));
@@ -105,7 +105,7 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
 
     targetPositionBox = new QGroupBox(tab_6);
     targetPositionBox->setObjectName(QString::fromUtf8("targetPositionBox"));
-    targetPositionBox->setGeometry(QRect(360, 190, 201, 161));
+    targetPositionBox->setGeometry(QRect(570, 20, 231, 151));
     gridLayoutWidget_6 = new QWidget(targetPositionBox);
     gridLayoutWidget_6->setObjectName(QString::fromUtf8("gridLayoutWidget_6"));
     gridLayoutWidget_6->setGeometry(QRect(10, 20, 181, 131));
@@ -151,14 +151,20 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
 
     gridLayout_5->addWidget(sendTargetPosButton, 3, 0, 1, 2);
 
+    gridLayout_5->setColumnStretch(1, 50);
+    PFDGroupBox = new QGroupBox(tab_6);
+    PFDGroupBox->setObjectName(QString::fromUtf8("PFDGroupBox"));
+    PFDGroupBox->setGeometry(QRect(330, 20, 221, 151));
+    CokpitWidget = new QWidget(PFDGroupBox);
+    CokpitWidget->setObjectName(QString::fromUtf8("CokpitWidget"));
+    CokpitWidget->setGeometry(QRect(20, 20, 191, 121));
 
-    tab_PFD = new QWidget();
-    tab_PFD->setObjectName(QString::fromUtf8("tab_PFD"));
+
+
     /*terminalPlainTextEdit_2 = new QPlainTextEdit(tab_7);
     terminalPlainTextEdit_2->setObjectName(QString::fromUtf8("terminalPlainTextEdit_2"));
     terminalPlainTextEdit_2->setGeometry(QRect(10, 20, 820, 501));*/
-    PFDGrid = new CockpitGrid(tab_PFD);
-    MKTabWidget_2->addTab(tab_PFD, QString());
+    PFDGrid = new CockpitGrid(CokpitWidget);
 
     addressGroupBox_2->setTitle("Address");
     addressInfLabel_2->setText("Address:");
@@ -279,6 +285,9 @@ void MKWidget::enableMotorCheckBox_Toggled(bool state)
 {
     verticalSlider->setValue(0);
     verticalSlider_sliderMoved(0);
+
+    /* Reset all enggines */
+    emit sendMotorSpeed(0,0,addressIndicationLabel_2->text().toInt());
 }
 
 void MKWidget::selectMotorComboBox_currentIndexChanged(int index)
@@ -289,7 +298,7 @@ void MKWidget::selectMotorComboBox_currentIndexChanged(int index)
 void MKWidget::verticalSlider_sliderMoved(int value)
 {
     motorSpeedIndicator->display(value);
-    emit sendMotorSpeed(value,selectMotorComboBox->currentIndex());
+    emit sendMotorSpeed(selectMotorComboBox->currentIndex(),value,addressIndicationLabel_2->text().toInt());
 }
 
 

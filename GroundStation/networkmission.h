@@ -96,9 +96,12 @@ private slots:
     void networkPackageReceiver(QByteArray data, int address);
 
 
-
+    /* MK Interface */
     void changeNodeAddress(int address,int newAddress);
     void sendTargetPosition(double latitude,double longitude,int address);
+    void sendMotorSpeed(int engine,int newValue,int address);
+
+
 
 signals:
     void commError();

@@ -36,8 +36,10 @@ AttitudeIndicator::AttitudeIndicator(
     QwtDial( parent ),
     d_gradient( 0.0 )
 {
-
-    setPalette( colorTheme( QColor( Qt::darkGray ).dark( 150 ) ) );
+    //const QColor color = palette().color(  );
+    //QPalette palette;
+    //palette.setColor( QPalette::Text, color );
+    //setPalette( colorTheme( QColor( Qt::darkGray ).dark( 150 ) ) );
 
     setMode( RotateScale );
     setWrapping( true );

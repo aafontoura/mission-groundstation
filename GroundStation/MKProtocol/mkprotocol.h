@@ -12,6 +12,8 @@
 #include "modules/HelicopterDefs.h"
 #include "parameterrequest.h"
 
+#define WAIT_REDIRECT_TIME 75
+
 
 
 class MKPROTOCOLSHARED_EXPORT  MKProtocol: public QObject

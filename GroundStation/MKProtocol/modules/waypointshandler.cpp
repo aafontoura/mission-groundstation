@@ -25,6 +25,8 @@ ParameterRequest WaypointsHandler::SendTargetPosition(HeliWaypoint newTarget)
 
     setRequestID(SEND_TARGET_POSITION);
     setRequestData(tempArray);
+    /* delete tempArray; */
+
     return(getParameter());
 }
 

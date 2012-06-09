@@ -2,7 +2,7 @@
 
 GeneralWaypoint::GeneralWaypoint()
 {
-    longitude = 0;
+    longitude = 2;//0;
     latitude = 0;
     altitude = 0;
     name.clear();

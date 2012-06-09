@@ -251,7 +251,7 @@ void MKProtocol::RequestData(ParameterRequest Setting)
         this->setUartModule(Setting.getDestDevice());
 
         /* Works only with this delay */
-        Sleep(150);
+        Sleep(WAIT_REDIRECT_TIME);
        // for (int i = 0 ; i<10000000; i++)
        //  h++;
     }
@@ -294,8 +294,6 @@ void MKProtocol::handleBuffer(QByteArray Data)
 
         /* Calculate CRC, ignoring the CRC sent and the stop BIT */
         CRC = CalcCRC(incomingBuffer.left(stopProtocolIndex-indexSearch-2));
-        int i = CRC % 64 + INTERFACE_NULL_BYTE;
-        int i2 = CRC / 64 + INTERFACE_NULL_BYTE;
         if (((int)incomingBuffer[incomingBuffer.size() - 2] == (CRC % 64 + INTERFACE_NULL_BYTE)) &&
             ((int)incomingBuffer[incomingBuffer.size() - 3] == (CRC / 64 + INTERFACE_NULL_BYTE)))
         {

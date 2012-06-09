@@ -73,6 +73,8 @@ public:
     QWidget *tab_PFD;
 
     CockpitGrid *PFDGrid;
+    QWidget *CokpitWidget;
+    QGroupBox *PFDGroupBox;
 
 
 
@@ -96,7 +98,7 @@ signals:
     /* Current address, new address */
     void addressChanged(int,int);
     void sendTargetPosition(double,double,int);
-    void sendMotorSpeed(int,int);
+    void sendMotorSpeed(int,int,int);
 
 };
 
