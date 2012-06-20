@@ -47,7 +47,7 @@ public:
     {
             quint16 Distance;                                   // distance to target in cm
             qint16 Bearing;                                    // course to target in deg
-    }  __attribute__((packed)) GPS_PosDev_t;
+    }  GPS_PosDev_t;
 
 
     typedef struct
@@ -82,7 +82,7 @@ public:
         quint8  Gas;                                        // for future use
         quint16 Current;                                    // actual current in 0.1A steps
         quint16 UsedCapacity;                               // used capacity in mAh
-    } __attribute__((packed)) naviDataType;
+    }  naviDataType;
 
 
 

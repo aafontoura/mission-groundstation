@@ -57,42 +57,132 @@ HelicopterHandler* NetworkMission::addMobileNode(QString name, int address)
 /* Outputs......: none                                                                           */
 /* Description..:                                                                                */
 /*************************************************************************************************/
-void NetworkMission::addStaticNode(QString identifier, int address)
+ZigBeeTransparentStaticNode* NetworkMission::addStaticNode(QString identifier, int address)
 {
     ZigBeeTransparentStaticNode *newStaticNode = new ZigBeeTransparentStaticNode(identifier,address);
     translateCommunicationType newNode;
 
     newNode.address = address;
     newNode.type = STATIC_TRANSPARENT_NODE_TYPE;
+    newStaticNode->setAddress(address);
+    //connect(newStaticNode,SIGNAL(sendBuffer(QByteArray,int)),this,SLOT(networkPackageSender(QByteArray,int)));
+
+    typeTranslation << newNode;
+
+    staticNodesList << newStaticNode;
+    missionNodesList << newStaticNode;
+
+    connect(newStaticNode,SIGNAL(discrete1Event(bool,int)),this,SLOT(handleZigbeeStaticNodeEvent(bool,int)));
+
+    return (newStaticNode);
+}
+
+
+/*************************************************************************************************/
+/* Name.........: addStaticNode                                                                  */
+/* Inputs.......:                                                                                */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
+ZigBeeTransparentStaticNode *NetworkMission::addStaticNode()
+{
+    ZigBeeTransparentStaticNode *newStaticNode = new ZigBeeTransparentStaticNode();
+    translateCommunicationType newNode;
+
+    newNode.address = this->getEmptyAddress();
+    newStaticNode->setAddress(newNode.address);
+    newNode.type = STATIC_TRANSPARENT_NODE_TYPE;
 
     //connect(newStaticNode,SIGNAL(sendBuffer(QByteArray,int)),this,SLOT(networkPackageSender(QByteArray,int)));
 
     typeTranslation << newNode;
 
-    //staticNodesList << newStaticNode;
+    staticNodesList << newStaticNode;
     missionNodesList << newStaticNode;
+
+    connect(newStaticNode,SIGNAL(discrete1Event(bool,int)),this,SLOT(handleZigbeeStaticNodeEvent(bool,int)));
+
+    return (newStaticNode);
+
 }
+
+void NetworkMission::addStaticNode(ZigBeeTransparentStaticNode *newStaticNode)
+{
+    translateCommunicationType newNode;
+
+    newNode.address = this->getEmptyAddress();
+    newStaticNode->setAddress(newNode.address);
+    newNode.type = STATIC_TRANSPARENT_NODE_TYPE;
+
+    //connect(newStaticNode,SIGNAL(sendBuffer(QByteArray,int)),this,SLOT(networkPackageSender(QByteArray,int)));
+
+    typeTranslation << newNode;
+
+    staticNodesList << newStaticNode;
+    missionNodesList << newStaticNode;
+
+    connect(newStaticNode,SIGNAL(discrete1Event(bool,int)),this,SLOT(handleZigbeeStaticNodeEvent(bool,int)));
+
+}
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
+void NetworkMission::assignWaypoints()
+{
+    HelicopterHandler* copterNode;
+    if ((waypointsList.length() > 0) && (mobileNodesList.length() > 0))
+    {
+        copterNode = mobileNodesList[0];
+        for (int i = 0; i < waypointsList.length() ; i++)
+        {
+            //copterNode->SendWaypoint(waypointsList[i]->getWaypointStructData());
+            copterNode->SendWaypoint((GPSPosition*)waypointsList[i]);
+        }
+    }
+
+}
+
+
+/*************************************************************************************************/
+/* Name.........:                                                                                */
+/* Inputs.......: none                                                                           */
+/* Outputs......: none                                                                           */
+/* Description..:                                                                                */
+/*************************************************************************************************/
 
 int NetworkMission::getEmptyAddress()
 {
     bool emptyAddr = true;
-    /* 500 is arbitrary number, just to prevent loop forever */
-    for (int nAddress = 1; nAddress < 500 ; nAddress++)
-    {
-        emptyAddr = true;
-        for(int i = 0 ; i < missionNodesList.length(); i++)
-        {
-            if (missionNodesList[i]->getAddress() == nAddress)
-            {
-                emptyAddr = false;
-                break;
-            }
-        }
-        if (emptyAddr)
-            return nAddress;
-    }
 
-    return 0;
+    if (0 == missionNodesList.length())
+    {
+        return (1);
+    }
+    else
+    {
+
+        /* 500 is arbitrary number, just to prevent loop forever */
+        for (int nAddress = 1; nAddress < 500 ; nAddress++)
+        {
+            emptyAddr = true;
+            for(int i = 0 ; i < missionNodesList.length(); i++)
+            {
+                if (missionNodesList[i]->getAddress() == nAddress)
+                {
+                    emptyAddr = false;
+                    break;
+                }
+            }
+            if (emptyAddr)
+                return nAddress;
+        }
+
+        return 0;
+    }
 
 }
 
@@ -232,7 +322,8 @@ void NetworkMission::sendTargetPosition(double latitude, double longitude, int a
         if (missionNodesList[i]->getAddress() == address)
         {
             HelicopterHandler* nodeTemp = dynamic_cast<HelicopterHandler*>(missionNodesList[i]);
-            nodeTemp->sendTargetPosition(latitude,longitude);
+            nodeTemp->SendWaypoint();
+            //nodeTemp->sendTargetPosition(latitude,longitude);
 
 
 
@@ -247,6 +338,22 @@ void NetworkMission::sendMotorSpeed(int engine, int newValue, int address)
     {
         if (newValue < 256)
             heliTemp->setEngineValue(engine,(unsigned char)newValue);
+    }
+}
+
+void NetworkMission::handleZigbeeStaticNodeEvent(bool discrete, int address)
+{
+    if (discrete)
+    {
+        if (mobileNodesList.length() > 0)
+        {
+            ZigBeeTransparentStaticNode* tempStaticNode = dynamic_cast<ZigBeeTransparentStaticNode*>(getMisisonNode(address));
+            if (tempStaticNode)
+            {
+                mobileNodesList[0]->clearWaypoints();
+                mobileNodesList[0]->SendWaypoint((GPSPosition*)tempStaticNode);
+            }
+        }
     }
 }
 

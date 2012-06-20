@@ -135,6 +135,28 @@ double GPSPosition::getAltitude()
     return altitude;
 }
 
+GPSPosition::WaypointStruct GPSPosition::getWaypointStructData()
+{
+    WaypointStruct tempWaypoint;
+
+
+
+    memset(&tempWaypoint,0,sizeof(WaypointStruct));
+    tempWaypoint.Position.Latitude = (quint32)  (getLatitude()*(double)10000000);
+    tempWaypoint.Position.Longitude = (quint32) (getLongitude()*(double)10000000);
+    tempWaypoint.Position.Altitude = (qint32) getAltitude();
+    tempWaypoint.Position.Status = GPS_NEWDATA;
+    tempWaypoint.ToleranceRadius = GPS_TOLERANCE_RADIUS_DEFAULT;
+    tempWaypoint.HoldTime = GPS_HOLD_TIME_DEFAULT;
+    tempWaypoint.Index = 0;
+    tempWaypoint.pointType = GPS_POINT_TYPE_WPT;
+    /*tempWaypoint.Name[0] = getName()[0].toLatin1();
+    tempWaypoint.Name[1] = getName()[1].toLatin1();
+    tempWaypoint.Name[2] = getName()[2].toLatin1();
+    tempWaypoint.Name[3] = getName()[3].toLatin1();*/
+
+    return tempWaypoint;
+}
 
 
 

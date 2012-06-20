@@ -12,7 +12,7 @@
 #include "modules/HelicopterDefs.h"
 #include "parameterrequest.h"
 
-#define WAIT_REDIRECT_TIME 75
+#define WAIT_REDIRECT_TIME 120
 
 
 

@@ -23,6 +23,21 @@
 #include <qmainwindow.h>
 #include <qlabel.h>
 
+/* Helicopter Request info State Machine */
+#define GET_FC_VERSION 0
+#define GET_NC_VERSION 1
+#define GET_FC_3D_INFO 2
+#define GET_NC_3D_INFO 3
+#define DEBUG_FC_MODE  4
+#define DEBUG_NC_MODE  5
+#define GET_OSD_DATA   6
+
+#define SEND_WAYPOINT_STATE  0
+#define CLEAR_WAYPOINT_STATE 1
+
+#define NORMAL_REQUEST_MODE 0
+#define WAYPOINT_SEND_MODE  1
+
 class HelicopterHandler : public MissionNode
 {
     Q_OBJECT
@@ -70,8 +85,10 @@ public:
 
 
 
-    void SendWaypoint(HeliWaypoint::WaypointStruct NewWP);
+    void SendWaypoint(GPSPosition *NewWP);
     void SendWaypoint();
+
+    void clearWaypoints();
 
     void sendTargetPosition(double latitude, double longitude);
     void setEngineValue(int engine, unsigned char newValue);
@@ -110,11 +127,14 @@ private:
     WaypointsHandler *Waypoints;
     EngineTest       *Engines;
 
+    int RSSI;
+
     /* Request Timers */
     QTimer *VersionTimer;
     QTimer *MovementTimer;
     QTimer *GeneralTimer;
     QTimer *engineTimer;
+    QTimer *waypointTimer;
     QTimer *TimeOutCommand;
     bool GeneralTimerIsOn;
 
@@ -122,6 +142,8 @@ private:
     int RequestState;
     int previousState;
     int RequestMode;
+    int preemptedRequestState;
+    //int preemptedRequestMode;
     bool initState;
     int timeOutCount;
 
@@ -147,10 +169,12 @@ private slots:
     void CalculateNextState();
     void timedOut();
     void sendEngineData();
+    void sendWaypoint();
+    //void sendWaypointData();
 
 signals:
 
-    void dataReceived(char,char);    
+    void dataReceived(char,char);
     void sendBuffer(QByteArray, int);
     void commError();
     void navigationDataReceived(int);
@@ -158,6 +182,7 @@ signals:
     void NCVersionReceived(QString,int);
     void FC3DDatareceived(int,int,int,int);
     void NumberOfWaypointsReceived(int,int);
+    void RSSIReceived(int,int);
     void retried(char,char);
     void terminalData(QByteArray,int);
 

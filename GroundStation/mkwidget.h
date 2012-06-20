@@ -58,9 +58,9 @@ public:
     QDoubleSpinBox *targetLongEdit;
     QPushButton *sendTargetPosButton;
 
-    QProgressBar *progressBarRoll;
+    /*QProgressBar *progressBarRoll;
     QProgressBar *progressBarPitch;
-    QProgressBar *progressBarYaw;
+    QProgressBar *progressBarYaw;*/
 
     QTableWidgetItem *latitudeIndication;
     QTableWidgetItem *longitudeIndication;
@@ -69,6 +69,8 @@ public:
     QTableWidgetItem *targetLatitudeIndication;
     QTableWidgetItem *targetLongitudeIndication;
     QTableWidgetItem *targetAltitudeIndication;
+
+    QProgressBar *RSSIProgressBar;
 
     QWidget *tab_PFD;
 
@@ -79,6 +81,8 @@ public:
 
 
     void SetUpInfoTable(QTableWidget* tableView);
+
+    void updateRSSILevel(int newRSSI);
 
 public slots:
     void changeAddresButton_Clicked();

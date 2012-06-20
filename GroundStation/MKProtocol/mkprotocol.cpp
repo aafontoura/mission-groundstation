@@ -217,7 +217,7 @@ void MKProtocol::sendBuffer(QByteArray data)
 /*********************************************************************************/
 void MKProtocol::RequestData(char Origin, char Destiny, QByteArray reqData)
 {
-    char h = Destiny;
+    /*char h = Destiny;
     if(!isUartModule(Destiny))
     {
         PrepareSendPackage(REDIRECT_UART_HEADER,getActualAddress(),getRequestUartRedirect(Destiny));
@@ -230,38 +230,32 @@ void MKProtocol::RequestData(char Origin, char Destiny, QByteArray reqData)
     Destiny = h;
 
 
-    PrepareSendPackage(Origin,Destiny,reqData);
+    PrepareSendPackage(Origin,Destiny,reqData);*/
 
 
 }
 
 void MKProtocol::RequestData(ParameterRequest Setting)
 {
-    // char h;
-    if(!isUartModule(Setting.getDestDevice()))
+    if ( 0 != Setting.getAttributeType())
     {
-        if (Setting.getDestDevice() == NC_ADDRESS)
-            sendBuffer(getRequestUartRedirect(Setting.getDestDevice()));
-        else
-            PrepareSendPackage(REDIRECT_UART_HEADER,getActualAddress(),getRequestUartRedirect(Setting.getDestDevice()));
 
-        /* --------------------------------------------------------KNOWN BUG---------------------------------------------------- */
-        /* If the helicopter is turned off, the UartModule won't change */
-        /* When the helicopter turns on, the execution won't run this part of the code wich is wrong */
-        this->setUartModule(Setting.getDestDevice());
+        if(!isUartModule(Setting.getDestDevice()))
+        {
+            if (Setting.getDestDevice() == NC_ADDRESS)
+                sendBuffer(getRequestUartRedirect(Setting.getDestDevice()));
+            else
+                PrepareSendPackage(REDIRECT_UART_HEADER,getActualAddress(),getRequestUartRedirect(Setting.getDestDevice()));
 
-        /* Works only with this delay */
-        Sleep(WAIT_REDIRECT_TIME);
-       // for (int i = 0 ; i<10000000; i++)
-       //  h++;
+            this->setUartModule(Setting.getDestDevice());
+
+            /* Works only with this delay */
+            Sleep(WAIT_REDIRECT_TIME);
+        }
+
+        PrepareSendPackage(Setting.getAttributeType(),Setting.getDestDevice(),
+                           Setting.getRequestParameter());
     }
-
-
-
-
-
-    PrepareSendPackage(Setting.getAttributeType(),Setting.getDestDevice(),
-                       Setting.getRequestParameter());
 }
 
 /*********************************************************************************/

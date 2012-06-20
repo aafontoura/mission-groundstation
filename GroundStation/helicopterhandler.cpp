@@ -73,6 +73,8 @@ HelicopterHandler::HelicopterHandler(QString newName, int newAddress)
     connect(TimeOutCommand,SIGNAL(timeout()),this,SLOT(timedOut()));
     engineTimer = new QTimer(this);
     connect(engineTimer,SIGNAL(timeout()),this,SLOT(sendEngineData()));
+    //waypointTimer = new QTimer(this);
+    //connect(waypointTimer,SIGNAL(timeout()),this,SLOT(sendWaypointData()));
 
     RequestState = GET_FC_VERSION;
     RequestMode = NORMAL_REQUEST_MODE;
@@ -189,9 +191,43 @@ OSDData *HelicopterHandler::getNavigationData()
 /* Outputs......: none                                                                           */
 /* Description..: Send to the Helicopter a new Waypoint                                          */
 /*************************************************************************************************/
-void HelicopterHandler::SendWaypoint(HeliWaypoint::WaypointStruct NewWP)
+void HelicopterHandler::SendWaypoint(GPSPosition* NewWP)
+{    
+    /* TODO: if theres is more modes, prevent to preempt recursively */
+    /* preemptedRequestState will be a wrong value */
+    if (RequestMode != WAYPOINT_SEND_MODE)
+    {
+        preemptedRequestState = RequestState;
+        RequestState = SEND_WAYPOINT_STATE;
+        RequestMode = WAYPOINT_SEND_MODE;
+        //GeneralTimer->start(1000);
+        heliProtocol->RequestData(Waypoints->SendNewWaypoint(NewWP));
+        manageTimeOut(Waypoints->getDestDevice(),Waypoints->getAttributeType());
+    }
+    else
+    {
+        Waypoints->addNewWaypoint(NewWP);
+    }
+    //heliProtocol->RequestData(Waypoints->SendNewWaypoint(NewWP));
+}
+
+void HelicopterHandler::clearWaypoints()
 {
-    heliProtocol->RequestData(Waypoints->SendNewWaypoint(NewWP));
+    /* TODO: if theres is more modes, prevent to preempt recursively */
+    /* preemptedRequestState will be a wrong value */
+    if (RequestMode != WAYPOINT_SEND_MODE)
+    {
+        preemptedRequestState = RequestState;
+        RequestState = CLEAR_WAYPOINT_STATE;
+        RequestMode = WAYPOINT_SEND_MODE;
+        GeneralTimer->stop();
+        heliProtocol->RequestData(Waypoints->ClearWaypointsList());
+        manageTimeOut(Waypoints->getDestDevice(),Waypoints->getAttributeType());
+    }
+    else
+    {
+        /* do nothing */
+    }
 }
 
 void HelicopterHandler::SendWaypoint()
@@ -199,10 +235,12 @@ void HelicopterHandler::SendWaypoint()
     heliProtocol->RequestData(Waypoints->SendNewWaypoint());
 }
 
+
+
 void HelicopterHandler::sendTargetPosition(double latitude, double longitude)
 {
-    HeliWaypoint *tempWP = new HeliWaypoint(latitude,longitude,1,"teste");
-    heliProtocol->RequestData(Waypoints->SendTargetPosition(*tempWP));
+    /*GPSPosition *tempWP = new HeliWaypoint(latitude,longitude,1,"teste");
+    heliProtocol->RequestData(Waypoints->SendTargetPosition(*tempWP));*/
     /* delete tempWP; */
 }
 
@@ -223,6 +261,11 @@ void HelicopterHandler::setEngineValue(int engine, unsigned char newValue)
 void HelicopterHandler::sendEngineData()
 {
     heliProtocol->RequestData(Engines->getParameter());
+}
+
+void HelicopterHandler::sendWaypoint()
+{
+    heliProtocol->RequestData(Waypoints->sendWaypoint());
 }
 
 int HelicopterHandler::getNumberOfWaypoints()
@@ -257,6 +300,8 @@ void HelicopterHandler::hubInProtocol(QByteArray data)
 
 void HelicopterHandler::dataHandler(QByteArray data)
 {
+    //QString t = data.left(1);
+    RSSI = (int)*(data.left(1).data());
     data = data.right(data.length()-2);
     heliProtocol->handleBuffer(data);
 }
@@ -296,6 +341,7 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
             case SEND_WAYPOINT_REPLY:
                 Waypoints->UpdateNumberOfWaypoints(Data);
 
+                manageStateMachine(Waypoints->isPeriodic(), OriginAddress, ModuleType);
                 emit NumberOfWaypointsReceived(this->getNumberOfWaypoints(),this->getAddress());
                 break;
 
@@ -333,7 +379,7 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                 break;
 
             case DEBUG_OUT_HEADER_REPLY:
-                switch (OriginAddress)
+               /* switch (OriginAddress)
                 {
                     case FC_ADDRESS_REPLY:
                         TriggerTimerState();
@@ -354,7 +400,7 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
                 }
 
 
-                break;
+                break;*/
 
             case DATA_3D_HEADER_REPLY:
                 switch (OriginAddress)
@@ -395,7 +441,9 @@ void HelicopterHandler::processData(char OriginAddress, char ModuleType, QByteAr
 
 void HelicopterHandler::hubOutProtocol(QByteArray data)
 {
+    emit (RSSIReceived(RSSI,this->getAddress()));
     emit (sendBuffer(data,this->getAddress()));
+
 }
 
 /*************************************************************************************************/
@@ -406,75 +454,73 @@ void HelicopterHandler::hubOutProtocol(QByteArray data)
 /*************************************************************************************************/
 void HelicopterHandler::RequestHelicopterState()
 {
-    switch (RequestState)
+    switch(RequestMode)
     {
-        case GET_FC_VERSION:
-            heliProtocol->RequestData(FCVersion->RequestNewData());
-            manageTimeOut(FCVersion->getDestDevice(),FCVersion->getAttributeType());
+        case NORMAL_REQUEST_MODE:
+            switch (RequestState)
+            {
+                case GET_FC_VERSION:
+                    heliProtocol->RequestData(FCVersion->RequestNewData());
+                    manageTimeOut(FCVersion->getDestDevice(),FCVersion->getAttributeType());
 
 
-            break;
-        case GET_NC_VERSION:
-            heliProtocol->RequestData(NCVersion->RequestNewData());
-            manageTimeOut(NCVersion->getDestDevice(),NCVersion->getAttributeType());
+                    break;
+                case GET_NC_VERSION:
+                    heliProtocol->RequestData(NCVersion->RequestNewData());
+                    manageTimeOut(NCVersion->getDestDevice(),NCVersion->getAttributeType());
 
 
-            break;
-        case GET_FC_3D_INFO:
+                    break;
+                case GET_FC_3D_INFO:
 
-            heliProtocol->RequestData(FCMovementData->RequestNewData());
-            GeneralTimer->start(3000);
-            manageTimeOut(FCMovementData->getDestDevice(),FCMovementData->getAttributeType());
+                    heliProtocol->RequestData(FCMovementData->RequestNewData());
+                    GeneralTimer->start(3000);
+                    manageTimeOut(FCMovementData->getDestDevice(),FCMovementData->getAttributeType());
 
-            break;
-        case GET_OSD_DATA:
-            heliProtocol->RequestData(NavigationData->RequestNewData());
-            //GeneralTimer->start(1000);
-            manageTimeOut(NavigationData->getDestDevice(),NavigationData->getAttributeType());
+                    break;
+                case GET_OSD_DATA:
+                    heliProtocol->RequestData(NavigationData->RequestNewData());
+                    //GeneralTimer->start(1000);
+                    manageTimeOut(NavigationData->getDestDevice(),NavigationData->getAttributeType());
 
+                    break;
+                case GET_NC_3D_INFO:
+                    break;
+                case DEBUG_FC_MODE:
+                    break;
+                case DEBUG_NC_MODE:
+                    break;
+                default:
+                    break;
+            }
             break;
-        case GET_NC_3D_INFO:
+
+        case WAYPOINT_SEND_MODE:
+            switch(RequestState)
+            {
+            case SEND_WAYPOINT_STATE:
+                if (Waypoints->unsentWaypoints() > 0)
+                {
+                    heliProtocol->RequestData(Waypoints->sendWaypoint());
+                    manageTimeOut(Waypoints->getDestDevice(),Waypoints->getAttributeType());
+                }
+
+                break;
+            case CLEAR_WAYPOINT_STATE:
+                heliProtocol->RequestData(Waypoints->ClearWaypointsList());
+                manageTimeOut(Waypoints->getDestDevice(),Waypoints->getAttributeType());
+                break;
+            default:
+                break;
+
+            }
             break;
-        case DEBUG_FC_MODE:
-            break;
-        case DEBUG_NC_MODE:
-            break;
+
         default:
             break;
     }
 
-    /*switch (RequestState)
-    {
-        case GET_FC_VERSION:
-            GeneralTimer->stop();
-            heliProtocol->RequestData(FCVersion->RequestNewData());
-           // startTimeout(VERSION_INFO_HEADER_REPLY,FC_ADDRESS_REPLY,FCVersion->RequestNewData());
 
-
-
-            break;
-        case GET_NC_VERSION:
-            heliProtocol->RequestData(NCVersion->RequestNewData());
-
-            CalculateNextState();
-
-            break;
-        case GET_FC_3D_INFO:
-            GeneralTimer->stop();
-            heliProtocol->RequestData(FCMovementData->RequestNewData());
-
-            CalculateNextState();
-
-            break;
-        case GET_NC_3D_INFO:
-            break;
-        case DEBUG_FC_MODE:
-            break;
-        case DEBUG_NC_MODE:
-            break;
-        default:
-            break;
-    }*/
 }
 
 void HelicopterHandler::handleTerminalData(QByteArray data)
@@ -560,6 +606,33 @@ void HelicopterHandler::CalculateNextState()
 
             }
             break;
+        case WAYPOINT_SEND_MODE:
+            switch(RequestState)
+            {
+            case SEND_WAYPOINT_STATE:
+                if (Waypoints->unsentWaypoints() == 0)
+                {
+                    RequestState = preemptedRequestState;
+                    RequestMode = NORMAL_REQUEST_MODE;
+                }
+                break;
+            case CLEAR_WAYPOINT_STATE:
+                if (Waypoints->unsentWaypoints() == 0)
+                {
+                    RequestState = preemptedRequestState;
+                    RequestMode = NORMAL_REQUEST_MODE;
+                }
+                else
+                    RequestState = SEND_WAYPOINT_STATE;
+
+                break;
+            default:
+                break;
+
+            }
+
+            break;
+
         default:
             break;
     }
@@ -569,53 +642,7 @@ void HelicopterHandler::CalculateNextState()
 
 }
 
-/*************************************************************************************************/
-/* Name.........: CalculateNextState                                                             */
-/* Inputs.......: none                                                                           */
-/* Outputs......: none                                                                           */
-/* Description..: Trigger the respective timer according to the Request state and mode.          */
-/*************************************************************************************************/
-void HelicopterHandler::TriggerTimerState()
-{
-    switch(RequestMode)
-    {
-        case NORMAL_REQUEST_MODE:
-            switch(RequestState)
-            {
-                case GET_FC_VERSION:
-                    if (!GeneralTimer->isActive() && !TimeOutCommand->isActive())
-                        GeneralTimer->start();
-                    break;
-                case GET_NC_VERSION:
-                    if (!GeneralTimer->isActive())
-                        GeneralTimer->start();
-                    break;
-                case GET_FC_3D_INFO:
-                    if (initState)
-                        GeneralTimer->start();
-                    else
-                        if (!GeneralTimer->isActive())
-                        {
-                            GeneralTimer->setInterval(TIMER_2_SECONDS);
-                            GeneralTimer->start(TIMER_2_SECONDS);
-                        }
-                            //GeneralTimer->singleShot(TIMER_2_SECONDS,this,SLOT(RequestHelicopterState()));
-                    break;
-                case GET_NC_3D_INFO:
-                    break;
-                case DEBUG_FC_MODE:
-                    break;
-                case DEBUG_NC_MODE:
-                    break;
-                default:
-                    break;
 
-            }
-            break;
-        default:
-            break;
-    }
-}
 
 void HelicopterHandler::initMachineState()
 {

@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="MobileNodesTab">
      <attribute name="title">
@@ -89,7 +89,7 @@
            </rect>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tab_6">
            <attribute name="title">
@@ -857,6 +857,11 @@
             </widget>
            </widget>
           </widget>
+          <widget class="QWidget" name="tab_4">
+           <attribute name="title">
+            <string>Page</string>
+           </attribute>
+          </widget>
          </widget>
         </widget>
        </item>
@@ -871,7 +876,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>20</y>
+        <y>60</y>
         <width>1181</width>
         <height>571</height>
        </rect>
@@ -1075,21 +1080,37 @@
        </item>
       </layout>
      </widget>
-     <widget class="QCommandLinkButton" name="addNewMobileNode">
+     <widget class="QWidget" name="horizontalLayoutWidget_2">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>590</y>
+        <y>10</y>
         <width>321</width>
-        <height>40</height>
+        <height>41</height>
        </rect>
       </property>
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
-      <property name="text">
-       <string>Add Mobile Node</string>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QCommandLinkButton" name="addNewMobileNode">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Add Mobile Node</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCommandLinkButton" name="assignWPs">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Assign Waypoints</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="missionTab">

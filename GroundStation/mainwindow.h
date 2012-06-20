@@ -72,13 +72,16 @@ private slots:
     void UpdateFCVersion(QString version, int address);
     void UpdateNCVersion(QString version, int address);
     void UpdateFC3DData(int winkel0, int winkel1, int winkel2, int address);
+    void UpdateRSSIData(int newRSSI, int address);
     void UpdateNumberOfWP(int address);    
+
     void changeMapNodeAddress(int address, int newAddress);
     void CommError();
     void open();
     void on_addNewMobileNode_clicked();
     void on_staticNodesTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void UpdateTerminal(QByteArray data,int address);
+    void on_assignWPs_clicked();
 };
 
 #endif // MAINWINDOW_H

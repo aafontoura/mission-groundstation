@@ -22,6 +22,7 @@ private:
 
 signals:
     void discrete1Changed(bool);
+    void discrete1Event(bool,int);
     void newRSSIReceived(int);
 };
 

@@ -31,6 +31,8 @@ public:
 
     int getAddress();
 
+    WaypointStruct getWaypointStructData();
+
     virtual void dataHandler(QByteArray data) = 0;
 
 

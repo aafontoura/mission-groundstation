@@ -4,7 +4,7 @@
 #include <QList>
 #include "HelicopterDefs.h"
 #include "helicopterattribute.h"
-#include "heliwaypoint.h"
+#include "gpsposition.h"
 
 
 
@@ -24,21 +24,26 @@ public:
 
     WaypointsHandler();
     void UpdateData(QByteArray NewData);
-    ParameterRequest SendTargetPosition(HeliWaypoint newTarget);
+    ParameterRequest SendTargetPosition(GPSPosition newTarget);
     ParameterRequest RequestWaypoint(quint8 WPIndex);
     ParameterRequest RequestWaypoint();
     ParameterRequest SendNewWaypoint();
-    ParameterRequest SendNewWaypoint(HeliWaypoint::WaypointStruct NewWaypoint);
+    ParameterRequest SendNewWaypoint(GPSPosition *NewWaypoint);
+    ParameterRequest sendWaypoint();
+    void addNewWaypoint(GPSPosition *NewWaypoint);
     ParameterRequest ClearWaypointsList();
-    HeliWaypoint::WaypointStruct CreateNewWaypoint();
+    GPSPosition::WaypointStruct CreateNewWaypoint();
     void UpdateNumberOfWaypoints(QByteArray Data);
     quint8 getNumberOfWaypoints();
+
+    int unsentWaypoints();
 
 
 
 
 private:
-    QList<HeliWaypoint> WaypointsList;
+    QList<GPSPosition*> WaypointsList;
+    int waypointsSent;
 
     // HeliWaypoint::WaypointStruct NewWaypoint;
 

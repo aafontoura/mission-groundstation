@@ -10,7 +10,7 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
     tab_6->setObjectName(QString::fromUtf8("tab_6"));
     tableWidget_2 = new QTableWidget(tab_6);
     tableWidget_2->setObjectName(QString::fromUtf8("tableWidget_2"));
-    tableWidget_2->setGeometry(QRect(20, 20, 281, 151));
+    tableWidget_2->setGeometry(QRect(20, 20, 281, 270));
     addressGroupBox_2 = new QGroupBox(tab_6);
     addressGroupBox_2->setObjectName(QString::fromUtf8("addressGroupBox_2"));
     addressGroupBox_2->setGeometry(QRect(330, 210, 231, 151));
@@ -159,12 +159,14 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
     CokpitWidget->setObjectName(QString::fromUtf8("CokpitWidget"));
     CokpitWidget->setGeometry(QRect(20, 20, 191, 121));
 
-
-
-    /*terminalPlainTextEdit_2 = new QPlainTextEdit(tab_7);
-    terminalPlainTextEdit_2->setObjectName(QString::fromUtf8("terminalPlainTextEdit_2"));
-    terminalPlainTextEdit_2->setGeometry(QRect(10, 20, 820, 501));*/
     PFDGrid = new CockpitGrid(CokpitWidget);
+
+    RSSIProgressBar = new QProgressBar(tab_6);
+    RSSIProgressBar->setObjectName(QString::fromUtf8("RSSIProgressBar"));
+    RSSIProgressBar->setValue(0);
+    RSSIProgressBar->setGeometry(QRect(5, 500, 800, 30));
+
+    //gridLayout_5->addWidget(RSSIProgressBar, 1, 0, 1, 1);
 
     addressGroupBox_2->setTitle("Address");
     addressInfLabel_2->setText("Address:");
@@ -219,17 +221,17 @@ MKWidget::MKWidget(QWidget *gridLayout) : QWidget(gridLayout)
 
 void MKWidget::SetUpInfoTable(QTableWidget* tableView)
 {
-    tableView->setRowCount(11);
+    tableView->setRowCount(8);
     tableView->setColumnCount(2);
 
     QStringList header;
 
-    progressBarRoll = new QProgressBar();
+    /*progressBarRoll = new QProgressBar();
     progressBarPitch = new QProgressBar();
-    progressBarYaw = new QProgressBar();
+    progressBarYaw = new QProgressBar();*/
 
     header << "FlightControl Version" << "NaviCtrl Version";
-    header << "Roll" << "Pitch" << "Yaw";
+    // header << "Roll" << "Pitch" << "Yaw";
     header << "Latitude" << "Longitude" << "Altitude";
     header << "Target Latitude" << "Target Longitude" << "Target Altitude";
 
@@ -237,9 +239,9 @@ void MKWidget::SetUpInfoTable(QTableWidget* tableView)
     tableView->setVerticalHeaderLabels(header);
 
 
-    tableView->setCellWidget(DEBUG_FC_3D_ROW,1,progressBarRoll);
+    /*tableView->setCellWidget(DEBUG_FC_3D_ROW,1,progressBarRoll);
     tableView->setCellWidget(DEBUG_FC_3D_ROW+1,1,progressBarPitch);
-    tableView->setCellWidget(DEBUG_FC_3D_ROW+2,1,progressBarYaw);
+    tableView->setCellWidget(DEBUG_FC_3D_ROW+2,1,progressBarYaw);*/
 
     tableView->setColumnHidden(0,true);
 
@@ -250,12 +252,12 @@ void MKWidget::SetUpInfoTable(QTableWidget* tableView)
     targetLongitudeIndication = new QTableWidgetItem();
     targetAltitudeIndication  = new QTableWidgetItem();
 
-    tableWidget_2->setItem(5,1,latitudeIndication);
-    tableWidget_2->setItem(6,1,longitudeIndication);
-    tableWidget_2->setItem(7,1,altitudeIndication);
-    tableWidget_2->setItem(8,1,targetLatitudeIndication);
-    tableWidget_2->setItem(9,1,targetLongitudeIndication);
-    tableWidget_2->setItem(10,1,targetAltitudeIndication);
+    tableView->setItem(2,1,latitudeIndication);
+    tableView->setItem(3,1,longitudeIndication);
+    tableView->setItem(4,1,altitudeIndication);
+    tableView->setItem(5,1,targetLatitudeIndication);
+    tableView->setItem(6,1,targetLongitudeIndication);
+    tableView->setItem(7,1,targetAltitudeIndication);
 
     latitudeIndication->setText("0");
 
@@ -265,6 +267,11 @@ void MKWidget::SetUpInfoTable(QTableWidget* tableView)
     tableView->resizeColumnToContents(0);//setColumnWidth(0,120);
 
 
+}
+
+void MKWidget::updateRSSILevel(int newRSSI)
+{
+    RSSIProgressBar->setValue(newRSSI);
 }
 
 void MKWidget::changeAddresButton_Clicked()
@@ -321,9 +328,9 @@ void MKWidget::UpdateFC3DData(int winkel0, int winkel1, int winkel2 )
     PFDGrid->changeGradient((double)winkel0/(double)1000);
     PFDGrid->d_compass->setValue((double)winkel2/10);
 
-    progressBarRoll->setValue((winkel1+1800)/36);
+    /*progressBarRoll->setValue((winkel1+1800)/36);
     progressBarPitch->setValue((winkel0+1800)/36);
-    progressBarYaw->setValue(winkel2/36);
+    progressBarYaw->setValue(winkel2/36);*/
 }
 
 void MKWidget::updateTerminal(QByteArray newData)

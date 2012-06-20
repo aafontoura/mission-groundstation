@@ -201,6 +201,12 @@ void MainWindow::UpdateFC3DData(int winkel0, int winkel1, int winkel2, int addre
 
 }
 
+void MainWindow::UpdateRSSIData(int newRSSI, int address)
+{
+    this->getMkCopterNodeWidget(address)->updateRSSILevel(newRSSI);
+
+}
+
 void MainWindow::UpdateTerminal(QByteArray data, int address)
 {
     for (int i = 0 ; i < nodesWidgetList.length() ; i++)
@@ -361,6 +367,8 @@ void MainWindow::addMkCopter()
     connect(heliHandlerTemp,SIGNAL(NCVersionReceived(QString,int)),this,SLOT(UpdateNCVersion(QString,int)));
     connect(heliHandlerTemp,SIGNAL(FC3DDatareceived(int,int,int,int)),this,SLOT(UpdateFC3DData(int,int,int,int)));
     connect(heliHandlerTemp,SIGNAL(navigationDataReceived(int)),this,SLOT(UpdateNavigationData(int)));
+    connect(heliHandlerTemp,SIGNAL(RSSIReceived(int,int)),this,SLOT(UpdateRSSIData(int,int)));
+
 
 
 
@@ -386,6 +394,9 @@ void MainWindow::addMkCopter()
     connect(newMkCopter,SIGNAL(sendTargetPosition(double,double,int)),mission,SLOT(sendTargetPosition(double,double,int)));
     connect(newMkCopter,SIGNAL(sendMotorSpeed(int,int,int)),mission,SLOT(sendMotorSpeed(int,int,int)));
 
+
+
+
 }
 
 
@@ -408,3 +419,11 @@ void MainWindow::on_staticNodesTreeWidget_itemClicked(QTreeWidgetItem *item, int
 }
 
 
+
+void MainWindow::on_assignWPs_clicked()
+{
+    //int i = ui->staticNodesTreeWidget->selectedItems()
+    //if ()
+
+    mission->assignWaypoints();
+}

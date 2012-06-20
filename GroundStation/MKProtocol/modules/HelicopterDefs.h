@@ -56,16 +56,7 @@
 #define FREQ_INTERVAL_10HZ  10
 #define FREQ_INTERVAL_1HZ   100
 
-/* Helicopter Request info State Machine */
-#define GET_FC_VERSION 0
-#define GET_NC_VERSION 1
-#define GET_FC_3D_INFO 2
-#define GET_NC_3D_INFO 3
-#define DEBUG_FC_MODE  4
-#define DEBUG_NC_MODE  5
-#define GET_OSD_DATA   6
 
-#define NORMAL_REQUEST_MODE 0
 
 /* Timers */
 #define TIMER_1_SECOND  1000

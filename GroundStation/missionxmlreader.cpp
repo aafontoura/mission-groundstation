@@ -185,13 +185,14 @@ void MissionXMLReader::readStaticNode(QTreeWidgetItem *item)
             xml.skipCurrentElement();
     }
 
-    if (0 < mission->missionNodesList.length())
-        staticNodeTemp->setAddress(mission->missionNodesList[mission->missionNodesList.length()-1]->getAddress()+1);
+    mission->addStaticNode(staticNodeTemp);
+    /*if (0 < mission->missionNodesList.length())
+        staticNodeTemp->setAddress(mission->getEmptyAddress());//>missionNodesList[mission->missionNodesList.length()-1]->getAddress()+1);
     else
         staticNodeTemp->setAddress(1);
 
     mission->missionNodesList << staticNodeTemp;
-    mission->staticNodesList << staticNodeTemp;
+    mission->staticNodesList << staticNodeTemp;*/
     staticNodeTemp = new ZigBeeTransparentStaticNode();
 }
 

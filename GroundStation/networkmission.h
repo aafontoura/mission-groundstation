@@ -78,11 +78,18 @@ public:
     QList<translateCommunicationType> typeTranslation;
 
     HelicopterHandler *addMobileNode(QString name, int address);
-    void addStaticNode(QString identifier, int address);
+    ZigBeeTransparentStaticNode *addStaticNode(QString identifier, int address);
+    ZigBeeTransparentStaticNode *addStaticNode();
+    void addStaticNode(ZigBeeTransparentStaticNode *newStaticNode);
+    void assignWaypoints();
 
     int getEmptyAddress();
 
     MissionNode* getMisisonNode(int address);
+
+
+
+
 
 
 
@@ -100,6 +107,8 @@ private slots:
     void changeNodeAddress(int address,int newAddress);
     void sendTargetPosition(double latitude,double longitude,int address);
     void sendMotorSpeed(int engine,int newValue,int address);
+
+    void handleZigbeeStaticNodeEvent(bool discrete,int address);
 
 
 
