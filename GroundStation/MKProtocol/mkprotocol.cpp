@@ -243,8 +243,10 @@ void MKProtocol::RequestData(ParameterRequest Setting)
         if(!isUartModule(Setting.getDestDevice()))
         {
             if (Setting.getDestDevice() == NC_ADDRESS)
-                sendBuffer(getRequestUartRedirect(Setting.getDestDevice()));
+                for (int i = 0; i < 15 ; i++)
+                    sendBuffer(getRequestUartRedirect(Setting.getDestDevice()));
             else
+                for (int i = 0; i < 10 ; i++)
                 PrepareSendPackage(REDIRECT_UART_HEADER,getActualAddress(),getRequestUartRedirect(Setting.getDestDevice()));
 
             this->setUartModule(Setting.getDestDevice());

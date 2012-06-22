@@ -238,25 +238,11 @@ void NetworkMission::networkPackageSender(QByteArray data, int address)
 void NetworkMission::networkPackageReceiver(QByteArray data, int address)
 {
 
-    /* TODO: Inheritize MobileNode also from missionNode */
-   /* for(int i = 0 ; i < mobileNodesList.length(); i++)
-    {
-        if (mobileNodesList[i]->getAddress() == address)
-        {
-            mobileNodesList[i]->hubInProtocol(data.right(data.length()-2));
-            break;
-        }
-    }*/
-
     for(int i = 0 ; i < missionNodesList.length(); i++)
     {
         if (missionNodesList[i]->getAddress() == address)
-        {
-            /* GAMBIARRA (workaround)!!! */
-            /* TODO: find another way. Just one list for all kind of nodes (inherited) but the
-              data handler must be especialized */
+        {            
             missionNodesList[i]->dataHandler(data);
-
             break;
         }
     }

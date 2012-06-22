@@ -144,7 +144,7 @@ GPSPosition::WaypointStruct GPSPosition::getWaypointStructData()
     memset(&tempWaypoint,0,sizeof(WaypointStruct));
     tempWaypoint.Position.Latitude = (quint32)  (getLatitude()*(double)10000000);
     tempWaypoint.Position.Longitude = (quint32) (getLongitude()*(double)10000000);
-    tempWaypoint.Position.Altitude = (qint32) getAltitude();
+    tempWaypoint.Position.Altitude = (qint32) (getAltitude()*(double)1000);
     tempWaypoint.Position.Status = GPS_NEWDATA;
     tempWaypoint.ToleranceRadius = GPS_TOLERANCE_RADIUS_DEFAULT;
     tempWaypoint.HoldTime = GPS_HOLD_TIME_DEFAULT;

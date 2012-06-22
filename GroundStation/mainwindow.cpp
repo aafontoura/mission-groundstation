@@ -316,7 +316,7 @@ void MainWindow::open()
             if (tempZigBeeNode!=0)
             {
                 connect(tempZigBeeNode,SIGNAL(discrete1Changed(bool)),newStaticNodeButton,SLOT(buttonStateChanged(bool)));
-                connect(tempZigBeeNode,SIGNAL(newRSSIReceived(int)),newStaticNodeButton,SLOT(changeSignalQuality(int)));
+                connect(tempZidynamigBeeNode,SIGNAL(newRSSIReceived(int)),newStaticNodeButton,SLOT(changeSignalQuality(int)));
             }
 
         }
